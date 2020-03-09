@@ -14,21 +14,13 @@
 /// limitations under the License.
 ///
 
-export * from './alarm-id';
-export * from './asset-id';
-export * from './audit-log-id';
-export * from './customer-id';
-export * from './dashboard-id';
-export * from './device-credentials-id';
-export * from './device-id';
-export * from './entity-id';
-export * from './entity-view-id';
-export * from './event-id';
-export * from './has-uuid';
-export * from './rule-chain-id';
-export * from './rule-node-id';
-export * from './tenant-id';
-export * from './user-id';
-export * from './widget-type-id';
-export * from './widgets-bundle-id';
-export * from './edge-id';
+import { EntityId } from './entity-id';
+import { EntityType } from '@shared/models/entity-type.models';
+
+export class EdgeId implements EntityId {
+  entityType = EntityType.EDGE;
+  id: string;
+  constructor(id: string) {
+    this.id = id;
+  }
+}

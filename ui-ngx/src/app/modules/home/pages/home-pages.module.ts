@@ -29,6 +29,7 @@ import {EntityViewModule} from '@modules/home/pages/entity-view/entity-view.modu
 import {RuleChainModule} from '@modules/home/pages/rulechain/rulechain.module';
 import {WidgetLibraryModule} from '@modules/home/pages/widget/widget-library.module';
 import {DashboardModule} from '@modules/home/pages/dashboard/dashboard.module';
+import {EdgeModule} from '@modules/home/pages/edge/edge.module';
 
 @NgModule({
   exports: [
@@ -44,7 +45,8 @@ import {DashboardModule} from '@modules/home/pages/dashboard/dashboard.module';
     WidgetLibraryModule,
     DashboardModule,
     AuditLogModule,
-    UserModule
+    UserModule,
+    EdgeModule
   ]
 })
 export class HomePagesModule { }

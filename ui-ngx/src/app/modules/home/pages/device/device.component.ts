@@ -23,6 +23,7 @@ import { User } from '@shared/models/user.model';
 import { selectAuth, selectUserDetails } from '@core/auth/auth.selectors';
 import { map } from 'rxjs/operators';
 import { Authority } from '@shared/models/authority.enum';
+
 import {DeviceInfo} from '@shared/models/device.models';
 import {EntityType} from '@shared/models/entity-type.models';
 import {NULL_UUID} from '@shared/models/id/has-uuid';
@@ -91,7 +92,6 @@ export class DeviceComponent extends EntityComponent<DeviceInfo> {
         {gateway: entity.additionalInfo ? entity.additionalInfo.gateway : false}});
     this.entityForm.patchValue({additionalInfo: {description: entity.additionalInfo ? entity.additionalInfo.description : ''}});
   }
-
 
   onDeviceIdCopied($event) {
     this.store.dispatch(new ActionNotificationShow(

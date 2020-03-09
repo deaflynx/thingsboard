@@ -17,7 +17,7 @@
 import {AfterViewInit, Component, ElementRef, forwardRef, Input, OnInit, ViewChild} from '@angular/core';
 import {ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {Observable} from 'rxjs';
-import {map, mergeMap, startWith, tap, share} from 'rxjs/operators';
+import {map, mergeMap, share, tap} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {AppState} from '@app/core/core.state';
 import {TranslateService} from '@ngx-translate/core';
@@ -152,6 +152,11 @@ export class EntityAutocompleteComponent implements ControlValueAccessor, OnInit
           this.entityText = 'device.device';
           this.noEntitiesMatchingText = 'device.no-devices-matching';
           this.entityRequiredText = 'device.device-required';
+          break;
+        case EntityType.EDGE:
+          this.entityText = 'edge.edge';
+          this.noEntitiesMatchingText = 'edge.no-edges-matching';
+          this.entityRequiredText = 'edge.edge-required';
           break;
         case EntityType.ENTITY_VIEW:
           this.entityText = 'entity-view.entity-view';

@@ -14,45 +14,23 @@
 /// limitations under the License.
 ///
 
-import {
-  AfterContentInit,
-  AfterViewInit,
-  Component,
-  ElementRef,
-  forwardRef,
-  Input, OnDestroy,
-  OnInit,
-  SkipSelf,
-  ViewChild
-} from '@angular/core';
-import {
-  ControlValueAccessor,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  FormGroupDirective,
-  NG_VALUE_ACCESSOR, NgForm, Validators
-} from '@angular/forms';
-import { Observable, of, Subscription, throwError } from 'rxjs';
-import { map, mergeMap, startWith, tap, share, pairwise, filter, publishReplay, refCount } from 'rxjs/operators';
+import {AfterViewInit, Component, ElementRef, forwardRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
+import {Observable, Subscription, throwError} from 'rxjs';
+import {map, mergeMap, publishReplay, refCount, share} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {AppState} from '@app/core/core.state';
 import {TranslateService} from '@ngx-translate/core';
-import { AliasEntityType, EntitySubtype, EntityType, entityTypeTranslations } from '@shared/models/entity-type.models';
-import {BaseData} from '@shared/models/base-data';
-import {EntityId} from '@shared/models/id/entity-id';
-import {EntityService} from '@core/http/entity.service';
-import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatChipList } from '@angular/material/chips';
-import { ErrorStateMatcher } from '@angular/material/core';
-import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { emptyPageData } from '@shared/models/page/page-data';
-import { AssetService } from '@core/http/asset.service';
-import { DeviceService } from '@core/http/device.service';
-import { EntityViewService } from '@core/http/entity-view.service';
-import { BroadcastService } from '@core/services/broadcast.service';
-import { MatChipInputEvent } from '@angular/material/chips';
-import { COMMA, ENTER, SEMICOLON } from '@angular/cdk/keycodes';
+import {EntitySubtype, EntityType} from '@shared/models/entity-type.models';
+import {MatAutocomplete, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import {MatChipInputEvent, MatChipList} from '@angular/material/chips';
+import {coerceBooleanProperty} from '@angular/cdk/coercion';
+import {AssetService} from '@core/http/asset.service';
+import {DeviceService} from '@core/http/device.service';
+import {EdgeService} from "@core/http/edge.service";
+import {EntityViewService} from '@core/http/entity-view.service';
+import {BroadcastService} from '@core/services/broadcast.service';
+import {COMMA, ENTER, SEMICOLON} from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'tb-entity-subtype-list',
@@ -119,6 +97,7 @@ export class EntitySubTypeListComponent implements ControlValueAccessor, OnInit,
               public translate: TranslateService,
               private assetService: AssetService,
               private deviceService: DeviceService,
+              private edgeService: EdgeService,
               private entityViewService: EntityViewService,
               private fb: FormBuilder) {
     this.entitySubtypeListFormGroup = this.fb.group({
@@ -161,6 +140,15 @@ export class EntitySubTypeListComponent implements ControlValueAccessor, OnInit,
         this.broadcastSubscription = this.broadcast.on('deviceSaved', () => {
           this.entitySubtypes = null;
         });
+        break;
+      case EntityType.EDGE:
+        this.placeholder = this.required ? this.translate.instant('edge.enter-edge-type')
+          : this.translate.instant('edge-any-edge');
+        this.secondaryPlaceholder = '+' + this.translate.instant('edge.edge-type');
+        this.noSubtypesMathingText = 'edge.no-edge-types-matching';
+        this.broadcastSubscription = this.broadcast.on('edgeSaved', () => {
+          this.entitySubtypes = null;
+      });
         break;
       case EntityType.ENTITY_VIEW:
         this.placeholder = this.required ? this.translate.instant('entity-view.enter-entity-view-type')
@@ -282,6 +270,9 @@ export class EntitySubTypeListComponent implements ControlValueAccessor, OnInit,
           break;
         case EntityType.DEVICE:
           subTypesObservable = this.deviceService.getDeviceTypes({ignoreLoading: true});
+          break;
+        case EntityType.EDGE:
+          subTypesObservable = this.edgeService.getEdgeTypes({ignoreLoading: true});
           break;
         case EntityType.ENTITY_VIEW:
           subTypesObservable = this.entityViewService.getEntityViewTypes({ignoreLoading: true});

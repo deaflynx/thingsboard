@@ -14,26 +14,19 @@
 /// limitations under the License.
 ///
 
-import {AfterViewInit, Component, ElementRef, forwardRef, Input, OnInit, ViewChild, OnDestroy} from '@angular/core';
+import {AfterViewInit, Component, forwardRef, Input, OnDestroy, OnInit} from '@angular/core';
 import {ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {Observable, of, throwError, Subscription, Subject} from 'rxjs';
-import {PageLink} from '@shared/models/page/page-link';
-import {Direction} from '@shared/models/page/sort-order';
-import {filter, map, mergeMap, publishReplay, refCount, startWith, tap, publish} from 'rxjs/operators';
-import {PageData, emptyPageData} from '@shared/models/page/page-data';
-import {DashboardInfo} from '@app/shared/models/dashboard.models';
-import {DashboardId} from '@app/shared/models/id/dashboard-id';
-import {DashboardService} from '@core/http/dashboard.service';
+import {Observable, Subject, Subscription, throwError} from 'rxjs';
+import {map, mergeMap, publishReplay, refCount, startWith, tap} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {AppState} from '@app/core/core.state';
-import {getCurrentAuthUser} from '@app/core/auth/auth.selectors';
-import {Authority} from '@shared/models/authority.enum';
 import {TranslateService} from '@ngx-translate/core';
 import {DeviceService} from '@core/http/device.service';
 import {EntitySubtype, EntityType} from '@app/shared/models/entity-type.models';
 import {BroadcastService} from '@app/core/services/broadcast.service';
 import {AssetService} from '@core/http/asset.service';
 import {EntityViewService} from '@core/http/entity-view.service';
+import {EdgeService} from "@core/http/edge.service";
 
 @Component({
   selector: 'tb-entity-subtype-select',
@@ -85,6 +78,7 @@ export class EntitySubTypeSelectComponent implements ControlValueAccessor, OnIni
               private broadcast: BroadcastService,
               public translate: TranslateService,
               private deviceService: DeviceService,
+              private edgeService: EdgeService,
               private assetService: AssetService,
               private entityViewService: EntityViewService,
               private fb: FormBuilder) {
@@ -127,6 +121,13 @@ export class EntitySubTypeSelectComponent implements ControlValueAccessor, OnIni
           this.subTypesOptionsSubject.next('');
         });
         break;
+      case EntityType.EDGE:
+        this.entitySubtypeTitle = 'edge.edge-type';
+        this.entitySubtypeRequiredText = 'edge.edge-type-required';
+        this.broadcastSubscription = this.broadcast.on('edgeSaved',() => {
+          this.subTypes = null;
+          this.subTypesOptionsSubject.next('');
+        })
     }
 
     this.subTypesOptions = this.subTypesOptionsSubject.asObservable().pipe(
@@ -215,6 +216,9 @@ export class EntitySubTypeSelectComponent implements ControlValueAccessor, OnIni
           break;
         case EntityType.DEVICE:
           this.subTypes = this.deviceService.getDeviceTypes({ignoreLoading: true});
+          break;
+        case EntityType.EDGE:
+          this.subTypes = this.edgeService.getEdgeTypes({ignoreLoading: true});
           break;
         case EntityType.ENTITY_VIEW:
           this.subTypes = this.entityViewService.getEntityViewTypes({ignoreLoading: true});

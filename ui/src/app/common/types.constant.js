@@ -222,6 +222,12 @@ export default angular.module('thingsboard.types', [])
                 },
                 "LOCKOUT": {
                     name: "audit-log.type-lockout"
+                },
+                "ASSIGNED_TO_EDGE": {
+                    name: "audit-log.type-assigned-to-edge"
+                },
+                "UNASSIGNED_FROM_EDGE": {
+                    name: "audit-log.type-unassigned-from-edge"
                 }
             },
             auditLogActionStatus: {
@@ -265,6 +271,10 @@ export default angular.module('thingsboard.types', [])
                     value: 'deviceType',
                     name: 'alias.filter-type-device-type'
                 },
+                edgeType: {
+                    value: 'edgeType',
+                    name: 'alias.filter-type-edge-type'
+                },
                 entityViewType: {
                     value: 'entityViewType',
                     name: 'alias.filter-type-entity-view-type'
@@ -280,6 +290,10 @@ export default angular.module('thingsboard.types', [])
                 deviceSearchQuery: {
                     value: 'deviceSearchQuery',
                     name: 'alias.filter-type-device-search-query'
+                },
+                edgeSearchQuery: {
+                    value: 'edgeSearchQuery',
+                    name: 'alias.filter-type-edge-search-query'
                 },
                 entityViewSearchQuery: {
                     value: 'entityViewSearchQuery',
@@ -351,6 +365,7 @@ export default angular.module('thingsboard.types', [])
             },
             entityType: {
                 device: "DEVICE",
+                edge: "EDGE",
                 asset: "ASSET",
                 tenant: "TENANT",
                 customer: "CUSTOMER",
@@ -416,6 +431,12 @@ export default angular.module('thingsboard.types', [])
                     typePlural: 'entity.type-devices',
                     list: 'entity.list-of-devices',
                     nameStartsWith: 'entity.device-name-starts-with'
+                },
+                "EDGE": {
+                    type: 'entity.type-edge',
+                    typePlural: 'entity.type-edges',
+                    list: 'entity.list-of-edges',
+                    nameStartsWith: 'entity.edge-name-starts-with'
                 },
                 "ASSET": {
                     type: 'entity.type-asset',
@@ -719,6 +740,7 @@ export default angular.module('thingsboard.types', [])
                     }
                 }
             },
+            edgeRuleChainType: "EDGE",
             unknownNodeComponent: {
                 type: 'UNKNOWN',
                 name: 'unknown',

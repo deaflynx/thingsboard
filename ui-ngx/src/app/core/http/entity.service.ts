@@ -14,49 +14,51 @@
 /// limitations under the License.
 ///
 
-import { Injectable } from '@angular/core';
-import { EMPTY, forkJoin, Observable, of, throwError } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { PageLink } from '@shared/models/page/page-link';
-import { AliasEntityType, EntityType } from '@shared/models/entity-type.models';
-import { BaseData } from '@shared/models/base-data';
-import { EntityId } from '@shared/models/id/entity-id';
-import { DeviceService } from '@core/http/device.service';
-import { TenantService } from '@core/http/tenant.service';
-import { CustomerService } from '@core/http/customer.service';
-import { UserService } from './user.service';
-import { DashboardService } from '@core/http/dashboard.service';
-import { Direction } from '@shared/models/page/sort-order';
-import { PageData } from '@shared/models/page/page-data';
-import { getCurrentAuthUser } from '@core/auth/auth.selectors';
-import { Store } from '@ngrx/store';
-import { AppState } from '@core/core.state';
-import { Authority } from '@shared/models/authority.enum';
-import { Tenant } from '@shared/models/tenant.model';
-import { catchError, concatMap, expand, map, mergeMap, toArray } from 'rxjs/operators';
-import { Customer } from '@app/shared/models/customer.model';
-import { AssetService } from '@core/http/asset.service';
-import { EntityViewService } from '@core/http/entity-view.service';
-import { AttributeScope, DataKeyType } from '@shared/models/telemetry/telemetry.models';
-import { defaultHttpOptionsFromConfig, RequestConfig } from '@core/http/http-utils';
-import { RuleChainService } from '@core/http/rule-chain.service';
-import { AliasInfo, StateParams, SubscriptionInfo } from '@core/api/widget-api.models';
-import { Datasource, DatasourceType, KeyInfo } from '@app/shared/models/widget.models';
-import { UtilsService } from '@core/services/utils.service';
-import { AliasFilterType, EntityAlias, EntityAliasFilter, EntityAliasFilterResult } from '@shared/models/alias.models';
-import { entityFields, EntityInfo, ImportEntitiesResultInfo, ImportEntityData } from '@shared/models/entity.models';
+import {Injectable} from '@angular/core';
+import {EMPTY, forkJoin, Observable, of, throwError} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {PageLink} from '@shared/models/page/page-link';
+import {AliasEntityType, EntityType} from '@shared/models/entity-type.models';
+import {BaseData} from '@shared/models/base-data';
+import {EntityId} from '@shared/models/id/entity-id';
+import {DeviceService} from '@core/http/device.service';
+import {TenantService} from '@core/http/tenant.service';
+import {EdgeService} from "@core/http/edge.service";
+import {CustomerService} from '@core/http/customer.service';
+import {UserService} from './user.service';
+import {DashboardService} from '@core/http/dashboard.service';
+import {Direction} from '@shared/models/page/sort-order';
+import {PageData} from '@shared/models/page/page-data';
+import {getCurrentAuthUser} from '@core/auth/auth.selectors';
+import {Store} from '@ngrx/store';
+import {AppState} from '@core/core.state';
+import {Authority} from '@shared/models/authority.enum';
+import {Tenant} from '@shared/models/tenant.model';
+import {catchError, concatMap, expand, map, mergeMap, toArray} from 'rxjs/operators';
+import {Customer} from '@app/shared/models/customer.model';
+import {AssetService} from '@core/http/asset.service';
+import {EntityViewService} from '@core/http/entity-view.service';
+import {AttributeScope, DataKeyType} from '@shared/models/telemetry/telemetry.models';
+import {defaultHttpOptionsFromConfig, RequestConfig} from '@core/http/http-utils';
+import {RuleChainService} from '@core/http/rule-chain.service';
+import {AliasInfo, StateParams, SubscriptionInfo} from '@core/api/widget-api.models';
+import {Datasource, DatasourceType, KeyInfo} from '@app/shared/models/widget.models';
+import {UtilsService} from '@core/services/utils.service';
+import {AliasFilterType, EntityAlias, EntityAliasFilter, EntityAliasFilterResult} from '@shared/models/alias.models';
+import {entityFields, EntityInfo, ImportEntitiesResultInfo, ImportEntityData} from '@shared/models/entity.models';
 import {
   EntityRelationInfo,
   EntityRelationsQuery,
   EntitySearchDirection,
   EntitySearchQuery
 } from '@shared/models/relation.models';
-import { EntityRelationService } from '@core/http/entity-relation.service';
-import { isDefined } from '@core/utils';
-import { Asset, AssetSearchQuery } from '@shared/models/asset.models';
-import { Device, DeviceCredentialsType, DeviceSearchQuery } from '@shared/models/device.models';
-import { EntityViewSearchQuery } from '@shared/models/entity-view.models';
-import { AttributeService } from '@core/http/attribute.service';
+import {EntityRelationService} from '@core/http/entity-relation.service';
+import {isDefined} from '@core/utils';
+import {Asset, AssetSearchQuery} from '@shared/models/asset.models';
+import {Device, DeviceCredentialsType, DeviceSearchQuery} from '@shared/models/device.models';
+import {EntityViewSearchQuery} from '@shared/models/entity-view.models';
+import {AttributeService} from '@core/http/attribute.service';
+import {EdgeSearchQuery} from "@shared/models/edge.models";
 
 @Injectable({
   providedIn: 'root'
@@ -67,6 +69,7 @@ export class EntityService {
     private http: HttpClient,
     private store: Store<AppState>,
     private deviceService: DeviceService,
+    private edgeService: EdgeService,
     private assetService: AssetService,
     private entityViewService: EntityViewService,
     private tenantService: TenantService,
@@ -86,6 +89,9 @@ export class EntityService {
     switch (entityType) {
       case EntityType.DEVICE:
         observable = this.deviceService.getDevice(entityId, config);
+        break;
+      case EntityType.EDGE:
+        observable = this.edgeService.getEdgeById(entityId, config);
         break;
       case EntityType.ASSET:
         observable = this.assetService.getAsset(entityId, config);
@@ -153,6 +159,9 @@ export class EntityService {
     switch (entityType) {
       case EntityType.DEVICE:
         observable = this.deviceService.getDevices(entityIds, config);
+        break;
+      case EntityType.EDGE:
+        observable = this.edgeService.getEdgesByIds(entityIds, config);
         break;
       case EntityType.ASSET:
         observable = this.assetService.getAssets(entityIds, config);
@@ -243,8 +252,7 @@ export class EntityService {
     );
   }
 
-  private getEntitiesByPageLinkObservable(entityType: EntityType, pageLink: PageLink, subType: string = '',
-                                          config?: RequestConfig): Observable<PageData<BaseData<EntityId>>> {
+  private getEntitiesByPageLinkObservable(entityType: EntityType, pageLink: PageLink, subType: string = '', config?: RequestConfig): Observable<PageData<BaseData<EntityId>>> {
     let entitiesObservable: Observable<PageData<BaseData<EntityId>>>;
     const authUser = getCurrentAuthUser(this.store);
     const customerId = authUser.customerId;
@@ -255,6 +263,14 @@ export class EntityService {
           entitiesObservable = this.deviceService.getCustomerDeviceInfos(customerId, pageLink, subType, config);
         } else {
           entitiesObservable = this.deviceService.getTenantDeviceInfos(pageLink, subType, config);
+        }
+        break;
+      case EntityType.EDGE:
+        pageLink.sortOrder.property = 'name';
+        if (authUser.authority === Authority.CUSTOMER_USER) {
+          entitiesObservable = this.edgeService.getCustomerEdges(customerId, pageLink, subType, config);
+        } else {
+          entitiesObservable = this.edgeService.getTenantEdges(pageLink, subType, config);
         }
         break;
       case EntityType.ASSET:
@@ -312,8 +328,7 @@ export class EntityService {
     return entitiesObservable;
   }
 
-  private getEntitiesByPageLink(entityType: EntityType, pageLink: PageLink, subType: string = '',
-                                config?: RequestConfig): Observable<Array<BaseData<EntityId>>> {
+  private getEntitiesByPageLink(entityType: EntityType, pageLink: PageLink, subType: string = '', config?: RequestConfig): Observable<Array<BaseData<EntityId>>> {
     const entitiesObservable: Observable<PageData<BaseData<EntityId>>> =
       this.getEntitiesByPageLinkObservable(entityType, pageLink, subType, config);
     if (entitiesObservable) {
@@ -336,7 +351,7 @@ export class EntityService {
   }
 
   public getEntitiesByNameFilter(entityType: EntityType, entityNameFilter: string,
-                                 pageSize: number, subType: string = '',
+                                 pageSize?, subType: string = '',
                                  config?: RequestConfig): Observable<Array<BaseData<EntityId>>> {
     const pageLink = new PageLink(pageSize, 0, entityNameFilter, {
       property: 'name',
@@ -390,6 +405,8 @@ export class EntityService {
           return entityTypes.indexOf(EntityType.ASSET)  > -1 ? true : false;
         case AliasFilterType.deviceType:
           return entityTypes.indexOf(EntityType.DEVICE)  > -1 ? true : false;
+        case AliasFilterType.edgeType:
+          return entityTypes.indexOf(EntityType.EDGE) > -1 ? true : false;
         case AliasFilterType.entityViewType:
           return entityTypes.indexOf(EntityType.ENTITY_VIEW)  > -1 ? true : false;
         case AliasFilterType.relationsQuery:
@@ -416,6 +433,8 @@ export class EntityService {
           return entityTypes.indexOf(EntityType.ASSET)  > -1 ? true : false;
         case AliasFilterType.deviceSearchQuery:
           return entityTypes.indexOf(EntityType.DEVICE)  > -1 ? true : false;
+        case AliasFilterType.edgeSearchQuery:
+          return entityTypes.indexOf(EntityType.EDGE) > -1 ? true : false;
         case AliasFilterType.entityViewSearchQuery:
           return entityTypes.indexOf(EntityType.ENTITY_VIEW)  > -1 ? true : false;
       }
@@ -449,6 +468,8 @@ export class EntityService {
         return entityType === EntityType.ASSET;
       case AliasFilterType.deviceType:
         return entityType === EntityType.DEVICE;
+      case AliasFilterType.edgeType:
+        return entityType === EntityType.EDGE;
       case AliasFilterType.entityViewType:
         return entityType === EntityType.ENTITY_VIEW;
       case AliasFilterType.relationsQuery:
@@ -457,6 +478,8 @@ export class EntityService {
         return entityType === EntityType.ASSET;
       case AliasFilterType.deviceSearchQuery:
         return entityType === EntityType.DEVICE;
+      case AliasFilterType.edgeSearchQuery:
+        return entityType === EntityType.EDGE;
       case AliasFilterType.entityViewSearchQuery:
         return entityType === EntityType.ENTITY_VIEW;
     }
@@ -473,6 +496,7 @@ export class EntityService {
         break;
       case Authority.TENANT_ADMIN:
         entityTypes.push(EntityType.DEVICE);
+        entityTypes.push(EntityType.EDGE);
         entityTypes.push(EntityType.ASSET);
         entityTypes.push(EntityType.ENTITY_VIEW);
         entityTypes.push(EntityType.TENANT);
@@ -484,6 +508,7 @@ export class EntityService {
         break;
       case Authority.CUSTOMER_USER:
         entityTypes.push(EntityType.DEVICE);
+        entityTypes.push(EntityType.EDGE);
         entityTypes.push(EntityType.ASSET);
         entityTypes.push(EntityType.ENTITY_VIEW);
         entityTypes.push(EntityType.CUSTOMER);
@@ -530,6 +555,7 @@ export class EntityService {
         entityFieldKeys.push(entityFields.type.keyName);
         break;
       case EntityType.DEVICE:
+      case EntityType.EDGE:
       case EntityType.ASSET:
         entityFieldKeys.push(entityFields.name.keyName);
         entityFieldKeys.push(entityFields.type.keyName);
@@ -709,6 +735,20 @@ export class EntityService {
           )
         );
         break;
+      case AliasFilterType.edgeType:
+        return this.getEntitiesByNameFilter(EntityType.EDGE, filter.edgeNameFilter, maxItems,
+          filter.edgeType, {ignoreLoading: true, ignoreErrors: true}).pipe(
+            map((entities) => {
+              if (entities && entities.length || !failOnEmpty) {
+                result.entities = this.entitiesToEntitiesInfo(entities);
+                return result;
+              } else {
+                throw new Error();
+              }
+            }
+            )
+        );
+            break;
       case AliasFilterType.entityViewType:
         return this.getEntitiesByNameFilter(EntityType.ENTITY_VIEW, filter.entityViewNameFilter, maxItems,
           filter.entityViewType, {ignoreLoading: true, ignoreErrors: true}).pipe(
@@ -770,6 +810,7 @@ export class EntityService {
         break;
       case AliasFilterType.assetSearchQuery:
       case AliasFilterType.deviceSearchQuery:
+      case AliasFilterType.edgeSearchQuery:
       case AliasFilterType.entityViewSearchQuery:
         result.stateEntity = filter.rootStateEntity;
         if (result.stateEntity && stateEntityId) {
@@ -796,15 +837,22 @@ export class EntityService {
             const assetSearchQuery = searchQuery as AssetSearchQuery;
             assetSearchQuery.assetTypes = filter.assetTypes;
             findByQueryObservable = this.assetService.findByQuery(assetSearchQuery, {ignoreLoading: true, ignoreErrors: true});
-          } else if (filter.type === AliasFilterType.deviceSearchQuery) {
-            const deviceSearchQuery = searchQuery as DeviceSearchQuery;
-            deviceSearchQuery.deviceTypes = filter.deviceTypes;
-            findByQueryObservable = this.deviceService.findByQuery(deviceSearchQuery, {ignoreLoading: true, ignoreErrors: true});
-          } else if (filter.type === AliasFilterType.entityViewSearchQuery) {
-            const entityViewSearchQuery = searchQuery as EntityViewSearchQuery;
-            entityViewSearchQuery.entityViewTypes = filter.entityViewTypes;
-            findByQueryObservable = this.entityViewService.findByQuery(entityViewSearchQuery, {ignoreLoading: true, ignoreErrors: true});
           }
+            else if (filter.type === AliasFilterType.deviceSearchQuery) {
+              const deviceSearchQuery = searchQuery as DeviceSearchQuery;
+              deviceSearchQuery.deviceTypes = filter.deviceTypes;
+              findByQueryObservable = this.deviceService.findByQuery(deviceSearchQuery, {ignoreLoading: true, ignoreErrors: true});
+            }
+            else if (filter.type === AliasFilterType.edgeSearchQuery) {
+              const edgeSearchQuery = searchQuery as EdgeSearchQuery;
+              edgeSearchQuery.edgeTypes = filter.edgeTypes;
+              findByQueryObservable = this.edgeService.findByQuery(edgeSearchQuery, {ignoreLoading: true, ignoreErrors: true});
+            }
+            else if (filter.type === AliasFilterType.entityViewSearchQuery) {
+              const entityViewSearchQuery = searchQuery as EntityViewSearchQuery;
+              entityViewSearchQuery.entityViewTypes = filter.entityViewTypes;
+              findByQueryObservable = this.entityViewService.findByQuery(entityViewSearchQuery, {ignoreLoading: true, ignoreErrors: true});
+            }
           return findByQueryObservable.pipe(
             map((entities) => {
               if (entities && entities.length || !failOnEmpty) {
