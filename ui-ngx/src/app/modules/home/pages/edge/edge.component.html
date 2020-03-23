@@ -99,8 +99,8 @@
         <button mat-button mat-icon-button
                    style="margin-top: 14px"
                    ngxClipboard
-                   (cbOnSuccess)="onEdgeIdCopied($event)"
-                   [cbContent]="entity?.id?.id"
+                   (cbOnSuccess)="onEdgeKeyCopied($event)"
+                   [cbContent]="entity?.routingKey"
                    [fxShow]="!isEdit">
           <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>
         </button>
@@ -114,8 +114,8 @@
         <button mat-button mat-icon-button
                    style="margin-top: 14px"
                    ngxClipboard
-                   (cbOnSuccess)="onEdgeIdCopied($event)"
-                   [cbContent]="entity?.id?.id"
+                   (cbOnSuccess)="onEdgeSecretCopied($event)"
+                   [cbContent]="entity?.secret"
                    [fxShow]="!isEdit">
           <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>
         </button>

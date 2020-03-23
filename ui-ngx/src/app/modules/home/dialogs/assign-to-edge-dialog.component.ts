@@ -26,66 +26,74 @@ import {EntityType} from '@shared/models/entity-type.models';
 import {forkJoin, Observable} from 'rxjs';
 import {AssetService} from '@core/http/asset.service';
 import {EntityViewService} from '@core/http/entity-view.service';
+import {DashboardService} from "@core/http/dashboard.service";
 import {DialogComponent} from '@shared/components/dialog.component';
 import {Router} from '@angular/router';
 import {EdgeService} from "@core/http/edge.service";
+import {RuleChainService} from "@core/http/rule-chain.service";
 
-export interface AssignToCustomerDialogData {
+export interface AssignToEdgeDialogData {
   entityIds: Array<EntityId>;
   entityType: EntityType;
 }
 
 @Component({
-  selector: 'tb-assign-to-customer-dialog',
-  templateUrl: './assign-to-customer-dialog.component.html',
-  providers: [{provide: ErrorStateMatcher, useExisting: AssignToCustomerDialogComponent}],
+  selector: 'tb-assign-to-edge-dialog',
+  templateUrl: './assign-to-edge-dialog.component.html',
+  providers: [{provide: ErrorStateMatcher, useExisting: AssignToEdgeDialogComponent}],
   styleUrls: []
 })
-export class AssignToCustomerDialogComponent extends
-  DialogComponent<AssignToCustomerDialogComponent, boolean> implements OnInit, ErrorStateMatcher {
+export class AssignToEdgeDialogComponent extends
+  DialogComponent<AssignToEdgeDialogComponent, boolean> implements OnInit, ErrorStateMatcher {
 
-  assignToCustomerFormGroup: FormGroup;
+  assignToEdgeFormGroup: FormGroup;
 
   submitted = false;
 
   entityType = EntityType;
 
-  assignToCustomerTitle: string;
-  assignToCustomerText: string;
+  assignToEdgeTitle: string;
+  assignToEdgeText: string;
 
   constructor(protected store: Store<AppState>,
               protected router: Router,
-              @Inject(MAT_DIALOG_DATA) public data: AssignToCustomerDialogData,
+              @Inject(MAT_DIALOG_DATA) public data: AssignToEdgeDialogData,
               private deviceService: DeviceService,
               private edgeService: EdgeService,
               private assetService: AssetService,
+              private dashboardService: DashboardService,
               private entityViewService: EntityViewService,
+              private ruleChainService: RuleChainService,
               @SkipSelf() private errorStateMatcher: ErrorStateMatcher,
-              public dialogRef: MatDialogRef<AssignToCustomerDialogComponent, boolean>,
+              public dialogRef: MatDialogRef<AssignToEdgeDialogComponent, boolean>,
               public fb: FormBuilder) {
     super(store, router, dialogRef);
   }
 
   ngOnInit(): void {
-    this.assignToCustomerFormGroup = this.fb.group({
-      customerId: [null, [Validators.required]]
+    this.assignToEdgeFormGroup = this.fb.group({
+      edgeId: [null, [Validators.required]]
     });
     switch (this.data.entityType) {
       case EntityType.DEVICE:
-        this.assignToCustomerTitle = 'device.assign-device-to-customer';
-        this.assignToCustomerText = 'device.assign-to-customer-text';
-        break;
-      case EntityType.EDGE:
-        this.assignToCustomerTitle = 'edge.assign-edge-to-customer';
-        this.assignToCustomerText = 'edge.assign-to-customer-text';
+        this.assignToEdgeTitle = 'device.assign-device-to-edge';
+        this.assignToEdgeText = 'device.assign-to-edge-text';
         break;
       case EntityType.ASSET:
-        this.assignToCustomerTitle = 'asset.assign-asset-to-customer';
-        this.assignToCustomerText = 'asset.assign-to-customer-text';
+        this.assignToEdgeTitle = 'asset.assign-asset-to-edge';
+        this.assignToEdgeText = 'asset.assign-to-edge-text';
         break;
       case EntityType.ENTITY_VIEW:
-        this.assignToCustomerTitle = 'entity-view.assign-entity-view-to-customer';
-        this.assignToCustomerText = 'entity-view.assign-to-customer-text';
+        this.assignToEdgeTitle = 'entity-view.assign-entity-view-to-edge';
+        this.assignToEdgeText = 'entity-view.assign-to-edge-text';
+        break;
+      case EntityType.DASHBOARD:
+        this.assignToEdgeTitle = 'dashboard.assign-dashboard-to-edge';
+        this.assignToEdgeText = 'dashboard.assign-to-edge-text';
+        break;
+      case EntityType.RULE_CHAIN:
+        this.assignToEdgeTitle = 'rulechain.assign-dashboard-to-edge';
+        this.assignToEdgeText = 'rulechain.assign-to-edge-text';
         break;
     }
   }
@@ -102,11 +110,11 @@ export class AssignToCustomerDialogComponent extends
 
   assign(): void {
     this.submitted = true;
-    const customerId: string = this.assignToCustomerFormGroup.get('customerId').value;
+    const edgeId: string = this.assignToEdgeFormGroup.get('edgeId').value;
     const tasks: Observable<any>[] = [];
     this.data.entityIds.forEach(
       (entityId) => {
-        tasks.push(this.getAssignToCustomerTask(customerId, entityId.id));
+        tasks.push(this.getAssignToEdgeTask(edgeId, entityId.id));
       }
     );
     forkJoin(tasks).subscribe(
@@ -116,19 +124,22 @@ export class AssignToCustomerDialogComponent extends
     );
   }
 
-  private getAssignToCustomerTask(customerId: string, entityId: string): Observable<any> {
+  private getAssignToEdgeTask(edgeId: string, entityId: string): Observable<any> {
     switch (this.data.entityType) {
       case EntityType.DEVICE:
-        return this.deviceService.assignDeviceToCustomer(customerId, entityId);
-        break;
-      case EntityType.EDGE:
-        return this.edgeService.assignEdgeToCustomer(customerId, entityId);
+        return this.deviceService.assignDeviceToEdge(edgeId, entityId);
         break;
       case EntityType.ASSET:
-        return this.assetService.assignAssetToCustomer(customerId, entityId);
+        return this.assetService.assignAssetToEdge(edgeId, entityId);
         break;
       case EntityType.ENTITY_VIEW:
-        return this.entityViewService.assignEntityViewToCustomer(customerId, entityId);
+        return this.entityViewService.assignEntityViewToEdge(edgeId, entityId);
+        break;
+      case EntityType.DASHBOARD:
+        return this.dashboardService.assignDashboardToEdge(edgeId, entityId);
+        break;
+      case EntityType.RULE_CHAIN:
+        return this.ruleChainService.assignRuleChainToEdge(edgeId, entityId);
         break;
     }
   }

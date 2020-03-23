@@ -20,10 +20,12 @@ import {TenantId} from '@shared/models/id/tenant-id';
 import {CustomerId} from '@shared/models/id/customer-id';
 import {DeviceCredentialsId} from '@shared/models/id/device-credentials-id';
 import { EntitySearchQuery } from '@shared/models/relation.models';
+import {EdgeId} from "@shared/models/id/edge-id";
 
 export interface Device extends BaseData<DeviceId> {
   tenantId?: TenantId;
   customerId?: CustomerId;
+  edgeId?: EdgeId;
   name: string;
   type: string;
   label: string;

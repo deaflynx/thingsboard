@@ -18,6 +18,7 @@ import {BaseData} from '@shared/models/base-data';
 import {AssetId} from './id/asset-id';
 import {TenantId} from '@shared/models/id/tenant-id';
 import {CustomerId} from '@shared/models/id/customer-id';
+import {EdgeId} from "@shared/models/id/edge-id";
 import {DeviceCredentialsId} from '@shared/models/id/device-credentials-id';
 import { EntitySearchQuery } from '@shared/models/relation.models';
 
@@ -28,6 +29,7 @@ export interface Asset extends BaseData<AssetId> {
   type: string;
   label: string;
   additionalInfo?: any;
+  edgeId?: EdgeId;
 }
 
 export interface AssetInfo extends Asset {

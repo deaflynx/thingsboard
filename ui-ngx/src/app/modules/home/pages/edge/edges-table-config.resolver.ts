@@ -58,9 +58,13 @@ import {EdgeComponent} from "@home/pages/edge/edge.component";
 import {EdgeTableHeaderComponent} from "@home/pages/edge/edge-table-header.component";
 import {EdgeId} from "@shared/models/id/edge-id";
 import {EdgeTabsComponent} from "@home/pages/edge/edge-tabs.component";
+import {
+  AssignToEdgeDialogComponent,
+  AssignToEdgeDialogData
+} from "@home/dialogs/assign-to-edge-dialog.component";
 
 @Injectable()
-export class EdgeTableConfigResolver implements Resolve<EntityTableConfig<EdgeInfo>> {
+export class EdgesTableConfigResolver implements Resolve<EntityTableConfig<EdgeInfo>> {
 
   private readonly config: EntityTableConfig<EdgeInfo> = new EntityTableConfig<EdgeInfo>();
 
@@ -178,33 +182,63 @@ export class EdgeTableConfigResolver implements Resolve<EntityTableConfig<EdgeIn
 
   configureCellActions(edgeScope: string): Array<CellActionDescriptor<EdgeInfo>> {
     const actions: Array<CellActionDescriptor<EdgeInfo>> = [];
+    actions.push(
+      {
+        name: this.translate.instant('edge.make-public'),
+        icon: 'share',
+        isEnabled: (entity) => (!entity.customerId || entity.customerId.id === NULL_UUID),
+        onAction: ($event, entity) => this.makePublic($event, entity)
+      },
+      {
+        name: this.translate.instant('edge.assign-to-customer'),
+        icon: 'assignment_ind',
+        isEnabled: (entity) => (!entity.customerId || entity.customerId.id === NULL_UUID),
+        onAction: ($event, entity) => this.assignToCustomer($event, [entity.id])
+      },
+      {
+        name: this.translate.instant('edge.unassign-from-customer'),
+        icon: 'assignment_return',
+        isEnabled: (entity) => (entity.customerId && entity.customerId.id !== NULL_UUID && !entity.customerIsPublic),
+        onAction: ($event, entity) => this.unassignFromCustomer($event, entity)
+      },
+      {
+        name: this.translate.instant('edge.make-private'),
+        icon: 'reply',
+        isEnabled: (entity) => (entity.customerId && entity.customerId.id !== NULL_UUID && entity.customerIsPublic),
+        onAction: ($event, entity) => this.unassignFromCustomer($event, entity)
+      },
+      {
+        name: this.translate.instant('edge.manage-edge-assets'),
+        icon: 'domain',
+        isEnabled: (entity) => true,
+        onAction: ($event, entity) => this.openEdgeAssets($event, entity)
+      },
+      {
+        name: this.translate.instant('edge.manage-edge-devices'),
+        icon: 'devices_other',
+        isEnabled: (entity) => true,
+        onAction: ($event, entity) => this.openEdgeDevices($event, entity)
+      },
+      {
+        name: this.translate.instant('edge.manage-edge-entity-views'),
+        icon: 'view_quilt',
+        isEnabled: (entity) => true,
+        onAction: ($event, entity) => this.openEdgeEntityViews($event, entity)
+      },
+      {
+        name: this.translate.instant('edge.manage-edge-dashboards'),
+        icon: 'dashboard',
+        isEnabled: (entity) => true,
+        onAction: ($event, entity) => this.openEdgeDashboards($event, entity)
+      },
+      {
+        name: this.translate.instant('edge.manage-edge-rulechains'),
+        icon: 'settings_ethernet',
+        isEnabled: (entity) => true,
+        onAction: ($event, entity) => this.openEdgeRuleChains($event, entity)
+      }
+    );
     if (edgeScope === 'tenant') {
-      actions.push(
-        {
-          name: this.translate.instant('edge.make-public'),
-          icon: 'share',
-          isEnabled: (entity) => (!entity.customerId || entity.customerId.id === NULL_UUID),
-          onAction: ($event, entity) => this.makePublic($event, entity)
-        },
-        {
-          name: this.translate.instant('edge.assign-to-customer'),
-          icon: 'assignment_ind',
-          isEnabled: (entity) => (!entity.customerId || entity.customerId.id === NULL_UUID),
-          onAction: ($event, entity) => this.assignToCustomer($event, [entity.id])
-        },
-        {
-          name: this.translate.instant('edge.unassign-from-customer'),
-          icon: 'assignment_return',
-          isEnabled: (entity) => (entity.customerId && entity.customerId.id !== NULL_UUID && !entity.customerIsPublic),
-          onAction: ($event, entity) => this.unassignFromCustomer($event, entity)
-        },
-        {
-          name: this.translate.instant('edge.make-private'),
-          icon: 'reply',
-          isEnabled: (entity) => (entity.customerId && entity.customerId.id !== NULL_UUID && entity.customerIsPublic),
-          onAction: ($event, entity) => this.unassignFromCustomer($event, entity)
-        },
-      );
     }
     if (edgeScope === 'customer') {
       actions.push(
@@ -336,6 +370,41 @@ export class EdgeTableConfigResolver implements Resolve<EntityTableConfig<EdgeIn
     );
   }
 
+  openEdgeDashboards($event, edge) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.router.navigateByUrl(`edges/${edge.id.id}/dashboards`);
+  }
+
+  openEdgeRuleChains($event, edge) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.router.navigateByUrl(`edges/${edge.id.id}/ruleChains`);
+  }
+
+  openEdgeAssets($event: Event, edge: Edge) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.router.navigateByUrl(`edges/${edge.id.id}/assets`);
+  }
+
+  openEdgeDevices($event, edge) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.router.navigateByUrl(`edges/${edge.id.id}/devices`);
+  }
+
+  openEdgeEntityViews($event, edge) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.router.navigateByUrl(`edges/${edge.id.id}/entityViews`);
+  }
+
   assignToCustomer($event: Event, edgesIds: Array<EdgeId>) {
     if ($event) {
       $event.stopPropagation();
@@ -418,17 +487,31 @@ export class EdgeTableConfigResolver implements Resolve<EntityTableConfig<EdgeIn
 
   onEdgeAction(action: EntityAction<EdgeInfo>): boolean {
   switch (action.action) {
-  case 'makePublic':
-    this.makePublic(action.event, action.entity);
-  return true;
-  case 'assignToCustomer':
-    this.assignToCustomer(action.event, [action.entity.id]);
-  return true;
-  case 'unassignFromCustomer':
-    this.unassignFromCustomer(action.event, action.entity);
-  return true
-}
-return false;
-}
+    case 'makePublic':
+      this.makePublic(action.event, action.entity);
+    return true;
+    case 'assignToCustomer':
+      this.assignToCustomer(action.event, [action.entity.id]);
+    return true;
+    case 'unassignFromCustomer':
+      this.unassignFromCustomer(action.event, action.entity);
+    return true;
+    case 'openEdgeAssets':
+      this.openEdgeAssets(action.event, action.entity);
+    return true;
+    case 'openEdgeDevices':
+      this.openEdgeDevices(action.event, action.entity);
+    return true;
+    case 'openEdgeEntityViews':
+      this.openEdgeEntityViews(action.event, action.entity);
+    return true;
+    case 'openEdgeDashboards':
+      this.openEdgeDashboards(action.event, action.entity);
+    return true;
+    case 'openEdgeRuleChains':
+      this.openEdgeRuleChains(action.event, action.entity);
+    return true;
+    }
+  }
 
 }

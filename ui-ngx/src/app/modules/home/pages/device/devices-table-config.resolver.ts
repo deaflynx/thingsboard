@@ -61,6 +61,7 @@ import {
 } from '../../dialogs/add-entities-to-customer-dialog.component';
 import { DeviceTabsComponent } from '@home/pages/device/device-tabs.component';
 import { HomeDialogsService } from '@home/dialogs/home-dialogs.service';
+import { AssignToEdgeDialogComponent, AssignToEdgeDialogData } from "@home/dialogs/assign-to-edge-dialog.component";
 
 @Injectable()
 export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<DeviceInfo>> {
@@ -68,6 +69,7 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
   private readonly config: EntityTableConfig<DeviceInfo> = new EntityTableConfig<DeviceInfo>();
 
   private customerId: string;
+  private edgeId: string;
 
   constructor(private store: Store<AppState>,
               private broadcast: BroadcastService,
@@ -86,7 +88,7 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
     this.config.entityTranslations = entityTypeTranslations.get(EntityType.DEVICE);
     this.config.entityResources = entityTypeResources.get(EntityType.DEVICE);
 
-    this.config.deleteEntityTitle = device => this.translate.instant('device.delete-device-title', { deviceName: device.name });
+    this.config.deleteEntityTitle = device => this.translate.instant('device.delete-device-title', {deviceName: device.name});
     this.config.deleteEntityContent = () => this.translate.instant('device.delete-device-text');
     this.config.deleteEntitiesTitle = count => this.translate.instant('device.delete-devices-title', {count});
     this.config.deleteEntitiesContent = () => this.translate.instant('device.delete-devices-text');
@@ -98,7 +100,7 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
           this.broadcast.broadcast('deviceSaved');
         }),
         mergeMap((savedDevice) => this.deviceService.getDeviceInfo(savedDevice.id.id)
-      ));
+        ));
     };
     this.config.onEntityAction = action => this.onDeviceAction(action);
     this.config.detailsReadonly = () => this.config.componentsData.deviceScope === 'customer_user';
@@ -114,6 +116,7 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
       deviceType: ''
     };
     this.customerId = routeParams.customerId;
+    this.edgeId = routeParams.edgeId;
     return this.store.pipe(select(selectAuthUser), take(1)).pipe(
       tap((authUser) => {
         if (authUser.authority === Authority.CUSTOMER_USER) {
@@ -177,6 +180,10 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
       this.config.entitiesFetchFunction = pageLink =>
         this.deviceService.getTenantDeviceInfos(pageLink, this.config.componentsData.deviceType);
       this.config.deleteEntity = id => this.deviceService.deleteDevice(id.id);
+    } else if (deviceScope === 'edge') {
+      this.config.entitiesFetchFunction = pageLink =>
+        this.deviceService.getEdgeDevices(this.edgeId, pageLink, this.config.componentsData.deviceType);
+      this.config.deleteEntity = id => this.deviceService.deleteDevice(id.id);
     } else {
       this.config.entitiesFetchFunction = pageLink =>
         this.deviceService.getCustomerDeviceInfos(this.customerId, pageLink, this.config.componentsData.deviceType);
@@ -217,30 +224,42 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
           icon: 'security',
           isEnabled: (entity) => true,
           onAction: ($event, entity) => this.manageCredentials($event, entity)
+        },
+        {
+        name: this.translate.instant('device.assign-to-edge'),
+          icon: 'wifi_tethering',
+          isEnabled: (entity) => (!entity.edgeId || entity.edgeId.id === NULL_UUID),
+          onAction: ($event, entity) => this.assignToEdge($event, [entity.id])
+        },
+        {
+          name: this.translate.instant('device.unassign-from-edge'),
+            icon: 'portable_wifi_off',
+          isEnabled: (entity) => (!entity.edgeId || entity.edgeId.id === NULL_UUID),
+          onAction: ($event, entity) => this.unassignFromEdge($event,entity)
         }
-      );
+        );
     }
     if (deviceScope === 'customer') {
-        actions.push(
-          {
-            name: this.translate.instant('device.unassign-from-customer'),
-            icon: 'assignment_return',
-            isEnabled: (entity) => (entity.customerId && entity.customerId.id !== NULL_UUID && !entity.customerIsPublic),
-            onAction: ($event, entity) => this.unassignFromCustomer($event, entity)
-          },
-          {
-            name: this.translate.instant('device.make-private'),
-            icon: 'reply',
-            isEnabled: (entity) => (entity.customerId && entity.customerId.id !== NULL_UUID && entity.customerIsPublic),
-            onAction: ($event, entity) => this.unassignFromCustomer($event, entity)
-          },
-          {
-            name: this.translate.instant('device.manage-credentials'),
-            icon: 'security',
-            isEnabled: (entity) => true,
-            onAction: ($event, entity) => this.manageCredentials($event, entity)
-          }
-        );
+      actions.push(
+        {
+          name: this.translate.instant('device.unassign-from-customer'),
+          icon: 'assignment_return',
+          isEnabled: (entity) => (entity.customerId && entity.customerId.id !== NULL_UUID && !entity.customerIsPublic),
+          onAction: ($event, entity) => this.unassignFromCustomer($event, entity)
+        },
+        {
+          name: this.translate.instant('device.make-private'),
+          icon: 'reply',
+          isEnabled: (entity) => (entity.customerId && entity.customerId.id !== NULL_UUID && entity.customerIsPublic),
+          onAction: ($event, entity) => this.unassignFromCustomer($event, entity)
+        },
+        {
+          name: this.translate.instant('device.manage-credentials'),
+          icon: 'security',
+          isEnabled: (entity) => true,
+          onAction: ($event, entity) => this.manageCredentials($event, entity)
+        }
+      );
     }
     if (deviceScope === 'customer_user') {
       actions.push(
@@ -376,10 +395,10 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
       }
     }).afterClosed()
       .subscribe((res) => {
-      if (res) {
-        this.config.table.updateData();
-      }
-    });
+        if (res) {
+          this.config.table.updateData();
+        }
+      });
   }
 
   unassignFromCustomer($event: Event, device: DeviceInfo) {
@@ -471,8 +490,55 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
       case 'manageCredentials':
         this.manageCredentials(action.event, action.entity);
         return true;
+      case 'assignToEdge':
+        this.assignToEdge(action.event, [action.entity.id]);
+        return true;
+      case 'unassignFromEdge':
+        this.unassignFromEdge(action.event, action.entity);
+        return true;
     }
     return false;
   }
 
+  assignToEdge($event: Event, deviceIds: Array<DeviceId>) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.dialog.open<AssignToEdgeDialogComponent, AssignToEdgeDialogData,
+      boolean>(AssignToEdgeDialogComponent, {
+      disableClose: true,
+      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
+      data: {
+        entityIds: deviceIds,
+        entityType: EntityType.DEVICE
+      }
+    }).afterClosed()
+      .subscribe((res) => {
+        if (res) {
+          this.config.table.updateData();
+        }
+      });
+  }
+
+  unassignFromEdge($event: Event, device: DeviceInfo) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.dialogService.confirm(
+      this.translate.instant('asset.unassign-device-from-edge-title', {assetName: device.name}),
+      this.translate.instant('asset.unassign-device-from-edge-text'),
+      this.translate.instant('action.no'),
+      this.translate.instant('action.yes'),
+      true
+    ).subscribe((res) => {
+        if (res) {
+          this.deviceService.unassignDeviceFromEdge(device.id.id).subscribe(
+            () => {
+              this.config.table.updateData();
+            }
+          );
+        }
+      }
+    );
+  }
 }

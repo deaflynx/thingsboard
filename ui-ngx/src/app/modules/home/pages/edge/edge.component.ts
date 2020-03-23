@@ -15,6 +15,7 @@ import {ClipboardService} from "ngx-clipboard";
 import {EdgeService} from "@core/http/edge.service";
 import {NULL_UUID} from "@shared/models/id/has-uuid";
 import {ActionNotificationShow} from "@core/notification/notification.actions";
+import {utils} from "protractor";
 
 @Component({
   selector: 'tb-edge',
@@ -24,7 +25,6 @@ import {ActionNotificationShow} from "@core/notification/notification.actions";
 export class EdgeComponent extends EntityComponent<EdgeInfo>{
 
   entityType = EntityType;
-
   edgeScope: 'tenant' | 'customer' | 'customer_user';
 
   constructor(protected store: Store<AppState>,
@@ -84,4 +84,40 @@ export class EdgeComponent extends EntityComponent<EdgeInfo>{
         horizontalPosition: 'left'
       }));
   }
+
+  onEdgeKeyCopied($event) {
+    this.store.dispatch(new ActionNotificationShow(
+      {
+        message: this.translate.instant('edge.edge-key-copied-message'),
+        type: 'success',
+        duration: 750,
+        verticalPosition: 'bottom',
+        horizontalPosition: 'left'
+      }));
+  }
+
+  onEdgeSecretCopied($event) {
+    this.store.dispatch(new ActionNotificationShow(
+      {
+        message: this.translate.instant('edge.edge-secret-copied-message'),
+        type: 'success',
+        duration: 750,
+        verticalPosition: 'bottom',
+        horizontalPosition: 'left'
+      }));
+  }
+
+  generateSecret(length): void {
+
+    // if (length == null) {
+    //   length = 1;
+    // }
+    // var l = length > 10 ? 10 : length;
+    // var str = Math.random().toString(36).substr(2, l);
+    // if (str.length >= length) {
+    //   return str;
+    // }
+    // return str.concat(this.generateSecret(length - str.length));
+  }
+
 }

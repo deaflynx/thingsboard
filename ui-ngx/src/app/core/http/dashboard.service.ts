@@ -24,6 +24,7 @@ import { Dashboard, DashboardInfo } from '@shared/models/dashboard.models';
 import { WINDOW } from '@core/services/window.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, map, publishReplay, refCount } from 'rxjs/operators';
+import {Asset} from "@shared/models/asset.models";
 
 // @dynamic
 @Injectable({
@@ -155,6 +156,30 @@ export class DashboardService {
       );
     }
     return this.stDiffObservable;
+  }
+
+  public assignDashboardToEdge(edgeId: string, dashboardId: string, config?: RequestConfig): Observable<Dashboard> {
+    return this.http.post<Dashboard>(`/api/edge/${edgeId}/dashboard/${dashboardId}`, null, defaultHttpOptionsFromConfig(config));
+  }
+
+  public unassignDashboardFromEdge(edgeId: string, dashboardId: string, config?: RequestConfig) {
+    return this.http.delete(`/api/edge/${edgeId}/dashboard/${dashboardId}`, defaultHttpOptionsFromConfig(config));
+  }
+
+  public updateDashboardEdges(dashboardId: string, edgeIds: Array<string>, config?:RequestConfig): Observable<Dashboard> {
+    return this.http.post<Dashboard>(`/api/dashboard/${dashboardId}/edges`, edgeIds, defaultHttpOptionsFromConfig(config))
+  }
+
+  public addDashboardEdges(dashboardId: string, edgeIds: Array<string>, config?:RequestConfig): Observable<Dashboard> {
+    return this.http.post<Dashboard>(`/api/dashboard/${dashboardId}/edges/add`, edgeIds, defaultHttpOptionsFromConfig(config))
+  }
+
+  public removeDashboardEdges(dashboardId: string, edgeIds: Array<string>, config?:RequestConfig): Observable<Dashboard> {
+    return this.http.post<Dashboard>(`/api/dashboard/${dashboardId}/edges/remove`, edgeIds, defaultHttpOptionsFromConfig(config))
+  }
+
+  public getEdgeDashboards(edgeId: string, pageLink: PageLink, type: string = '',  config?: RequestConfig): Observable<PageData<DashboardInfo>> {
+    return this.http.get<PageData<DashboardInfo>>(`/api/edge/${edgeId}/dashboards${pageLink.toQuery()}&type=${type}`, defaultHttpOptionsFromConfig(config))
   }
 
 }

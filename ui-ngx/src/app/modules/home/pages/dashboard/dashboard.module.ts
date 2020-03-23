@@ -35,12 +35,14 @@ import { ManageDashboardLayoutsDialogComponent } from './layout/manage-dashboard
 import { DashboardSettingsDialogComponent } from './dashboard-settings-dialog.component';
 import { ManageDashboardStatesDialogComponent } from './states/manage-dashboard-states-dialog.component';
 import { DashboardStateDialogComponent } from './states/dashboard-state-dialog.component';
+import { ManageDashboardEdgesDialogComponent } from "@home/pages/dashboard/manage-dashboard-edges-dialog.component";
 
 @NgModule({
   declarations: [
     DashboardFormComponent,
     DashboardTabsComponent,
     ManageDashboardCustomersDialogComponent,
+    ManageDashboardEdgesDialogComponent,
     MakeDashboardPublicDialogComponent,
     DashboardToolbarComponent,
     DashboardPageComponent,

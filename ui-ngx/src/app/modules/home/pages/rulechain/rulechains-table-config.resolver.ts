@@ -40,6 +40,8 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
 
   private readonly config: EntityTableConfig<RuleChain> = new EntityTableConfig<RuleChain>();
 
+  private edgeId: string;
+
   constructor(private ruleChainService: RuleChainService,
               private dialogService: DialogService,
               private importExport: ImportExportService,

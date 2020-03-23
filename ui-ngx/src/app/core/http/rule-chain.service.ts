@@ -43,6 +43,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { EntityType } from '@shared/models/entity-type.models';
 import { deepClone, snakeCase } from '@core/utils';
 import { DebugRuleNodeEventBody } from '@app/shared/models/event.models';
+import {Asset} from "@shared/models/asset.models";
 
 @Injectable({
   providedIn: 'root'
@@ -284,6 +285,30 @@ export class RuleChainService {
         return of(ruleChain);
       })
     );
+  }
+
+  public assignRuleChainToEdge(edgeId: string, ruleChainId: string, config?: RequestConfig): Observable<RuleChain> {
+    return this.http.post<RuleChain>(`/api/edge/${edgeId}/ruleChain/${ruleChainId}`, null, defaultHttpOptionsFromConfig(config));
+  }
+
+  public unassignRuleChainFromEdge(ruleChainId: string, config?: RequestConfig) {
+    return this.http.delete(`/api/edge/ruleChain/${ruleChainId}`, defaultHttpOptionsFromConfig(config));
+  }
+
+  public getEdgeRuleChains(edgeId: string, pageLink: PageLink, type:string = '', config?:RequestConfig): Observable<PageData<RuleChain>> {
+    return this.http.get<PageData<RuleChain>>(`/api/edge/${edgeId}/ruleChains${pageLink.toQuery()}$type=${type}`, defaultHttpOptionsFromConfig(config) )
+  }
+
+  public updateRuleChainEdges(ruleChainId: string, edgeIds: Array<string>, config?: RequestConfig): Observable<RuleChain> {
+    return this.http.post<RuleChain>(`/api/ruleChain/${ruleChainId}/edges`, edgeIds, defaultHttpOptionsFromConfig(config))
+  }
+
+  public addRuleChainEdges(ruleChainId: string, edgeIds: Array<string>, config?: RequestConfig): Observable<RuleChain> {
+    return this.http.post<RuleChain>(`/api/ruleChain/${ruleChainId}/edges/add`, edgeIds, defaultHttpOptionsFromConfig(config))
+  }
+
+  public removeRuleChainEdges(ruleChainId: string, edgeIds: Array<string>, config?: RequestConfig): Observable<RuleChain> {
+    return this.http.post<RuleChain>(`/api/ruleChain/${ruleChainId}/edges/remove`, edgeIds, defaultHttpOptionsFromConfig(config))
   }
 
 }
