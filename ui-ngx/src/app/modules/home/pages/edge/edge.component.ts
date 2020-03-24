@@ -22,10 +22,12 @@ import {utils} from "protractor";
   templateUrl: './edge.component.html',
   styleUrls: ['./edge.component.scss']
 })
+
 export class EdgeComponent extends EntityComponent<EdgeInfo>{
 
   entityType = EntityType;
   edgeScope: 'tenant' | 'customer' | 'customer_user';
+  secretKeyTest = this.generateSecretTest('TOP ')
 
   constructor(protected store: Store<AppState>,
               protected translate: TranslateService,
@@ -38,6 +40,12 @@ export class EdgeComponent extends EntityComponent<EdgeInfo>{
   ngOnInit() {
     this.edgeScope = this.entitiesTableConfig.componentsData.edgeScope;
     super.ngOnInit()
+  }
+
+  generateSecretTest(randomNumber: string): string {
+    let text = '';
+    text += ' SECRET'
+    return text;
   }
 
   hideDelete() {

@@ -92,10 +92,12 @@
       </div>
 
       <div fxLayout="row">
+
         <mat-form-field class="mat-block">
           <mat-label translate>edge.edge-key</mat-label>
-          <input matInput ng-model="edge.routingKey" disabled>
+          <input matInput ng-model="12345" disabled>
         </mat-form-field>
+
         <button mat-button mat-icon-button
                    style="margin-top: 14px"
                    ngxClipboard
@@ -104,21 +106,22 @@
                    [fxShow]="!isEdit">
           <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>
         </button>
+
       </div>
 
       <div fxLayout="row">
         <mat-form-field class="mat-block">
           <mat-label translate>edge.edge-secret</mat-label>
-          <input matInput ng-model="edge.secret" disabled>
+          <input matInput ng-model="secretKeyTest">
         </mat-form-field>
-        <button mat-button mat-icon-button
-                   style="margin-top: 14px"
-                   ngxClipboard
-                   (cbOnSuccess)="onEdgeSecretCopied($event)"
-                   [cbContent]="entity?.secret"
-                   [fxShow]="!isEdit">
-          <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>
-        </button>
+<!--        <button mat-button mat-icon-button-->
+<!--                   style="margin-top: 14px"-->
+<!--                   ngxClipboard-->
+<!--                   (cbOnSuccess)="onEdgeSecretCopied($event)"-->
+<!--                   [cbContent]="entity?.secret"-->
+<!--                   [fxShow]="!isEdit">-->
+<!--          <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>-->
+<!--        </button>-->
       </div>
 
     </fieldset>

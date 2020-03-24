@@ -33,6 +33,7 @@ import org.thingsboard.server.dao.entityview.EntityViewService;
 import org.thingsboard.server.dao.rule.RuleChainService;
 import org.thingsboard.server.dao.tenant.TenantService;
 import org.thingsboard.server.dao.user.UserService;
+import org.thingsboard.server.dao.edge.EdgeService;
 
 /**
  * Created by ashvayka on 04.05.17.
@@ -68,6 +69,9 @@ public class BaseEntityService extends AbstractEntityService implements EntitySe
     @Autowired
     private RuleChainService ruleChainService;
 
+    @Autowired
+    private EdgeService edgeService;
+
     @Override
     public void deleteEntityRelations(TenantId tenantId, EntityId entityId) {
         super.deleteEntityRelations(tenantId, entityId);
@@ -82,6 +86,8 @@ public class BaseEntityService extends AbstractEntityService implements EntitySe
             case ASSET:
                 hasName = assetService.findAssetByIdAsync(tenantId, new AssetId(entityId.getId()));
                 break;
+            case EDGE:
+                hasName = edgeService.findEdgeByIdAsync(tenantId, new EdgeId(entityId.getId()));
             case DEVICE:
                 hasName = deviceService.findDeviceByIdAsync(tenantId, new DeviceId(entityId.getId()));
                 break;
