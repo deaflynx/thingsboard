@@ -279,6 +279,10 @@ export default angular.module('thingsboard.types', [])
                     value: 'entityViewType',
                     name: 'alias.filter-type-entity-view-type'
                 },
+                edgeType: {
+                    value: 'edgeType',
+                    name: 'alias.filter-type-edge-type'
+                },
                 relationsQuery: {
                     value: 'relationsQuery',
                     name: 'alias.filter-type-relations-query'
@@ -298,6 +302,10 @@ export default angular.module('thingsboard.types', [])
                 entityViewSearchQuery: {
                     value: 'entityViewSearchQuery',
                     name: 'alias.filter-type-entity-view-search-query'
+                },
+                edgeSearchQuery: {
+                    value: 'edgeSearchQuery',
+                    name: 'alias.filter-type-edge-search-query'
                 }
             },
             direction: {
@@ -374,7 +382,8 @@ export default angular.module('thingsboard.types', [])
                 alarm: "ALARM",
                 rulechain: "RULE_CHAIN",
                 rulenode: "RULE_NODE",
-                entityView: "ENTITY_VIEW"
+                entityView: "ENTITY_VIEW",
+                edge: "EDGE"
             },
             importEntityColumnType: {
                 name: {
@@ -495,7 +504,13 @@ export default angular.module('thingsboard.types', [])
                 "CURRENT_CUSTOMER": {
                     type: 'entity.type-current-customer',
                     list: 'entity.type-current-customer'
-                }
+                },
+                "EDGE": {
+                    type: 'entity.type-edge',
+                    typePlural: 'entity.type-edges',
+                    list: 'entity.list-of-edges',
+                    nameStartsWith: 'entity.edge-name-starts-with'
+                },
             },
             entityField: {
                 createdTime: {
@@ -723,6 +738,8 @@ export default angular.module('thingsboard.types', [])
                     clientSide: false
                 }
             },
+            systemRuleChainType: "SYSTEM",
+            edgeRuleChainType: "EDGE",
             ruleNodeTypeComponentTypes: ["FILTER", "ENRICHMENT", "TRANSFORMATION", "ACTION", "EXTERNAL"],
             ruleChainNodeComponent: {
                 type: 'RULE_CHAIN',

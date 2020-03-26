@@ -17,6 +17,7 @@ package org.thingsboard.rule.engine.metadata;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 import lombok.extern.slf4j.Slf4j;
 import org.thingsboard.rule.engine.api.RuleNode;
 import org.thingsboard.rule.engine.api.TbContext;
@@ -29,6 +30,7 @@ import org.thingsboard.server.common.data.id.AssetId;
 import org.thingsboard.server.common.data.id.DeviceId;
 import org.thingsboard.server.common.data.id.EntityViewId;
 import org.thingsboard.server.common.data.plugin.ComponentType;
+import org.thingsboard.server.common.data.rule.RuleChainType;
 import org.thingsboard.server.common.msg.TbMsg;
 
 @Slf4j
@@ -40,7 +42,9 @@ import org.thingsboard.server.common.msg.TbMsg;
                 "<b>Note:</b> only Device, Asset, and Entity View type are allowed.<br><br>" +
                 "If the originator of the message is not assigned to Customer, or originator type is not supported - Message will be forwarded to <b>Failure</b> chain, otherwise, <b>Success</b> chain will be used.",
         uiResources = {"static/rulenode/rulenode-core-config.js"},
-        configDirective = "tbEnrichmentNodeEntityDetailsConfig")
+        configDirective = "tbEnrichmentNodeEntityDetailsConfig",
+        ruleChainTypes = {RuleChainType.SYSTEM, RuleChainType.EDGE}
+)
 public class TbGetCustomerDetailsNode extends TbAbstractGetEntityDetailsNode<TbGetCustomerDetailsNodeConfiguration> {
 
     private static final String CUSTOMER_PREFIX = "customer_";
@@ -63,7 +67,7 @@ public class TbGetCustomerDetailsNode extends TbAbstractGetEntityDetailsNode<TbG
             } else {
                 return Futures.immediateFuture(null);
             }
-        });
+        }, MoreExecutors.directExecutor());
     }
 
     private ListenableFuture<Customer> getCustomer(TbContext ctx, TbMsg msg) {
@@ -79,7 +83,7 @@ public class TbGetCustomerDetailsNode extends TbAbstractGetEntityDetailsNode<TbG
                     } else {
                         return Futures.immediateFuture(null);
                     }
-                });
+                }, MoreExecutors.directExecutor());
             case ASSET:
                 return Futures.transformAsync(ctx.getAssetService().findAssetByIdAsync(ctx.getTenantId(), new AssetId(msg.getOriginator().getId())), asset -> {
                     if (asset != null) {
@@ -91,7 +95,7 @@ public class TbGetCustomerDetailsNode extends TbAbstractGetEntityDetailsNode<TbG
                     } else {
                         return Futures.immediateFuture(null);
                     }
-                });
+                }, MoreExecutors.directExecutor());
             case ENTITY_VIEW:
                 return Futures.transformAsync(ctx.getEntityViewService().findEntityViewByIdAsync(ctx.getTenantId(), new EntityViewId(msg.getOriginator().getId())), entityView -> {
                     if (entityView != null) {
@@ -103,7 +107,7 @@ public class TbGetCustomerDetailsNode extends TbAbstractGetEntityDetailsNode<TbG
                     } else {
                         return Futures.immediateFuture(null);
                     }
-                });
+                }, MoreExecutors.directExecutor());
             default:
                 throw new RuntimeException("Entity with entityType '" + msg.getOriginator().getEntityType() + "' is not supported.");
         }

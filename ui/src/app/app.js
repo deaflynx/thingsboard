@@ -99,6 +99,7 @@ import thingsboardApiAlarm from './api/alarm.service';
 import thingsboardApiAuditLog from './api/audit-log.service';
 import thingsboardApiComponentDescriptor from './api/component-descriptor.service';
 import thingsboardApiRuleChain from './api/rule-chain.service';
+import thingsboardApiEdge from './api/edge.service';
 
 
 import AppConfig from './app.config';
@@ -158,6 +159,7 @@ angular.module('thingsboard', [
     thingsboardApiAuditLog,
     thingsboardApiComponentDescriptor,
     thingsboardApiRuleChain,
+    thingsboardApiEdge,
     uiRouter])
     .config(AppConfig)
     .factory('globalInterceptor', GlobalInterceptor)
