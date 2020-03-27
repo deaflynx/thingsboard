@@ -43,7 +43,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { EntityType } from '@shared/models/entity-type.models';
 import { deepClone, snakeCase } from '@core/utils';
 import { DebugRuleNodeEventBody } from '@app/shared/models/event.models';
-import {Asset} from "@shared/models/asset.models";
 
 @Injectable({
   providedIn: 'root'
@@ -309,6 +308,10 @@ export class RuleChainService {
 
   public removeRuleChainEdges(ruleChainId: string, edgeIds: Array<string>, config?: RequestConfig): Observable<RuleChain> {
     return this.http.post<RuleChain>(`/api/ruleChain/${ruleChainId}/edges/remove`, edgeIds, defaultHttpOptionsFromConfig(config))
+  }
+
+  public setDefaultRootEdgeRuleChain(ruleChainId, config?: RequestConfig): Observable<RuleChain> {
+    return this.http.post<RuleChain>(`/api/ruleChain/${ruleChainId}/defaultRootEdge`, defaultHttpOptionsFromConfig(config))
   }
 
 }
