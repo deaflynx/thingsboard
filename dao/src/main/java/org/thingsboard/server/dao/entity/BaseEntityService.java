@@ -97,8 +97,6 @@ public class BaseEntityService extends AbstractEntityService implements EntitySe
             case ASSET:
                 hasName = assetService.findAssetByIdAsync(tenantId, new AssetId(entityId.getId()));
                 break;
-            case EDGE:
-                hasName = edgeService.findEdgeByIdAsync(tenantId, new EdgeId(entityId.getId()));
             case DEVICE:
                 hasName = deviceService.findDeviceByIdAsync(tenantId, new DeviceId(entityId.getId()));
                 break;
