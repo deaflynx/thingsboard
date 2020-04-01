@@ -3,19 +3,15 @@ import { select, Store } from '@ngrx/store';
 import { AppState } from "@core/core.state";
 import { EntityComponent } from "@home/components/entity/entity.component";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { User } from '@shared/models/user.model';
-import { selectAuth, selectUserDetails } from '@core/auth/auth.selectors';
-import { map } from 'rxjs/operators';
-import { Authority } from '@shared/models/authority.enum';
 
-import {EntityType} from "@shared/models/entity-type.models";
-import {EdgeInfo} from "@shared/models/edge.models";
-import {TranslateService} from "@ngx-translate/core";
-import {ClipboardService} from "ngx-clipboard";
-import {EdgeService} from "@core/http/edge.service";
-import {NULL_UUID} from "@shared/models/id/has-uuid";
-import {ActionNotificationShow} from "@core/notification/notification.actions";
-import {utils} from "protractor";
+import { EntityType } from "@shared/models/entity-type.models";
+import { EdgeInfo } from "@shared/models/edge.models";
+import { TranslateService } from "@ngx-translate/core";
+import { ClipboardService } from "ngx-clipboard";
+import { EdgeService } from "@core/http/edge.service";
+import { NULL_UUID } from "@shared/models/id/has-uuid";
+import { ActionNotificationShow } from "@core/notification/notification.actions";
+import { utils } from "protractor";
 
 @Component({
   selector: 'tb-edge',

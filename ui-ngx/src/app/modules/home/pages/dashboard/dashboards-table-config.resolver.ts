@@ -64,8 +64,8 @@ import {
 } from '@modules/home/pages/dashboard/make-dashboard-public-dialog.component';
 import { DashboardTabsComponent } from '@home/pages/dashboard/dashboard-tabs.component';
 import { ImportExportService } from '@home/components/import-export/import-export.service';
-import {AssignToEdgeDialogComponent, AssignToEdgeDialogData} from "@home/dialogs/assign-to-edge-dialog.component";
-import {DashboardId} from "@shared/models/id/dashboard-id";
+import { AssignToEdgeDialogComponent, AssignToEdgeDialogData } from "@home/dialogs/assign-to-edge-dialog.component";
+import { DashboardId } from "@shared/models/id/dashboard-id";
 import {
   ManageDashboardEdgesActionType,
   ManageDashboardEdgesDialogComponent,

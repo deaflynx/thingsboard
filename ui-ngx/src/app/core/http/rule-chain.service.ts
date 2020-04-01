@@ -21,12 +21,13 @@ import { HttpClient } from '@angular/common/http';
 import { PageLink } from '@shared/models/page/page-link';
 import { PageData } from '@shared/models/page/page-data';
 import {
+  edgeRuleChainType,
   ResolvedRuleChainMetaData,
   RuleChain,
   RuleChainConnectionInfo,
   RuleChainMetaData,
   ruleChainNodeComponent,
-  ruleNodeTypeComponentTypes,
+  ruleNodeTypeComponentTypes, systemRuleChainType,
   unknownNodeComponent
 } from '@shared/models/rule-chain.models';
 import { ComponentDescriptorService } from './component-descriptor.service';
@@ -43,6 +44,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { EntityType } from '@shared/models/entity-type.models';
 import { deepClone, snakeCase } from '@core/utils';
 import { DebugRuleNodeEventBody } from '@app/shared/models/event.models';
+import {ActivatedRoute, ActivatedRouteSnapshot} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -51,16 +53,22 @@ export class RuleChainService {
 
   private ruleNodeComponents: Array<RuleNodeComponentDescriptor>;
   private ruleNodeConfigFactories: {[directive: string]: ComponentFactory<IRuleNodeConfigurationComponent>} = {};
+  private ruleChainScope: Observable<any>;
 
   constructor(
     private http: HttpClient,
     private componentDescriptorService: ComponentDescriptorService,
     private resourcesService: ResourcesService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private route: ActivatedRoute
   ) { }
 
+  // resolve(route: ActivatedRouteSnapshot): Observable<RuleChain> {
+  //   return this.ruleChainScope = route.data.ruleChainsType;
+  // }
+
   public getRuleChains(pageLink: PageLink, config?: RequestConfig): Observable<PageData<RuleChain>> {
-    return this.http.get<PageData<RuleChain>>(`/api/ruleChains${pageLink.toQuery()}`,
+    return this.http.get<PageData<RuleChain>>(`/api/ruleChains${pageLink.toQuery()}&type=${systemRuleChainType}`,
       defaultHttpOptionsFromConfig(config));
   }
 
@@ -69,6 +77,18 @@ export class RuleChainService {
   }
 
   public saveRuleChain(ruleChain: RuleChain, config?: RequestConfig): Observable<RuleChain> {
+    ruleChain.type = edgeRuleChainType;
+    console.log("AAA SNAPSHOT", this.route.snapshot);
+    const s: ActivatedRouteSnapshot = this.route.snapshot;
+    this.ruleChainScope = s.data.ruleChainsType;
+    console.log("AAA RULECHAINTYPE", this.ruleChainScope);
+
+    // if (this.route.data.ruleChainsType === 'edges') {
+    //   ruleChain.type = edgeRuleChainType;
+    // } else {
+    //   ruleChain.type = systemRuleChainType;
+    // }
+
     return this.http.post<RuleChain>('/api/ruleChain', ruleChain, defaultHttpOptionsFromConfig(config));
   }
 
@@ -314,4 +334,8 @@ export class RuleChainService {
     return this.http.post<RuleChain>(`/api/ruleChain/${ruleChainId}/defaultRootEdge`, defaultHttpOptionsFromConfig(config))
   }
 
+  public getEdgesRuleChains(pageLink: PageLink, config?: RequestConfig): Observable<PageData<RuleChain>> {
+    return this.http.get<PageData<RuleChain>>(`/api/ruleChains${pageLink.toQuery()}&type=${edgeRuleChainType}`,
+      defaultHttpOptionsFromConfig(config));
+  }
 }

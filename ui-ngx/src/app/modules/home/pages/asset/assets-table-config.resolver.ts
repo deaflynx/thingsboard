@@ -222,7 +222,7 @@ export class AssetsTableConfigResolver implements Resolve<EntityTableConfig<Asse
         {
           name: this.translate.instant('asset.unassign-from-edge'),
           icon: 'portable_wifi_off',
-          isEnabled: (entity) => (entity.edgeId && entity.edgeId.id !== NULL_UUID),
+          isEnabled: (entity) => (!entity.edgeId || entity.edgeId.id === NULL_UUID),
           onAction: ($event, entity) => this.unassignFromEdge($event, entity)
         }
       );
