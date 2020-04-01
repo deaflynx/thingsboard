@@ -22,6 +22,7 @@ import {EdgeId} from "@shared/models/id/edge-id";
 
 export interface Edge extends BaseData<EdgeId> {
   tenantId?: TenantId;
+  edgeId: EdgeId;
   customerId?: CustomerId;
   name: string;
   type: string;

@@ -22,12 +22,13 @@ import { Widget } from './widget.models';
 import { Timewindow } from '@shared/models/time/time.models';
 import { EntityType } from '@shared/models/entity-type.models';
 import { EntityAlias, EntityAliases } from './alias.models';
+import { Edge } from "@shared/models/edge.models";
 
 export interface DashboardInfo extends BaseData<DashboardId> {
   tenantId?: TenantId;
   title?: string;
   assignedCustomers?: Array<ShortCustomerInfo>;
-  assignedEdges?: Array<ShortCustomerInfo>;
+  assignedEdges?: Array<Edge>;
 }
 
 export interface WidgetLayout {
