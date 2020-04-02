@@ -198,7 +198,7 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
         onAction: ($event, entity) => this.openDashboard($event, entity)
       }
     );
-    if (dashboardScope === 'tenant' || 'edge') {
+    if (dashboardScope === 'tenant') {
       actions.push(
         {
           name: this.translate.instant('dashboard.export'),
@@ -259,7 +259,7 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
 
   configureGroupActions(dashboardScope: string): Array<GroupActionDescriptor<DashboardInfo>> {
     const actions: Array<GroupActionDescriptor<DashboardInfo>> = [];
-    if (dashboardScope === 'tenant' || 'edge') {
+    if (dashboardScope === 'tenant') {
       actions.push(
         {
           name: this.translate.instant('dashboard.assign-dashboards'),
@@ -274,22 +274,6 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
           icon: 'assignment_return',
           isEnabled: true,
           onAction: ($event, entities) => this.unassignDashboardsFromCustomers($event, entities.map((entity) => entity.id.id))
-        }
-      );
-      actions.push(
-        {
-          name: this.translate.instant('edge.assign-dashboards'),
-          icon: 'assignment_ind',
-          isEnabled: true,
-          onAction: ($event, entities) => this.assignDashboardsToEdges($event, entities.map((entity) => entity.id.id))
-        }
-      );
-      actions.push(
-        {
-          name: this.translate.instant('edge.unassign-dashboards'),
-          icon: 'assignment_return',
-          isEnabled: true,
-          onAction: ($event, entities) => this.unassignDashboardsFromEdges($event, entities.map((entity) => entity.id.id))
         }
       );
     }
@@ -309,7 +293,7 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
 
   configureAddActions(dashboardScope: string): Array<HeaderActionDescriptor> {
     const actions: Array<HeaderActionDescriptor> = [];
-    if (dashboardScope === 'tenant' || 'edge') {
+    if (dashboardScope === 'tenant') {
       actions.push(
         {
           name: this.translate.instant('dashboard.create-new-dashboard'),
@@ -546,18 +530,30 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
     return false;
   }
 
+  assignToEdge($event: Event, dashboardIds: Array<DashboardId>) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.dialog.open<AssignToEdgeDialogComponent, AssignToEdgeDialogData,
+      boolean>(AssignToEdgeDialogComponent, {
+      disableClose: true,
+      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
+      data: {
+        entityIds: dashboardIds,
+        entityType: EntityType.DASHBOARD
+      }
+    }).afterClosed()
+      .subscribe((res) => {
+        if (res) {
+          this.config.table.updateData();
+        }
+      });
+  }
+
   manageAssignedEdges($event: Event, dashboard: DashboardInfo) {
     const assignedEdgesIds = dashboard.assignedEdges ?
       dashboard.assignedEdges.map(edgeInfo => edgeInfo.edgeId.id) : [];
     this.showManageAssignedEdgesDialog($event, [dashboard.id.id], 'manage', assignedEdgesIds);
-  }
-
-  assignDashboardsToEdges($event: Event, edgeIds: Array<string>) {
-    this.showManageAssignedEdgesDialog($event, edgeIds, 'assign');
-  }
-
-  unassignDashboardsFromEdges($event: Event, edgeIds: Array<string>) {
-    this.showManageAssignedEdgesDialog($event, edgeIds, 'unassign');
   }
 
   showManageAssignedEdgesDialog($event: Event, dashboardIds: Array<string>,
@@ -583,26 +579,6 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
       });
   }
 
-  assignToEdge($event: Event, dashboardIds: Array<DashboardId>) {
-    if ($event) {
-      $event.stopPropagation();
-    }
-    this.dialog.open<AssignToEdgeDialogComponent, AssignToEdgeDialogData,
-      boolean>(AssignToEdgeDialogComponent, {
-      disableClose: true,
-      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
-      data: {
-        entityIds: dashboardIds,
-        entityType: EntityType.DASHBOARD
-      }
-    }).afterClosed()
-      .subscribe((res) => {
-        if (res) {
-          this.config.table.updateData();
-        }
-      });
-  }
-
   unassignFromEdge($event: Event, dashboard: DashboardInfo, edgeId: string) {
     if ($event) {
       $event.stopPropagation();
@@ -616,38 +592,6 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
     ).subscribe((res) => {
         if (res) {
           this.dashboardService.unassignDashboardFromEdge(edgeId, dashboard.id.id).subscribe(
-            () => {
-              this.config.table.updateData();
-            }
-          );
-        }
-      }
-    );
-  }
-
-  assignDashboardsToEdge($event: Event, edgeIds: Array<string>) {
-    this.showManageAssignedEdgesDialog($event, edgeIds, 'assign');
-  }
-
-  unassignDashboardsFromEdge($event: Event, edgeIds: Array<string>, edgeId: string) {
-    if ($event) {
-      $event.stopPropagation();
-    }
-    this.dialogService.confirm(
-      this.translate.instant('edge.unassign-dashboards-title', {count: edgeIds.length}),
-      this.translate.instant('edge.unassign-dashboards-text'),
-      this.translate.instant('action.no'),
-      this.translate.instant('action.yes'),
-      true
-    ).subscribe((res) => {
-        if (res) {
-          const tasks: Observable<any>[] = [];
-          edgeIds.forEach(
-            (dashboardId) => {
-              tasks.push(this.dashboardService.unassignDashboardFromEdge(edgeId, dashboardId));
-            }
-          );
-          forkJoin(tasks).subscribe(
             () => {
               this.config.table.updateData();
             }
