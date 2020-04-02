@@ -21,18 +21,14 @@ import { HttpClient } from '@angular/common/http';
 import { PageLink } from '@shared/models/page/page-link';
 import { PageData } from '@shared/models/page/page-data';
 import { EntitySubtype } from '@app/shared/models/entity-type.models';
-import { Edge, EdgeInfo, EdgeSearchQuery } from "@shared/models/edge.models";
-import { UtilsService } from "@core/services/utils.service";
+import {Edge, EdgeInfo, EdgeSearchQuery} from "@shared/models/edge.models";
 
 @Injectable({
   providedIn: 'root'
 })
 export class EdgeService {
 
-  constructor(
-    private http: HttpClient,
-    private utils: UtilsService
-  ) { }
+  constructor( private http: HttpClient ) { }
 
   public getTenantEdge(edgeName: string, config?: RequestConfig): Observable<Edge> {
     return this.http.get<Edge>(`/api/tenant/edges=${edgeName}`, defaultHttpOptionsFromConfig(config))

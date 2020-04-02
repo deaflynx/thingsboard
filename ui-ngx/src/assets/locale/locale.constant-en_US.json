@@ -1537,7 +1537,6 @@
         "no-relations-text": "No relations found"
     },
     "rulechain": {
-        "system-rulechains": "System Rule chains",
         "rulechain": "Rule chain",
         "rulechains": "Rule chains",
         "root": "Root",

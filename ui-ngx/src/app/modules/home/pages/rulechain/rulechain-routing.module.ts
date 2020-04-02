@@ -154,12 +154,8 @@ const routes: Routes = [
         path: '',
         component: EntitiesTableComponent,
         data: {
-          breadcrumb: {
-            label: 'rulechain.system-rulechains',
-            icon: 'settings_ethernet'
-          } as BreadCrumbConfig,
           auth: [Authority.TENANT_ADMIN],
-          ruleChainsType: 'tenant'
+          title: 'rulechain.rulechains'
         },
         resolve: {
           entitiesTableConfig: RuleChainsTableConfigResolver
@@ -169,12 +165,8 @@ const routes: Routes = [
         path: 'edge',
         component: EntitiesTableComponent,
         data: {
-          breadcrumb: {
-            label: 'rulechain.edge-rulechains',
-            icon: 'settings_ethernet'
-          } as BreadCrumbConfig,
           auth: [Authority.TENANT_ADMIN],
-          ruleChainsType: 'edges',
+          title: 'edge.rulechains'
           },
         resolve: {
           entitiesTableConfig: RuleChainsTableConfigResolver

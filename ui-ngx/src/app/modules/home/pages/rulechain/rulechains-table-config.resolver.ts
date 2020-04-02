@@ -16,7 +16,7 @@
 
 import {Injectable} from '@angular/core';
 
-import {ActivatedRouteSnapshot, Resolve, Router} from '@angular/router';
+import {Resolve, Router} from '@angular/router';
 import {
   checkBoxCell,
   DateEntityTableColumn,
@@ -27,19 +27,21 @@ import {TranslateService} from '@ngx-translate/core';
 import {DatePipe} from '@angular/common';
 import {EntityType, entityTypeResources, entityTypeTranslations} from '@shared/models/entity-type.models';
 import {EntityAction} from '@home/models/entity/entity-component.models';
-import {edgeRuleChainType, RuleChain, systemRuleChainType} from '@shared/models/rule-chain.models';
+import {RuleChain} from '@shared/models/rule-chain.models';
 import {RuleChainService} from '@core/http/rule-chain.service';
 import {RuleChainComponent} from '@modules/home/pages/rulechain/rulechain.component';
 import {DialogService} from '@core/services/dialog.service';
 import { RuleChainTabsComponent } from '@home/pages/rulechain/rulechain-tabs.component';
 import { ImportExportService } from '@home/components/import-export/import-export.service';
 import { ItemBufferService } from '@core/services/item-buffer.service';
-import {string} from "prop-types";
 
 @Injectable()
 export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<RuleChain>> {
 
   private readonly config: EntityTableConfig<RuleChain> = new EntityTableConfig<RuleChain>();
+
+  private edgeId: string;
+
   constructor(private ruleChainService: RuleChainService,
               private dialogService: DialogService,
               private importExport: ImportExportService,
@@ -105,6 +107,7 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
     this.config.deleteEntitiesTitle = count => this.translate.instant('rulechain.delete-rulechains-title', {count});
     this.config.deleteEntitiesContent = () => this.translate.instant('rulechain.delete-rulechains-text');
 
+    this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getRuleChains(pageLink);
     this.config.loadEntity = id => this.ruleChainService.getRuleChain(id.id);
     this.config.saveEntity = ruleChain => this.ruleChainService.saveRuleChain(ruleChain);
     this.config.deleteEntity = id => this.ruleChainService.deleteRuleChain(id.id);
@@ -113,14 +116,9 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
     this.config.entitySelectionEnabled = (ruleChain) => ruleChain && !ruleChain.root;
   }
 
-  resolve(route: ActivatedRouteSnapshot): EntityTableConfig<RuleChain> {
-    if (route.data.ruleChainsType === 'tenant') {
-      this.config.tableTitle = this.translate.instant(route.data.breadcrumb.label);
-      this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getRuleChains(pageLink);
-    } else {
-      this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getEdgesRuleChains(pageLink);
-      this.config.tableTitle = this.translate.instant(route.data.breadcrumb.label);
-    }
+  resolve(): EntityTableConfig<RuleChain> {
+    this.config.tableTitle = this.translate.instant('rulechain.rulechains');
+
     return this.config;
   }
 
