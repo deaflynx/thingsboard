@@ -24,7 +24,6 @@ import { Dashboard, DashboardInfo } from '@shared/models/dashboard.models';
 import { WINDOW } from '@core/services/window.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, map, publishReplay, refCount } from 'rxjs/operators';
-import {Asset} from "@shared/models/asset.models";
 
 // @dynamic
 @Injectable({
