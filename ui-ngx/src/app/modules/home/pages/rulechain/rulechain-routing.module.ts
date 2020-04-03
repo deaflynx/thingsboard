@@ -155,7 +155,12 @@ const routes: Routes = [
         component: EntitiesTableComponent,
         data: {
           auth: [Authority.TENANT_ADMIN],
-          title: 'rulechain.rulechains'
+          title: 'rulechain.rulechains',
+          breadcrumb: {
+            label: 'rulechain.system-rulechains',
+            icon: 'settings_ethernet'
+          },
+          ruleChainsType: 'tenant'
         },
         resolve: {
           entitiesTableConfig: RuleChainsTableConfigResolver
@@ -166,7 +171,12 @@ const routes: Routes = [
         component: EntitiesTableComponent,
         data: {
           auth: [Authority.TENANT_ADMIN],
-          title: 'edge.rulechains'
+          title: 'edge.rulechains',
+          breadcrumb: {
+            label: 'rulechain.edge-rulechains',
+            icon: 'settings_ethernet'
+          },
+          ruleChainsType: 'edges'
           },
         resolve: {
           entitiesTableConfig: RuleChainsTableConfigResolver

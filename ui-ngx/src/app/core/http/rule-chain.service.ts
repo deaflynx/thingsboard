@@ -21,12 +21,13 @@ import { HttpClient } from '@angular/common/http';
 import { PageLink } from '@shared/models/page/page-link';
 import { PageData } from '@shared/models/page/page-data';
 import {
+  edgeRuleChainType,
   ResolvedRuleChainMetaData,
   RuleChain,
   RuleChainConnectionInfo,
   RuleChainMetaData,
   ruleChainNodeComponent,
-  ruleNodeTypeComponentTypes,
+  ruleNodeTypeComponentTypes, systemRuleChainType,
   unknownNodeComponent
 } from '@shared/models/rule-chain.models';
 import { ComponentDescriptorService } from './component-descriptor.service';
@@ -60,7 +61,7 @@ export class RuleChainService {
   ) { }
 
   public getRuleChains(pageLink: PageLink, config?: RequestConfig): Observable<PageData<RuleChain>> {
-    return this.http.get<PageData<RuleChain>>(`/api/ruleChains${pageLink.toQuery()}`,
+    return this.http.get<PageData<RuleChain>>(`/api/ruleChains${pageLink.toQuery()}&type=${systemRuleChainType}`,
       defaultHttpOptionsFromConfig(config));
   }
 
@@ -312,6 +313,11 @@ export class RuleChainService {
 
   public setDefaultRootEdgeRuleChain(ruleChainId, config?: RequestConfig): Observable<RuleChain> {
     return this.http.post<RuleChain>(`/api/ruleChain/${ruleChainId}/defaultRootEdge`, defaultHttpOptionsFromConfig(config))
+  }
+
+  public getEdgesRuleChains(pageLink: PageLink, config?: RequestConfig): Observable<PageData<RuleChain>> {
+    return this.http.get<PageData<RuleChain>>(`/api/ruleChains${pageLink.toQuery()}&type=${edgeRuleChainType}`,
+      defaultHttpOptionsFromConfig(config));
   }
 
 }
