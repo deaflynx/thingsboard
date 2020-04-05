@@ -110,7 +110,3 @@ export const inputNodeComponent: RuleNodeComponentDescriptor = {
   name: 'Input',
   clazz: 'tb.internal.Input'
 };
-
-export const systemRuleChainType = "SYSTEM";
-
-export const edgeRuleChainType = "EDGE";

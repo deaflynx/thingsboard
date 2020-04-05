@@ -35,9 +35,9 @@ $previewSize: 100px !default;
 
   .tb-image-preview {
     width: auto;
-    max-width: $previewSize - 2;
+    max-width: $previewSize;
     height: auto;
-    max-height: $previewSize - 2;
+    max-height: $previewSize;
   }
 
   .tb-image-preview-container {

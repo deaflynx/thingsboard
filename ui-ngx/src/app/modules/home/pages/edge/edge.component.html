@@ -92,36 +92,33 @@
       </div>
 
       <div fxLayout="row">
-
         <mat-form-field class="mat-block">
           <mat-label translate>edge.edge-key</mat-label>
-          <input matInput ng-model="12345" disabled>
+          <input matInput ng-model="edge.routingKey" disabled>
         </mat-form-field>
-
         <button mat-button mat-icon-button
                    style="margin-top: 14px"
                    ngxClipboard
-                   (cbOnSuccess)="onEdgeKeyCopied($event)"
-                   [cbContent]="entity?.routingKey"
+                   (cbOnSuccess)="onEdgeIdCopied($event)"
+                   [cbContent]="entity?.id?.id"
                    [fxShow]="!isEdit">
           <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>
         </button>
-
       </div>
 
       <div fxLayout="row">
         <mat-form-field class="mat-block">
           <mat-label translate>edge.edge-secret</mat-label>
-          <input matInput ng-model="secretKeyTest">
+          <input matInput ng-model="edge.secret" disabled>
         </mat-form-field>
-<!--        <button mat-button mat-icon-button-->
-<!--                   style="margin-top: 14px"-->
-<!--                   ngxClipboard-->
-<!--                   (cbOnSuccess)="onEdgeSecretCopied($event)"-->
-<!--                   [cbContent]="entity?.secret"-->
-<!--                   [fxShow]="!isEdit">-->
-<!--          <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>-->
-<!--        </button>-->
+        <button mat-button mat-icon-button
+                   style="margin-top: 14px"
+                   ngxClipboard
+                   (cbOnSuccess)="onEdgeIdCopied($event)"
+                   [cbContent]="entity?.id?.id"
+                   [fxShow]="!isEdit">
+          <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>
+        </button>
       </div>
 
     </fieldset>

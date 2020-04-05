@@ -15,20 +15,20 @@
 ///
 
 import {Component, Inject, OnInit, SkipSelf} from '@angular/core';
-import {ErrorStateMatcher} from '@angular/material/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import { ErrorStateMatcher } from '@angular/material/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {PageComponent} from '@shared/components/page.component';
 import {Store} from '@ngrx/store';
 import {AppState} from '@core/core.state';
 import {FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm, Validators} from '@angular/forms';
 import {DeviceService} from '@core/http/device.service';
-import {EdgeService} from "@core/http/edge.service";
 import {EntityType} from '@shared/models/entity-type.models';
 import {forkJoin, Observable} from 'rxjs';
 import {AssetService} from '@core/http/asset.service';
 import {EntityViewService} from '@core/http/entity-view.service';
 import {DashboardService} from '@core/http/dashboard.service';
-import {DialogComponent} from '@shared/components/dialog.component';
-import {Router} from '@angular/router';
+import { DialogComponent } from '@shared/components/dialog.component';
+import { Router } from '@angular/router';
 
 export interface AddEntitiesToCustomerDialogData {
   customerId: string;
@@ -57,7 +57,6 @@ export class AddEntitiesToCustomerDialogComponent extends
               protected router: Router,
               @Inject(MAT_DIALOG_DATA) public data: AddEntitiesToCustomerDialogData,
               private deviceService: DeviceService,
-              private edgeService: EdgeService,
               private assetService: AssetService,
               private entityViewService: EntityViewService,
               private dashboardService: DashboardService,
@@ -76,10 +75,6 @@ export class AddEntitiesToCustomerDialogComponent extends
       case EntityType.DEVICE:
         this.assignToCustomerTitle = 'device.assign-device-to-customer';
         this.assignToCustomerText = 'device.assign-device-to-customer-text';
-        break;
-      case EntityType.EDGE:
-        this.assignToCustomerTitle = 'edge.assign-edge-to-customer';
-        this.assignToCustomerText = 'edge.assign-edge-to-customer-text';
         break;
       case EntityType.ASSET:
         this.assignToCustomerTitle = 'asset.assign-asset-to-customer';
@@ -126,9 +121,6 @@ export class AddEntitiesToCustomerDialogComponent extends
     switch (this.data.entityType) {
       case EntityType.DEVICE:
         return this.deviceService.assignDeviceToCustomer(customerId, entityId);
-        break;
-      case EntityType.EDGE:
-        return this.edgeService.assignEdgeToCustomer(customerId, entityId);
         break;
       case EntityType.ASSET:
         return this.assetService.assignAssetToCustomer(customerId, entityId);

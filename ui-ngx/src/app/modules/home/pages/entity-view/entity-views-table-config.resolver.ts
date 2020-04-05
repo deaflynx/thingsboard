@@ -56,9 +56,6 @@ import {EntityViewComponent} from '@modules/home/pages/entity-view/entity-view.c
 import {EntityViewTableHeaderComponent} from '@modules/home/pages/entity-view/entity-view-table-header.component';
 import {EntityViewId} from '@shared/models/id/entity-view-id';
 import { EntityViewTabsComponent } from '@home/pages/entity-view/entity-view-tabs.component';
-import {AssetId} from "@shared/models/id/asset-id";
-import {AssignToEdgeDialogComponent, AssignToEdgeDialogData} from "@home/dialogs/assign-to-edge-dialog.component";
-import {AssetInfo} from "@shared/models/asset.models";
 
 @Injectable()
 export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig<EntityViewInfo>> {
@@ -66,7 +63,6 @@ export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig
   private readonly config: EntityTableConfig<EntityViewInfo> = new EntityTableConfig<EntityViewInfo>();
 
   private customerId: string;
-  private edgeId: string;
 
   constructor(private store: Store<AppState>,
               private broadcast: BroadcastService,
@@ -115,7 +111,6 @@ export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig
       entityViewType: ''
     };
     this.customerId = routeParams.customerId;
-    this.edgeId = routeParams.edgeId;
     return this.store.pipe(select(selectAuthUser), take(1)).pipe(
       tap((authUser) => {
         if (authUser.authority === Authority.CUSTOMER_USER) {
@@ -172,10 +167,6 @@ export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig
       this.config.entitiesFetchFunction = pageLink =>
         this.entityViewService.getTenantEntityViewInfos(pageLink, this.config.componentsData.entityViewType);
       this.config.deleteEntity = id => this.entityViewService.deleteEntityView(id.id);
-    } else if (entityViewScope === 'edge') {
-      this.config.entitiesFetchFunction = pageLink =>
-        this.entityViewService.getEdgeEntityViews(this.edgeId, pageLink, this.config.componentsData.entityViewType);
-      this.config.deleteEntity = id => this.entityViewService.deleteEntityView(id.id);
     } else {
       this.config.entitiesFetchFunction = pageLink =>
         this.entityViewService.getCustomerEntityViewInfos(this.customerId, pageLink, this.config.componentsData.entityViewType);
@@ -210,18 +201,6 @@ export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig
           icon: 'reply',
           isEnabled: (entity) => (entity.customerId && entity.customerId.id !== NULL_UUID && entity.customerIsPublic),
           onAction: ($event, entity) => this.unassignFromCustomer($event, entity)
-        },
-        {
-          name: this.translate.instant('entity-view.assign-to-edge'),
-          icon: 'wifi_tethering',
-          isEnabled: (entity) => (!entity.edgeId || entity.edgeId.id === NULL_UUID),
-          onAction: ($event, entity) => this.assignToEdge($event, [entity.id])
-        },
-        {
-          name: this.translate.instant('entity-view.unassign-from-edge'),
-          icon: 'portable_wifi_off',
-          isEnabled: (entity) => (!entity.edgeId || entity.edgeId.id === NULL_UUID),
-          onAction: ($event, entity) => this.unassignFromEdge($event,entity)
         }
       );
     }
@@ -417,56 +396,8 @@ export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig
       case 'unassignFromCustomer':
         this.unassignFromCustomer(action.event, action.entity);
         return true;
-      case 'assignToEdge':
-        this.assignToEdge(action.event, [action.entity.id]);
-        return true;
-      case 'unassignFromEdge':
-        this.unassignFromEdge(action.event, action.entity);
-        return true;
     }
     return false;
-  }
-
-  assignToEdge($event: Event, entityViewIds: Array<EntityViewId>) {
-    if ($event) {
-      $event.stopPropagation();
-    }
-    this.dialog.open<AssignToEdgeDialogComponent, AssignToEdgeDialogData,
-      boolean>(AssignToEdgeDialogComponent, {
-      disableClose: true,
-      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
-      data: {
-        entityIds: entityViewIds,
-        entityType: EntityType.ENTITY_VIEW
-      }
-    }).afterClosed()
-      .subscribe((res) => {
-        if (res) {
-          this.config.table.updateData();
-        }
-      });
-  }
-
-  unassignFromEdge($event: Event, entityView: EntityViewInfo) {
-    if ($event) {
-      $event.stopPropagation();
-    }
-    this.dialogService.confirm(
-      this.translate.instant('entity-view.unassign-asset-from-edge-title', {assetName: entityView.name}),
-      this.translate.instant('entity-view.unassign-asset-from-edge-text'),
-      this.translate.instant('action.no'),
-      this.translate.instant('action.yes'),
-      true
-    ).subscribe((res) => {
-        if (res) {
-          this.entityViewService.unassignEntityViewFromEdge(entityView.id.id).subscribe(
-            () => {
-              this.config.table.updateData();
-            }
-          );
-        }
-      }
-    );
   }
 
 }

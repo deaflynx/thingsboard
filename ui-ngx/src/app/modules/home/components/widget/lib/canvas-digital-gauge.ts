@@ -15,12 +15,12 @@
 ///
 
 import * as CanvasGauges from 'canvas-gauges';
+import GenericOptions = CanvasGauges.GenericOptions;
+import BaseGauge = CanvasGauges.BaseGauge;
 import { FontStyle, FontWeight } from '@home/components/widget/lib/settings.models';
 import * as tinycolor_ from 'tinycolor2';
 import { ColorFormats } from 'tinycolor2';
-import { isDefined, isString, isUndefined, padValue } from '@core/utils';
-import GenericOptions = CanvasGauges.GenericOptions;
-import BaseGauge = CanvasGauges.BaseGauge;
+import { isDefined, isUndefined } from '@core/utils';
 
 const tinycolor = tinycolor_;
 
@@ -32,20 +32,13 @@ export interface DigitalGaugeColorRange {
   rgbString: string;
 }
 
-export interface ColorLevelSetting {
-  value: number;
-  color: string;
-}
-
-export type levelColors = Array<string | ColorLevelSetting>;
-
 export interface CanvasDigitalGaugeOptions extends GenericOptions {
   gaugeType?: GaugeType;
   gaugeWithScale?: number;
   dashThickness?: number;
   roundedLineCap?: boolean;
   gaugeColor?: string;
-  levelColors?: levelColors;
+  levelColors?: string[];
   symbol?: string;
   label?: string;
   hideValue?: boolean;
@@ -80,11 +73,6 @@ export interface CanvasDigitalGaugeOptions extends GenericOptions {
   fontLabelHeight?: FontHeightInfo;
   fontValueHeight?: FontHeightInfo;
   fontMinMaxHeight?: FontHeightInfo;
-
-  ticksValue?: number[];
-  ticks?: number[];
-  colorTicks?: string;
-  tickWidth?: number;
 
   showTimestamp?: boolean;
 }
@@ -121,10 +109,6 @@ const defaultDigitalGaugeOptions: CanvasDigitalGaugeOptions = { ...GenericOption
     fontLabel: 'Roboto',
 
     neonGlowBrightness: 0,
-
-    colorTicks: 'gray',
-    tickWidth: 4,
-    ticks: [],
 
     isMobile: false
   }
@@ -245,42 +229,26 @@ export class CanvasDigitalGauge extends BaseGauge {
     }
 
     const colorsCount = options.levelColors.length;
-    const isColorProperty = isString(options.levelColors[0]);
     const inc = colorsCount > 1 ? (1 / (colorsCount - 1)) : 1;
     options.colorsRange = [];
     if (options.neonGlowBrightness) {
       options.neonColorsRange = [];
     }
     for (let i = 0; i < options.levelColors.length; i++) {
-      const levelColor: any = options.levelColors[i];
-      if (levelColor !== null) {
-        let percentage: number;
-        if(isColorProperty){
-          percentage = inc * i;
-        } else {
-          percentage = CanvasDigitalGauge.normalizeValue(levelColor.value, options.minValue, options.maxValue);
-        }
-        let tColor = tinycolor(isColorProperty ? levelColor : levelColor.color);
-        options.colorsRange.push({
+      const percentage = inc * i;
+      let tColor = tinycolor(options.levelColors[i]);
+      options.colorsRange[i] = {
+        pct: percentage,
+        color: tColor.toRgb(),
+        rgbString: tColor.toRgbString()
+      };
+      if (options.neonGlowBrightness) {
+        tColor = tinycolor(options.levelColors[i]).brighten(options.neonGlowBrightness);
+        options.neonColorsRange[i] = {
           pct: percentage,
           color: tColor.toRgb(),
           rgbString: tColor.toRgbString()
-        });
-        if (options.neonGlowBrightness) {
-          tColor = tinycolor(isColorProperty ? levelColor : levelColor.color).brighten(options.neonGlowBrightness);
-          options.neonColorsRange.push({
-            pct: percentage,
-            color: tColor.toRgb(),
-            rgbString: tColor.toRgbString()
-          });
-        }
-      }
-    }
-
-    options.ticksValue = [];
-    for (const tick of options.ticks) {
-      if (tick !== null) {
-        options.ticksValue.push(CanvasDigitalGauge.normalizeValue(tick, options.minValue, options.maxValue))
+        };
       }
     }
 
@@ -292,17 +260,6 @@ export class CanvasDigitalGauge extends BaseGauge {
     }
 
     return options;
-  }
-
-  static normalizeValue (value: number, min: number, max: number): number {
-    const normalValue = (value - min) / (max - min);
-    if (normalValue <= 0) {
-      return 0;
-    }
-    if (normalValue >= 1) {
-      return 1;
-    }
-    return normalValue;
   }
 
   private initValueClone() {
@@ -678,7 +635,7 @@ function determineFontHeight (options: CanvasDigitalGaugeOptions, target: string
       fontStyle: options['font' + target + 'Style']
     };
     const text = $('<span>Hg</span>').css(fontStyle);
-    const block = $('<div style="display: inline-block; width: 1px; height: 0;"></div>');
+    const block = $('<div style="display: inline-block; width: 1px; height: 0px;"></div>');
 
     const div = $('<div></div>');
     div.append(text, block);
@@ -786,6 +743,24 @@ function drawDigitalMinMax(context: DigitalGaugeCanvasRenderingContext2D, option
   drawText(context, options, 'MinMax', options.maxValue+'', maxX, maxY);
 }
 
+function padValue(val: any, options: CanvasDigitalGaugeOptions): string {
+  const dec = options.valueDec;
+  let strVal;
+  let n;
+
+  val = parseFloat(val);
+  n = (val < 0);
+  val = Math.abs(val);
+
+  if (dec > 0) {
+    strVal = val.toFixed(dec).toString()
+  } else {
+    strVal = Math.round(val).toString();
+  }
+  strVal = (n ? '-' : '') + strVal;
+  return strVal;
+}
+
 function drawDigitalValue(context: DigitalGaugeCanvasRenderingContext2D, options: CanvasDigitalGaugeOptions, value: any) {
   if (options.hideValue) return;
 
@@ -795,7 +770,7 @@ function drawDigitalValue(context: DigitalGaugeCanvasRenderingContext2D, options
   const textX = Math.round(baseX + width / 2);
   const textY = valueY;
 
-  let text = options.valueText || padValue(value, options.valueDec);
+  let text = options.valueText || padValue(value, options);
   text += options.symbol;
 
   context.save();
@@ -887,52 +862,6 @@ function drawBarGlow(context: DigitalGaugeCanvasRenderingContext2D, startX: numb
   context.stroke();
 }
 
-function drawTickArc(context: DigitalGaugeCanvasRenderingContext2D, tickValues: number[], Cx: number, Cy: number,
-                     Ri: number, Rm: number, Ro: number, startAngle: number, endAngle: number,
-                     color: string, tickWidth: number) {
-  if (!tickValues.length) {
-    return;
-  }
-
-  const strokeWidth = Ro - Ri;
-  context.beginPath();
-  context.lineWidth = tickWidth;
-  context.strokeStyle = color;
-  for (const tick of tickValues) {
-    const angle = startAngle + tick * endAngle;
-    const x1 = Cx + (Ri + strokeWidth) * Math.cos(angle);
-    const y1 = Cy + (Ri + strokeWidth) * Math.sin(angle);
-    const x2 = Cx + Ri * Math.cos(angle);
-    const y2 = Cy + Ri * Math.sin(angle);
-    context.moveTo(x1, y1);
-    context.lineTo(x2, y2);
-  }
-  context.stroke();
-}
-
-function drawTickBar(context: DigitalGaugeCanvasRenderingContext2D, tickValues: number[], startX: number, startY: number,
-                     distanceBar: number, strokeWidth: number, isVertical: boolean, color: string, tickWidth: number) {
-  if (!tickValues.length) {
-    return;
-  }
-
-  context.beginPath();
-  context.lineWidth = tickWidth;
-  context.strokeStyle = color;
-  for (const tick of tickValues) {
-    const tickValue = tick * distanceBar;
-    if (isVertical) {
-      context.moveTo(startX - strokeWidth / 2, startY + tickValue - distanceBar);
-      context.lineTo(startX + strokeWidth / 2, startY + tickValue - distanceBar);
-    } else {
-      context.moveTo(startX + tickValue, startY);
-      context.lineTo(startX + tickValue, startY + strokeWidth);
-    }
-  }
-  context.stroke();
-}
-
-
 function drawProgress(context: DigitalGaugeCanvasRenderingContext2D,
                       options: CanvasDigitalGaugeOptions, progress: number) {
   let neonColor;
@@ -966,8 +895,6 @@ function drawProgress(context: DigitalGaugeCanvasRenderingContext2D,
       drawArcGlow(context, Cx, Cy, Ri, Rm, Ro, neonColor, progress, true,
         options.donutStartAngle, options.donutEndAngle);
     }
-    drawTickArc(context, options.ticksValue, Cx, Cy, Ri, Rm, Ro, options.donutStartAngle,
-      options.donutEndAngle - options.donutStartAngle, options.colorTicks, options.tickWidth);
   } else if (options.gaugeType === 'arc') {
     if (options.neonGlowBrightness) {
       context.strokeStyle = neonColor;
@@ -978,7 +905,6 @@ function drawProgress(context: DigitalGaugeCanvasRenderingContext2D,
     if (options.neonGlowBrightness && !options.isMobile) {
       drawArcGlow(context, Cx, Cy, Ri, Rm, Ro, neonColor, progress, false);
     }
-    drawTickArc(context, options.ticksValue, Cx, Cy, Ri, Rm, Ro, Math.PI, Math.PI, options.colorTicks, options.tickWidth);
   } else if (options.gaugeType === 'horizontalBar') {
     if (options.neonGlowBrightness) {
       context.strokeStyle = neonColor;
@@ -992,8 +918,6 @@ function drawProgress(context: DigitalGaugeCanvasRenderingContext2D,
         barLeft + (barRight-barLeft)*progress, barTop + strokeWidth/2,
         neonColor, strokeWidth, false);
     }
-    drawTickBar(context, options.ticksValue, barLeft, barTop, barRight - barLeft, strokeWidth,
-      false, options.colorTicks, options.tickWidth);
   } else if (options.gaugeType === 'verticalBar') {
     if (options.neonGlowBrightness) {
       context.strokeStyle = neonColor;
@@ -1007,8 +931,6 @@ function drawProgress(context: DigitalGaugeCanvasRenderingContext2D,
         baseX + width/2, barBottom - (barBottom-barTop)*progress,
         neonColor, strokeWidth, true);
     }
-    drawTickBar(context, options.ticksValue, baseX + width / 2, barTop, barTop - barBottom, strokeWidth,
-      true, options.colorTicks, options.tickWidth);
   }
 
 }

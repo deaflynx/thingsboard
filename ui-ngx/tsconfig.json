@@ -19,8 +19,7 @@
       "src/typings/jquery.typings.d.ts",
       "src/typings/jquery.flot.typings.d.ts",
       "src/typings/jquery.jstree.typings.d.ts",
-      "src/typings/split.js.typings.d.ts",
-      "src/typings/add-marker.d.ts"
+      "src/typings/split.js.typings.d.ts"
     ],
     "paths": {
       "@app/*": ["src/app/*"],
@@ -34,7 +33,6 @@
     },
     "lib": [
       "es2018",
-      "es2019",
       "dom"
     ]
   }

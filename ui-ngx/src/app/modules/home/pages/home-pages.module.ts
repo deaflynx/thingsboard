@@ -23,27 +23,13 @@ import { TenantModule } from '@modules/home/pages/tenant/tenant.module';
 import { CustomerModule } from '@modules/home/pages/customer/customer.module';
 import { AuditLogModule } from '@modules/home/pages/audit-log/audit-log.module';
 import { UserModule } from '@modules/home/pages/user/user.module';
-import { DeviceModule } from '@modules/home/pages/device/device.module';
-import { AssetModule } from '@modules/home/pages/asset/asset.module';
-import { EntityViewModule } from '@modules/home/pages/entity-view/entity-view.module';
-import { RuleChainModule } from '@modules/home/pages/rulechain/rulechain.module';
-import { WidgetLibraryModule } from '@modules/home/pages/widget/widget-library.module';
-import { DashboardModule } from '@modules/home/pages/dashboard/dashboard.module';
-import { RouterModule, Routes } from '@angular/router';
-import { EdgeModule } from '@modules/home/pages/edge/edge.module';
-
-const routes: Routes = [
-  { path: '**',
-    redirectTo: 'home'
-  }
-];
-
-@NgModule({
-  imports: [
-    RouterModule.forChild(routes)],
-  exports: [RouterModule]
-})
-export class PageNotFoundRoutingModule { }
+import {DeviceModule} from '@modules/home/pages/device/device.module';
+import {AssetModule} from '@modules/home/pages/asset/asset.module';
+import {EntityViewModule} from '@modules/home/pages/entity-view/entity-view.module';
+import {RuleChainModule} from '@modules/home/pages/rulechain/rulechain.module';
+import {WidgetLibraryModule} from '@modules/home/pages/widget/widget-library.module';
+import {DashboardModule} from '@modules/home/pages/dashboard/dashboard.module';
+import {EdgeModule} from '@modules/home/pages/edge/edge.module';
 
 @NgModule({
   exports: [
@@ -60,7 +46,6 @@ export class PageNotFoundRoutingModule { }
     DashboardModule,
     AuditLogModule,
     UserModule,
-    PageNotFoundRoutingModule,
     EdgeModule
   ]
 })

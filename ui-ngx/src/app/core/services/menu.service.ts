@@ -194,7 +194,7 @@ export class MenuService {
           {
             name: 'rulechain.edge-rulechains',
             type: 'link',
-            path: '/ruleChains/edge',
+            path: '/edgesRuleChains',
             icon: 'router'
           }
         ]
@@ -263,9 +263,9 @@ export class MenuService {
             path: '/ruleChains'
           },
           {
-            name: 'rulechain.edge-rulechains',
+            name: 'edgechain.edge-rulechains',
             icon: 'router',
-            path: '/ruleChains/edge'
+            path: '/edgesRuleChains'
           }
         ]
       },

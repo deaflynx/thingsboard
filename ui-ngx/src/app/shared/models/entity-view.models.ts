@@ -21,7 +21,6 @@ import {CustomerId} from '@shared/models/id/customer-id';
 import {EntityViewId} from '@shared/models/id/entity-view-id';
 import {EntityId} from '@shared/models/id/entity-id';
 import { EntitySearchQuery } from '@shared/models/relation.models';
-import {EdgeId} from "@shared/models/id/edge-id";
 
 export interface AttributesEntityView {
   cs: Array<string>;
@@ -38,7 +37,6 @@ export interface EntityView extends BaseData<EntityViewId> {
   tenantId: TenantId;
   customerId: CustomerId;
   entityId: EntityId;
-  edgeId: EdgeId;
   name: string;
   type: string;
   keys: TelemetryEntityView;

@@ -27,7 +27,6 @@ export interface DashboardInfo extends BaseData<DashboardId> {
   tenantId?: TenantId;
   title?: string;
   assignedCustomers?: Array<ShortCustomerInfo>;
-  assignedEdges?: Array<ShortCustomerInfo>;
 }
 
 export interface WidgetLayout {

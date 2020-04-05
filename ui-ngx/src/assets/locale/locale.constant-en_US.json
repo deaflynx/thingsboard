@@ -194,8 +194,6 @@
         "filter-type-entity-view-type": "Entity View type",
         "filter-type-entity-view-type-description": "Entity Views of type '{{entityView}}'",
         "filter-type-entity-view-type-and-name-description": "Entity Views of type '{{entityView}}' and with name starting with '{{prefix}}'",
-        "filter-type-edge-type": "Edge type",
-        "filter-type-edge-type-description": "Edges of type '{{edgeType}}'",
         "filter-type-relations-query": "Relations query",
         "filter-type-relations-query-description": "{{entities}} that have {{relationType}} relation {{direction}} {{rootEntity}}",
         "filter-type-asset-search-query": "Asset search query",
@@ -204,8 +202,6 @@
         "filter-type-device-search-query-description": "Devices with types {{deviceTypes}} that have {{relationType}} relation {{direction}} {{rootEntity}}",
         "filter-type-entity-view-search-query": "Entity view search query",
         "filter-type-entity-view-search-query-description": "Entity views with types {{entityViewTypes}} that have {{relationType}} relation {{direction}} {{rootEntity}}",
-        "filter-type-edge-search-query": "Edge search query",
-        "filter-type-edge-search-query-description": "Edges with types {{edgeTypes}} that have {{relationType}} relation {{direction}} {{rootEntity}}",
         "entity-filter": "Entity filter",
         "resolve-multiple": "Resolve as multiple entities",
         "filter-type": "Filter type",
@@ -290,14 +286,7 @@
         "asset-file": "Asset file",
         "search": "Search assets",
         "selected-assets": "{ count, plural, 1 {1 asset} other {# assets} } selected",
-        "label": "Label",
-        "assign-asset-to-edge": "Assign Asset(s) To Edge",
-        "assign-asset-to-edge-text":"Please select the assets to assign to the edge",
-        "unassign-from-edge": "Unassign from edge",
-        "assign-to-edge": "Assign to edge",
-        "assign-to-edge-text": "Please select the edge to assign the asset(s)",
-        "unassign-asset-from-edge-title": "Are you sure you want to unassign the asset '{{assetName}}'?",
-        "unassign-asset-from-edge-text": "After the confirmation the asset will be unassigned and won't be accessible by the edge."
+        "label": "Label"
     },
     "attribute": {
         "attributes": "Attributes",
@@ -347,8 +336,6 @@
         "type-credentials-updated": "Credentials updated",
         "type-assigned-to-customer": "Assigned to Customer",
         "type-unassigned-from-customer": "Unassigned from Customer",
-        "type-assigned-to-edge": "Assigned to Edge",
-        "type-unassigned-from-edge": "Unassigned from Edge",
         "type-activated": "Activated",
         "type-suspended": "Suspended",
         "type-credentials-read": "Credentials read",
@@ -449,12 +436,7 @@
         "default-customer": "Default customer",
         "default-customer-required": "Default customer is required in order to debug dashboard on Tenant level",
         "search": "Search customers",
-        "selected-customers": "{ count, plural, 1 {1 customer} other {# customers} } selected",
-        "public-edges": "Public Edges",
-        "manage-customer-edges": "Manage customer edges",
-        "manage-public-edges": "Manage public edges",
-        "edges": "Customer Edges"
-
+        "selected-customers": "{ count, plural, 1 {1 customer} other {# customers} } selected"
     },
     "datetime": {
         "date-from": "Date from",
@@ -608,21 +590,7 @@
         "select-state": "Select target state",
         "state-controller": "State controller",
         "search": "Search dashboards",
-        "selected-dashboards": "{ count, plural, 1 {1 dashboard} other {# dashboards} } selected",
-        "manage-assigned-edges": "Manage assigned edges",
-        "unassign-dashboard-from-edge-text": "After the confirmation the dashboard will be unassigned and won't be accessible by the edge.",
-        "assigned-edges": "Assigned edges",
-        "unassign-from-edge": "Unassign from edge",
-        "unassign-dashboards-from-edge-action-title": "Unassign { count, plural, 1 {1 dashboard} other {# dashboards} } from edge",
-        "unassign-dashboards-from-edge-text": "After the confirmation all selected dashboards will be unassigned and won't be accessible by the edge.",
-        "assign-dashboard-to-edge": "Assign Dashboard(s) To Edge",
-        "assign-dashboard-to-edge-text": "Please select the dashboards to assign to the edge",
-        "assign-dashboards-to-edge-text": "Assign { count, plural, 1 {1 dashboard} other {# dashboards} } to edges",
-        "unassign-dashboards-from-edge-action-text": "Unassign { count, plural, 1 {1 dashboard} other {# dashboards} } from edges",
-        "assign-to-edges": "Assign Dashboard(s) To Edges",
-        "assign-to-edges-text": "Please select the edges to assign the dashboard(s)",
-        "unassign-from-edges": "Unassign Dashboard(s) From Edges",
-        "unassign-from-edges-text": "Please select the edges to unassign from the dashboard(s)"
+        "selected-dashboards": "{ count, plural, 1 {1 dashboard} other {# dashboards} } selected"
     },
     "datakey": {
         "settings": "Settings",
@@ -762,14 +730,7 @@
         "import": "Import device",
         "device-file": "Device file",
         "search": "Search devices",
-        "selected-devices": "{ count, plural, 1 {1 device} other {# devices} } selected",
-        "assign-device-to-edge": "Assign Device(s) To Edge",
-        "assign-device-to-edge-text":"Please select the devices to assign to the edge",
-        "unassign-from-edge": "Unassign from edge",
-        "assign-to-edge": "Assign to edge",
-        "assign-to-edge-text": "Please select the edge to assign the device(s)",
-        "unassign-device-from-edge-title": "Are you sure you want to unassign the device '{{deviceName}}'?",
-        "unassign-device-from-edge-text": "After the confirmation the device will be unassigned and won't be accessible by the edge."
+        "selected-devices": "{ count, plural, 1 {1 device} other {# devices} } selected"
     },
     "edge": {
         "edge": "Edge",
@@ -927,7 +888,6 @@
         "customer-name-starts-with": "Customers whose names start with '{{prefix}}'",
         "type-user": "User",
         "type-users": "Users",
-        "type-edge": "Edge",
         "list-of-users": "{ count, plural, 1 {One user} other {List of # users} }",
         "user-name-starts-with": "Users whose names start with '{{prefix}}'",
         "type-dashboard": "Dashboard",
@@ -954,11 +914,7 @@
         "details": "Entity details",
         "no-entities-prompt": "No entities found",
         "no-data": "No data to display",
-        "columns-to-display": "Columns to Display",
-        "type-edge": "Edge",
-        "type-edges": "Edges",
-        "list-of-edges": "{ count, plural, 1 {One edge} other {List of # edges} }",
-        "edge-name-starts-with": "Edges whose names start with '{{prefix}}'"
+        "columns-to-display": "Columns to Display"
     },
     "entity-field": {
         "created-time": "Created time",
@@ -1077,14 +1033,7 @@
         "make-private-entity-view-title": "Are you sure you want to make the entity view '{{entityViewName}}' private?",
         "make-private-entity-view-text": "After the confirmation the entity view and all its data will be made private and won't be accessible by others.",
         "search": "Search entity views",
-        "selected-entity-views": "{ count, plural, 1 {1 entity view} other {# entity views} } selected",
-        "assign-entity-view-to-edge": "Assign Entity View(s) To Edge",
-        "assign-entity-view-to-edge-text":"Please select the entity views to assign to the edge",
-        "unassign-from-edge": "Unassign from edge",
-        "assign-to-edge": "Assign to edge",
-        "assign-to-edge-text": "Please select the edge to assign the entity view(s)",
-        "unassign-entity-view-from-edge-title": "Are you sure you want to unassign the entity view '{{entityViewName}}'?",
-        "unassign-entity-view-from-edge-text": "After the confirmation the entity view will be unassigned and won't be accessible by the edge."
+        "selected-entity-views": "{ count, plural, 1 {1 entity view} other {# entity views} } selected"
     },
     "event": {
         "event-type": "Event type",
@@ -1537,6 +1486,7 @@
         "no-relations-text": "No relations found"
     },
     "rulechain": {
+        "edge-rulechains": "Edge Rule chains",
         "rulechain": "Rule chain",
         "rulechains": "Rule chains",
         "root": "Root",
@@ -1575,24 +1525,7 @@
         "debug-mode": "Debug mode",
         "search": "Search rule chains",
         "selected-rulechains": "{ count, plural, 1 {1 rule chain} other {# rule chains} } selected",
-        "open-rulechain": "Open rule chain",
-        "manage-assigned-edges": "Manage assigned edges",
-        "unassign-rulechain-from-edge-text": "After the confirmation the rulechain will be unassigned and won't be accessible by the edge.",
-        "assigned-edges": "Assigned edges",
-        "unassign-from-edge": "Unassign from edge",
-        "unassign-rulechains-from-edge-action-title": "Unassign { count, plural, 1 {1 rulechain} other {# rulechains} } from edge",
-        "unassign-rulechains-from-edge-text": "After the confirmation all selected rulechains will be unassigned and won't be accessible by the edge.",
-        "assign-rulechains-to-edge-text": "Assign { count, plural, 1 {1 rulechain} other {# rulechains} } to edges",
-        "assign-rulechain-to-edge": "Assign Rule Chain(s) To Edge",
-        "assign-rulechain-to-edge-text": "Please select the rulechains to assign to the edge",
-        "unassign-rulechains-from-edge-action-text": "Unassign { count, plural, 1 {1 rulechain} other {# rulechains} } from edges",
-        "assign-to-edges": "Assign Rule Chain(s) To Edges",
-        "assign-to-edges-text": "Please select the edges to assign the rulechain(s)",
-        "unassign-from-edges": "Unassign Rule Chain(s) From Edges",
-        "unassign-from-edges-text": "Please select the edges to unassign from the rulechain(s)",
-        "assigned-to-edges": "Assigned to edges",
-        "system-rulechains": "System Rule chains",
-        "edge-rulechains": "Edge Rule chains"
+        "open-rulechain": "Open rule chain"
     },
     "rulenode": {
         "details": "Details",

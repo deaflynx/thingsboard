@@ -26,7 +26,7 @@ export interface Edge extends BaseData<EdgeId> {
   name: string;
   type: string;
   label?: string;
-  additionalInfo?: any
+  additionalInfo?: any;
 }
 
 export interface EdgeInfo extends Edge {

@@ -64,21 +64,11 @@ import {
 } from '@modules/home/pages/dashboard/make-dashboard-public-dialog.component';
 import { DashboardTabsComponent } from '@home/pages/dashboard/dashboard-tabs.component';
 import { ImportExportService } from '@home/components/import-export/import-export.service';
-import {AssignToEdgeDialogComponent, AssignToEdgeDialogData} from "@home/dialogs/assign-to-edge-dialog.component";
-import {DashboardId} from "@shared/models/id/dashboard-id";
-import {
-  ManageDashboardEdgesActionType,
-  ManageDashboardEdgesDialogComponent,
-  ManageDashboardEdgesDialogData
-} from "@home/pages/dashboard/manage-dashboard-edges-dialog.component";
-
 
 @Injectable()
 export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<DashboardInfo | Dashboard>> {
 
   private readonly config: EntityTableConfig<DashboardInfo | Dashboard> = new EntityTableConfig<DashboardInfo | Dashboard>();
-
-  private edgeId: string;
 
   constructor(private store: Store<AppState>,
               private dashboardService: DashboardService,
@@ -112,7 +102,6 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
 
   resolve(route: ActivatedRouteSnapshot): Observable<EntityTableConfig<DashboardInfo | Dashboard>> {
     const routeParams = route.params;
-    this.edgeId = routeParams.edgeId;
     this.config.componentsData = {
       dashboardScope: route.data.dashboardsType,
       customerId: routeParams.customerId
@@ -176,11 +165,7 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
       this.config.entitiesFetchFunction = pageLink =>
         this.dashboardService.getTenantDashboards(pageLink);
       this.config.deleteEntity = id => this.dashboardService.deleteDashboard(id.id);
-    } else if (dashboardScope === 'edge') {
-      this.config.entitiesFetchFunction = pageLink =>
-        this.dashboardService.getEdgeDashboards(this.edgeId, pageLink, this.config.componentsData.dashboardType);
-      this.config.deleteEntity = id => this.dashboardService.deleteDashboard(id.id);
-    }  else {
+    } else {
       this.config.entitiesFetchFunction = pageLink =>
         this.dashboardService.getCustomerDashboards(this.config.componentsData.customerId, pageLink);
       this.config.deleteEntity = id =>
@@ -223,12 +208,6 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
           icon: 'assignment_ind',
           isEnabled: () => true,
           onAction: ($event, entity) => this.manageAssignedCustomers($event, entity)
-        },
-        {
-          name: this.translate.instant('dashboard.manage-assigned-edges'),
-            icon: 'wifi_tethering',
-          isEnabled: (entity) => true,
-          onAction: ($event, entity) => this.manageAssignedEdges($event, entity)
         }
       );
     }
@@ -520,85 +499,8 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
       case 'unassignFromCustomer':
         this.unassignFromCustomer(action.event, action.entity, this.config.componentsData.customerId);
         return true;
-      case 'manageAssignedEdges':
-        this.manageAssignedEdges(action.event, action.entity);
-        return true;
-      case 'unassignFromEdge':
-        this.unassignFromEdge(action.event, action.entity, this.config.componentsData.edgeId);
-        return true;
     }
     return false;
-  }
-
-  assignToEdge($event: Event, dashboardIds: Array<DashboardId>) {
-    if ($event) {
-      $event.stopPropagation();
-    }
-    this.dialog.open<AssignToEdgeDialogComponent, AssignToEdgeDialogData,
-      boolean>(AssignToEdgeDialogComponent, {
-      disableClose: true,
-      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
-      data: {
-        entityIds: dashboardIds,
-        entityType: EntityType.DASHBOARD
-      }
-    }).afterClosed()
-      .subscribe((res) => {
-        if (res) {
-          this.config.table.updateData();
-        }
-      });
-  }
-
-  manageAssignedEdges($event: Event, dashboard: DashboardInfo) {
-    const assignedEdgesIds = dashboard.assignedEdges ?
-      dashboard.assignedEdges.map(edgeInfo => edgeInfo.edgeId.id) : [];
-    this.showManageAssignedEdgesDialog($event, [dashboard.id.id], 'manage', assignedEdgesIds);
-  }
-
-  showManageAssignedEdgesDialog($event: Event, dashboardIds: Array<string>,
-                                    actionType: ManageDashboardEdgesActionType,
-                                    assignedEdgesIds?: Array<string>) {
-    if ($event) {
-      $event.stopPropagation();
-    }
-    this.dialog.open<ManageDashboardEdgesDialogComponent, ManageDashboardEdgesDialogData,
-      boolean>(ManageDashboardEdgesDialogComponent, {
-      disableClose: true,
-      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
-      data: {
-        dashboardIds,
-        actionType,
-        assignedEdgesIds
-      }
-    }).afterClosed()
-      .subscribe((res) => {
-        if (res) {
-          this.config.table.updateData();
-        }
-      });
-  }
-
-  unassignFromEdge($event: Event, dashboard: DashboardInfo, edgeId: string) {
-    if ($event) {
-      $event.stopPropagation();
-    }
-    this.dialogService.confirm(
-      this.translate.instant('dashboard.unassign-dashboard-title', {dashboardTitle: dashboard.title}),
-      this.translate.instant('dashboard.unassign-dashboard-text'),
-      this.translate.instant('action.no'),
-      this.translate.instant('action.yes'),
-      true
-    ).subscribe((res) => {
-        if (res) {
-          this.dashboardService.unassignDashboardFromEdge(edgeId, dashboard.id.id).subscribe(
-            () => {
-              this.config.table.updateData();
-            }
-          );
-        }
-      }
-    );
   }
 
 }
