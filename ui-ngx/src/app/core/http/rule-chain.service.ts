@@ -21,12 +21,13 @@ import { HttpClient } from '@angular/common/http';
 import { PageLink } from '@shared/models/page/page-link';
 import { PageData } from '@shared/models/page/page-data';
 import {
+  edgeRuleChainType,
   ResolvedRuleChainMetaData,
   RuleChain,
   RuleChainConnectionInfo,
   RuleChainMetaData,
   ruleChainNodeComponent,
-  ruleNodeTypeComponentTypes,
+  ruleNodeTypeComponentTypes, systemRuleChainType,
   unknownNodeComponent
 } from '@shared/models/rule-chain.models';
 import { ComponentDescriptorService } from './component-descriptor.service';
@@ -60,7 +61,7 @@ export class RuleChainService {
   ) { }
 
   public getRuleChains(pageLink: PageLink, config?: RequestConfig): Observable<PageData<RuleChain>> {
-    return this.http.get<PageData<RuleChain>>(`/api/ruleChains${pageLink.toQuery()}`,
+    return this.http.get<PageData<RuleChain>>(`/api/ruleChains${pageLink.toQuery()}&type=${systemRuleChainType}`,
       defaultHttpOptionsFromConfig(config));
   }
 
@@ -284,6 +285,39 @@ export class RuleChainService {
         return of(ruleChain);
       })
     );
+  }
+
+  public assignRuleChainToEdge(edgeId: string, ruleChainId: string, config?: RequestConfig): Observable<RuleChain> {
+    return this.http.post<RuleChain>(`/api/edge/${edgeId}/ruleChain/${ruleChainId}`, null, defaultHttpOptionsFromConfig(config));
+  }
+
+  public unassignRuleChainFromEdge(ruleChainId: string, config?: RequestConfig) {
+    return this.http.delete(`/api/edge/ruleChain/${ruleChainId}`, defaultHttpOptionsFromConfig(config));
+  }
+
+  public getEdgeRuleChains(edgeId: string, pageLink: PageLink, type:string = '', config?:RequestConfig): Observable<PageData<RuleChain>> {
+    return this.http.get<PageData<RuleChain>>(`/api/edge/${edgeId}/ruleChains${pageLink.toQuery()}$type=${type}`, defaultHttpOptionsFromConfig(config) )
+  }
+
+  public updateRuleChainEdges(ruleChainId: string, edgeIds: Array<string>, config?: RequestConfig): Observable<RuleChain> {
+    return this.http.post<RuleChain>(`/api/ruleChain/${ruleChainId}/edges`, edgeIds, defaultHttpOptionsFromConfig(config))
+  }
+
+  public addRuleChainEdges(ruleChainId: string, edgeIds: Array<string>, config?: RequestConfig): Observable<RuleChain> {
+    return this.http.post<RuleChain>(`/api/ruleChain/${ruleChainId}/edges/add`, edgeIds, defaultHttpOptionsFromConfig(config))
+  }
+
+  public removeRuleChainEdges(ruleChainId: string, edgeIds: Array<string>, config?: RequestConfig): Observable<RuleChain> {
+    return this.http.post<RuleChain>(`/api/ruleChain/${ruleChainId}/edges/remove`, edgeIds, defaultHttpOptionsFromConfig(config))
+  }
+
+  public setDefaultRootEdgeRuleChain(ruleChainId, config?: RequestConfig): Observable<RuleChain> {
+    return this.http.post<RuleChain>(`/api/ruleChain/${ruleChainId}/defaultRootEdge`, defaultHttpOptionsFromConfig(config))
+  }
+
+  public getEdgesRuleChains(pageLink: PageLink, config?: RequestConfig): Observable<PageData<RuleChain>> {
+    return this.http.get<PageData<RuleChain>>(`/api/ruleChains${pageLink.toQuery()}&type=${edgeRuleChainType}`,
+      defaultHttpOptionsFromConfig(config));
   }
 
 }

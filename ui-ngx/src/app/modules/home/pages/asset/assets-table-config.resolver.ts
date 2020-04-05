@@ -58,6 +58,10 @@ import { AssetId } from '@app/shared/models/id/asset-id';
 import { AssetTabsComponent } from '@home/pages/asset/asset-tabs.component';
 import { HomeDialogsService } from '@home/dialogs/home-dialogs.service';
 import { DeviceInfo } from '@shared/models/device.models';
+import {
+  AssignToEdgeDialogComponent,
+  AssignToEdgeDialogData
+} from "@home/dialogs/assign-to-edge-dialog.component";
 
 @Injectable()
 export class AssetsTableConfigResolver implements Resolve<EntityTableConfig<AssetInfo>> {
@@ -65,6 +69,7 @@ export class AssetsTableConfigResolver implements Resolve<EntityTableConfig<Asse
   private readonly config: EntityTableConfig<AssetInfo> = new EntityTableConfig<AssetInfo>();
 
   private customerId: string;
+  private edgeId: string;
 
   constructor(private store: Store<AppState>,
               private broadcast: BroadcastService,
@@ -111,6 +116,7 @@ export class AssetsTableConfigResolver implements Resolve<EntityTableConfig<Asse
       assetType: ''
     };
     this.customerId = routeParams.customerId;
+    this.edgeId = routeParams.edgeId;
     return this.store.pipe(select(selectAuthUser), take(1)).pipe(
       tap((authUser) => {
         if (authUser.authority === Authority.CUSTOMER_USER) {
@@ -149,7 +155,7 @@ export class AssetsTableConfigResolver implements Resolve<EntityTableConfig<Asse
       new DateEntityTableColumn<AssetInfo>('createdTime', 'asset.created-time', this.datePipe, '150px'),
       new EntityTableColumn<AssetInfo>('name', 'asset.name', '25%'),
       new EntityTableColumn<AssetInfo>('type', 'asset.asset-type', '25%'),
-      new EntityTableColumn<DeviceInfo>('label', 'asset.label', '25%'),
+      new EntityTableColumn<DeviceInfo>('label', 'asset.label', '25%')
     ];
     if (assetScope === 'tenant') {
       columns.push(
@@ -167,6 +173,10 @@ export class AssetsTableConfigResolver implements Resolve<EntityTableConfig<Asse
     if (assetScope === 'tenant') {
       this.config.entitiesFetchFunction = pageLink =>
         this.assetService.getTenantAssetInfos(pageLink, this.config.componentsData.assetType);
+      this.config.deleteEntity = id => this.assetService.deleteAsset(id.id);
+    } else if (assetScope === 'edge') {
+      this.config.entitiesFetchFunction = pageLink =>
+        this.assetService.getEdgeAssets(this.edgeId, pageLink, this.config.componentsData.assetType);
       this.config.deleteEntity = id => this.assetService.deleteAsset(id.id);
     } else {
       this.config.entitiesFetchFunction = pageLink =>
@@ -202,6 +212,18 @@ export class AssetsTableConfigResolver implements Resolve<EntityTableConfig<Asse
           icon: 'reply',
           isEnabled: (entity) => (entity.customerId && entity.customerId.id !== NULL_UUID && entity.customerIsPublic),
           onAction: ($event, entity) => this.unassignFromCustomer($event, entity)
+        },
+        {
+          name: this.translate.instant('asset.assign-to-edge'),
+          icon: 'wifi_tethering',
+          isEnabled: (entity) => (!entity.edgeId || entity.edgeId.id === NULL_UUID),
+          onAction: ($event, entity) => this.assignToEdge($event, [entity.id])
+        },
+        {
+          name: this.translate.instant('asset.unassign-from-edge'),
+          icon: 'portable_wifi_off',
+          isEnabled: (entity) => (entity.edgeId && entity.edgeId.id !== NULL_UUID),
+          onAction: ($event, entity) => this.unassignFromEdge($event, entity)
         }
       );
     }
@@ -422,8 +444,56 @@ export class AssetsTableConfigResolver implements Resolve<EntityTableConfig<Asse
       case 'unassignFromCustomer':
         this.unassignFromCustomer(action.event, action.entity);
         return true;
+      case 'assignToEdge':
+        this.assignToEdge(action.event, [action.entity.id]);
+        return true;
+      case 'unassignFromEdge':
+        this.unassignFromEdge(action.event, action.entity);
+        return true;
     }
     return false;
+  }
+
+  assignToEdge($event: Event, assetIds: Array<AssetId>) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.dialog.open<AssignToEdgeDialogComponent, AssignToEdgeDialogData,
+      boolean>(AssignToEdgeDialogComponent, {
+      disableClose: true,
+      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
+      data: {
+        entityIds: assetIds,
+        entityType: EntityType.ASSET
+      }
+    }).afterClosed()
+      .subscribe((res) => {
+        if (res) {
+          this.config.table.updateData();
+        }
+      });
+  }
+
+  unassignFromEdge($event: Event, asset: AssetInfo) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.dialogService.confirm(
+      this.translate.instant('asset.unassign-asset-from-edge-title', {assetName: asset.name}),
+      this.translate.instant('asset.unassign-asset-from-edge-text'),
+      this.translate.instant('action.no'),
+      this.translate.instant('action.yes'),
+      true
+    ).subscribe((res) => {
+        if (res) {
+          this.assetService.unassignAssetFromEdge(asset.id.id).subscribe(
+            () => {
+              this.config.table.updateData();
+            }
+          );
+        }
+      }
+    );
   }
 
 }

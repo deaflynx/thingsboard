@@ -16,7 +16,7 @@
 
 import {Injectable} from '@angular/core';
 
-import {Resolve, Router} from '@angular/router';
+import {ActivatedRouteSnapshot, Resolve, Router} from '@angular/router';
 import {
   checkBoxCell,
   DateEntityTableColumn,
@@ -105,7 +105,6 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
     this.config.deleteEntitiesTitle = count => this.translate.instant('rulechain.delete-rulechains-title', {count});
     this.config.deleteEntitiesContent = () => this.translate.instant('rulechain.delete-rulechains-text');
 
-    this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getRuleChains(pageLink);
     this.config.loadEntity = id => this.ruleChainService.getRuleChain(id.id);
     this.config.saveEntity = ruleChain => this.ruleChainService.saveRuleChain(ruleChain);
     this.config.deleteEntity = id => this.ruleChainService.deleteRuleChain(id.id);
@@ -114,8 +113,15 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
     this.config.entitySelectionEnabled = (ruleChain) => ruleChain && !ruleChain.root;
   }
 
-  resolve(): EntityTableConfig<RuleChain> {
-    this.config.tableTitle = this.translate.instant('rulechain.rulechains');
+  resolve(route: ActivatedRouteSnapshot): EntityTableConfig<RuleChain> {
+
+    if (route.data.ruleChainsType === 'edges') {
+      this.config.tableTitle = this.translate.instant('rulechain.edge-rulechains');
+      this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getEdgesRuleChains(pageLink);
+    } else {
+      this.config.tableTitle = this.translate.instant('rulechain.system-rulechains');
+      this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getRuleChains(pageLink);
+    }
 
     return this.config;
   }

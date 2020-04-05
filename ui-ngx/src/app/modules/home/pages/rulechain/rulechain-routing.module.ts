@@ -15,28 +15,30 @@
 ///
 
 import * as AngularCore from '@angular/core';
-import { Injectable, NgModule } from '@angular/core';
+import {Injectable, NgModule} from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   CanActivate,
-  Resolve, Router,
+  Resolve,
+  Router,
   RouterModule,
   RouterStateSnapshot,
-  Routes, UrlTree
+  Routes,
+  UrlTree
 } from '@angular/router';
 
-import { EntitiesTableComponent } from '../../components/entity/entities-table.component';
-import { Authority } from '@shared/models/authority.enum';
-import { RuleChainsTableConfigResolver } from '@modules/home/pages/rulechain/rulechains-table-config.resolver';
+import {EntitiesTableComponent} from '../../components/entity/entities-table.component';
+import {Authority} from '@shared/models/authority.enum';
+import {RuleChainsTableConfigResolver} from '@modules/home/pages/rulechain/rulechains-table-config.resolver';
 import * as RxJs from 'rxjs';
-import { Observable } from 'rxjs';
+import {Observable} from 'rxjs';
 import * as RxJsOperators from 'rxjs/operators';
-import { BreadCrumbConfig, BreadCrumbLabelFunction } from '@shared/components/breadcrumb';
-import { ResolvedRuleChainMetaData, RuleChain, RuleChainImport } from '@shared/models/rule-chain.models';
-import { RuleChainService } from '@core/http/rule-chain.service';
-import { RuleChainPageComponent } from '@home/pages/rulechain/rulechain-page.component';
-import { RuleNodeComponentDescriptor } from '@shared/models/rule-node.models';
-import { ConfirmOnExitGuard } from '@core/guards/confirm-on-exit.guard';
+import {BreadCrumbConfig, BreadCrumbLabelFunction} from '@shared/components/breadcrumb';
+import {ResolvedRuleChainMetaData, RuleChain} from '@shared/models/rule-chain.models';
+import {RuleChainService} from '@core/http/rule-chain.service';
+import {RuleChainPageComponent} from '@home/pages/rulechain/rulechain-page.component';
+import {RuleNodeComponentDescriptor} from '@shared/models/rule-node.models';
+import {ConfirmOnExitGuard} from '@core/guards/confirm-on-exit.guard';
 
 import * as AngularCommon from '@angular/common';
 import * as AngularForms from '@angular/forms';
@@ -47,9 +49,9 @@ import * as AngularMaterialAutocomplete from '@angular/material/autocomplete';
 import * as NgrxStore from '@ngrx/store';
 import * as TranslateCore from '@ngx-translate/core';
 import * as TbCore from '@core/public-api';
+import {ItemBufferService} from '@core/public-api';
 import * as TbShared from '@shared/public-api';
 import * as TbHomeComponents from '@home/components/public-api';
-import { ItemBufferService } from '@core/public-api';
 
 declare const SystemJS;
 
@@ -153,8 +155,29 @@ const routes: Routes = [
         component: EntitiesTableComponent,
         data: {
           auth: [Authority.TENANT_ADMIN],
-          title: 'rulechain.rulechains'
+          title: 'rulechain.rulechains',
+          breadcrumb: {
+            label: 'rulechain.system-rulechains',
+            icon: 'settings_ethernet'
+          },
+          ruleChainsType: 'tenant'
         },
+        resolve: {
+          entitiesTableConfig: RuleChainsTableConfigResolver
+        }
+      },
+      {
+        path: 'edge',
+        component: EntitiesTableComponent,
+        data: {
+          auth: [Authority.TENANT_ADMIN],
+          title: 'edge.rulechains',
+          breadcrumb: {
+            label: 'rulechain.edge-rulechains',
+            icon: 'settings_ethernet'
+          },
+          ruleChainsType: 'edges'
+          },
         resolve: {
           entitiesTableConfig: RuleChainsTableConfigResolver
         }
