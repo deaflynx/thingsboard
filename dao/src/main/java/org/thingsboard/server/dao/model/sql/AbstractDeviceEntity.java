@@ -98,6 +98,7 @@ public abstract class AbstractDeviceEntity<T extends Device> extends BaseSqlEnti
         this.label = deviceEntity.getLabel();
         this.searchText = deviceEntity.getSearchText();
         this.additionalInfo = deviceEntity.getAdditionalInfo();
+        this.edgeId = deviceEntity.getEdgeId();
     }
 
     @Override

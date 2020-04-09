@@ -139,6 +139,7 @@ public abstract class AbstractEntityViewEntity<T extends EntityView> extends Bas
         this.endTs = entityViewEntity.getEndTs();
         this.searchText = entityViewEntity.getSearchText();
         this.additionalInfo = entityViewEntity.getAdditionalInfo();
+        this.edgeId = entityViewEntity.getEdgeId();
     }
 
     @Override

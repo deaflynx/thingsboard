@@ -234,7 +234,7 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
         {
           name: this.translate.instant('device.unassign-from-edge'),
             icon: 'portable_wifi_off',
-          isEnabled: (entity) => (!entity.edgeId || entity.edgeId.id === NULL_UUID),
+          isEnabled: (entity) => (entity.edgeId && entity.edgeId.id !== NULL_UUID),
           onAction: ($event, entity) => this.unassignFromEdge($event,entity)
         }
         );
@@ -525,8 +525,8 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
       $event.stopPropagation();
     }
     this.dialogService.confirm(
-      this.translate.instant('asset.unassign-device-from-edge-title', {assetName: device.name}),
-      this.translate.instant('asset.unassign-device-from-edge-text'),
+      this.translate.instant('device.unassign-device-from-edge-title', {deviceName: device.name}),
+      this.translate.instant('device.unassign-device-from-edge-text'),
       this.translate.instant('action.no'),
       this.translate.instant('action.yes'),
       true

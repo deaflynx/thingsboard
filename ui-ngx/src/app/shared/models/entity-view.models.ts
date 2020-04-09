@@ -20,7 +20,7 @@ import {TenantId} from '@shared/models/id/tenant-id';
 import {CustomerId} from '@shared/models/id/customer-id';
 import {EntityViewId} from '@shared/models/id/entity-view-id';
 import {EntityId} from '@shared/models/id/entity-id';
-import { EntitySearchQuery } from '@shared/models/relation.models';
+import {EntitySearchQuery} from '@shared/models/relation.models';
 import {EdgeId} from "@shared/models/id/edge-id";
 
 export interface AttributesEntityView {

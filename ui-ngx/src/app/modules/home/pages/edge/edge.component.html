@@ -63,6 +63,7 @@
        [fxShow]="!isEdit && entity?.customerIsPublic && (edgeScope === 'customer' || edgeScope === 'tenant')">
     {{ 'edge.public' | translate }}
   </div>
+
   <form #entityNgForm="ngForm" [formGroup]="entityForm">
     <fieldset [disabled]="(isLoading$ | async) || !isEdit">
       <mat-form-field class="mat-block">
@@ -89,39 +90,38 @@
           <mat-label translate>edge.description</mat-label>
           <textarea matInput formControlName="description" rows="2"></textarea>
         </mat-form-field>
-      </div>
 
-      <div fxLayout="row">
+        <div fxLayout="row">
+          <mat-form-field class="mat-block" fxFlex>
+            <mat-label translate>edge.edge-key</mat-label>
+            <input matInput formControlName="routingKey" disabled>
+          </mat-form-field>
+<!--          <button mat-button mat-icon-button-->
+<!--                  style="margin-top: 14px"-->
+<!--                  ngxClipboard-->
+<!--                  (cbOnSuccess)="onEdgeKeyCopied($event)"-->
+<!--                  [cbContent]="routingKey"-->
+<!--                  [fxShow]="!isEdit">-->
+<!--            <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>-->
+<!--          </button>-->
+        </div>
 
-        <mat-form-field class="mat-block">
-          <mat-label translate>edge.edge-key</mat-label>
-          <input matInput ng-model="12345" disabled>
-        </mat-form-field>
+        <div fxLayout="row">
+          <mat-form-field class="mat-block" fxFlex>
+            <mat-label translate>edge.edge-secret</mat-label>
+            <input matInput formControlName="secret"  disabled>
+          </mat-form-field>
+<!--          <button mat-button mat-icon-button-->
+<!--                  style="margin-top: 14px"-->
+<!--                  ngxClipboard-->
+<!--                  (cbOnSuccess)="onEdgeSecretCopied($event)"-->
+<!--                  [cbContent]="secret"-->
+<!--                  [fxShow]="!isEdit">-->
+<!--            <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>-->
+<!--          </button>-->
+        </div>
 
-        <button mat-button mat-icon-button
-                   style="margin-top: 14px"
-                   ngxClipboard
-                   (cbOnSuccess)="onEdgeKeyCopied($event)"
-                   [cbContent]="entity?.routingKey"
-                   [fxShow]="!isEdit">
-          <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>
-        </button>
 
-      </div>
-
-      <div fxLayout="row">
-        <mat-form-field class="mat-block">
-          <mat-label translate>edge.edge-secret</mat-label>
-          <input matInput ng-model="secretKeyTest">
-        </mat-form-field>
-<!--        <button mat-button mat-icon-button-->
-<!--                   style="margin-top: 14px"-->
-<!--                   ngxClipboard-->
-<!--                   (cbOnSuccess)="onEdgeSecretCopied($event)"-->
-<!--                   [cbContent]="entity?.secret"-->
-<!--                   [fxShow]="!isEdit">-->
-<!--          <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>-->
-<!--        </button>-->
       </div>
 
     </fieldset>

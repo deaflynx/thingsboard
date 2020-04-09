@@ -622,7 +622,9 @@
         "assign-to-edges": "Assign Dashboard(s) To Edges",
         "assign-to-edges-text": "Please select the edges to assign the dashboard(s)",
         "unassign-from-edges": "Unassign Dashboard(s) From Edges",
-        "unassign-from-edges-text": "Please select the edges to unassign from the dashboard(s)"
+        "unassign-from-edges-text": "Please select the edges to unassign from the dashboard(s)",
+        "assign-edges": "Assign edges",
+        "unassign-edges": "Unassign edges"
     },
     "datakey": {
         "settings": "Settings",

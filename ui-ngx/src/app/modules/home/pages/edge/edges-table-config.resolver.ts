@@ -58,10 +58,6 @@ import {EdgeComponent} from "@home/pages/edge/edge.component";
 import {EdgeTableHeaderComponent} from "@home/pages/edge/edge-table-header.component";
 import {EdgeId} from "@shared/models/id/edge-id";
 import {EdgeTabsComponent} from "@home/pages/edge/edge-tabs.component";
-import {
-  AssignToEdgeDialogComponent,
-  AssignToEdgeDialogData
-} from "@home/dialogs/assign-to-edge-dialog.component";
 
 @Injectable()
 export class EdgesTableConfigResolver implements Resolve<EntityTableConfig<EdgeInfo>> {

@@ -143,7 +143,7 @@ export class DeviceService {
   }
 
   public assignDeviceToEdge(edgeId: string, deviceId: string, config?: RequestConfig): Observable<Device> {
-    return this.http.post<Device>(`/api/edge/${edgeId}/device/${deviceId}`, null, defaultHttpOptionsFromConfig(config));
+    return this.http.post<Device>(`/api/edge/${edgeId}/device/${deviceId}`, defaultHttpOptionsFromConfig(config));
   }
 
   public unassignDeviceFromEdge(deviceId: string, config?: RequestConfig) {

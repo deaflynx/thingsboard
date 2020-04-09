@@ -60,6 +60,7 @@ public class EntityView extends SearchTextBasedWithAdditionalInfo<EntityViewId>
         this.entityId = entityView.getEntityId();
         this.tenantId = entityView.getTenantId();
         this.customerId = entityView.getCustomerId();
+        this.edgeId = entityView.getEdgeId();
         this.name = entityView.getName();
         this.type = entityView.getType();
         this.keys = entityView.getKeys();

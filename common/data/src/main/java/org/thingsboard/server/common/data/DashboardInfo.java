@@ -48,6 +48,7 @@ public class DashboardInfo extends SearchTextBased<DashboardId> implements HasNa
         this.tenantId = dashboardInfo.getTenantId();
         this.title = dashboardInfo.getTitle();
         this.assignedCustomers = dashboardInfo.getAssignedCustomers();
+        this.assignedEdges = dashboardInfo.getAssignedEdges();
     }
 
     public TenantId getTenantId() {

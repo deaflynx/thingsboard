@@ -106,6 +106,7 @@ public abstract class AbstractAssetEntity<T extends Asset> extends BaseSqlEntity
         this.label = assetEntity.getLabel();
         this.searchText = assetEntity.getSearchText();
         this.additionalInfo = assetEntity.getAdditionalInfo();
+        this.edgeId = assetEntity.getEdgeId();
     }
 
     @Override

@@ -95,6 +95,4 @@ export class EntityViewService {
     return this.http.get<PageData<EntityViewInfo>>(`/api/edge/${edgeId}/entityViews${pageLink.toQuery()}&type=${type}`, defaultHttpOptionsFromConfig(config))
   }
 
-
-
 }

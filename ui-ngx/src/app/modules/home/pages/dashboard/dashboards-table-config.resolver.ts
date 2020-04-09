@@ -276,6 +276,22 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
           onAction: ($event, entities) => this.unassignDashboardsFromCustomers($event, entities.map((entity) => entity.id.id))
         }
       );
+      actions.push(
+        {
+          name: this.translate.instant('dashboard.assign-edges'),
+          icon: 'wifi_tethering',
+          isEnabled: true,
+          onAction: ($event, entities) => this.assignDashboardsToEdges($event, entities.map((entity) => entity.id.id))
+        }
+      );
+      actions.push(
+        {
+          name: this.translate.instant('dashboard.unassign-edges'),
+          icon: 'portable_wifi_off',
+          isEnabled: true,
+          onAction: ($event, entities) => this.unassignDashboardsFromEdges($event, entities.map((entity) => entity.id.id))
+        }
+      );
     }
     if (dashboardScope === 'customer') {
       actions.push(
@@ -599,6 +615,14 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
         }
       }
     );
+  }
+
+  assignDashboardsToEdges($event: Event, dashboardIds: Array<string>) {
+    this.showManageAssignedEdgesDialog($event, dashboardIds, 'assign');
+  }
+
+  unassignDashboardsFromEdges($event: Event, dashboardIds: Array<string>) {
+    this.showManageAssignedEdgesDialog($event, dashboardIds, 'unassign');
   }
 
 }

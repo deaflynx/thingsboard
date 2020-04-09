@@ -56,9 +56,7 @@ import {EntityViewComponent} from '@modules/home/pages/entity-view/entity-view.c
 import {EntityViewTableHeaderComponent} from '@modules/home/pages/entity-view/entity-view-table-header.component';
 import {EntityViewId} from '@shared/models/id/entity-view-id';
 import { EntityViewTabsComponent } from '@home/pages/entity-view/entity-view-tabs.component';
-import {AssetId} from "@shared/models/id/asset-id";
 import {AssignToEdgeDialogComponent, AssignToEdgeDialogData} from "@home/dialogs/assign-to-edge-dialog.component";
-import {AssetInfo} from "@shared/models/asset.models";
 
 @Injectable()
 export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig<EntityViewInfo>> {
@@ -220,7 +218,7 @@ export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig
         {
           name: this.translate.instant('entity-view.unassign-from-edge'),
           icon: 'portable_wifi_off',
-          isEnabled: (entity) => (!entity.edgeId || entity.edgeId.id === NULL_UUID),
+          isEnabled: (entity) => (entity.edgeId && entity.edgeId.id !== NULL_UUID),
           onAction: ($event, entity) => this.unassignFromEdge($event,entity)
         }
       );
@@ -452,8 +450,8 @@ export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig
       $event.stopPropagation();
     }
     this.dialogService.confirm(
-      this.translate.instant('entity-view.unassign-asset-from-edge-title', {assetName: entityView.name}),
-      this.translate.instant('entity-view.unassign-asset-from-edge-text'),
+      this.translate.instant('entity-view.unassign-entity-view-from-edge-title', {entityViewName: entityView.name}),
+      this.translate.instant('entity-view.unassign-entity-view-from-edge-text'),
       this.translate.instant('action.no'),
       this.translate.instant('action.yes'),
       true
