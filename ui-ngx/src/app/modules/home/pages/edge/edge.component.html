@@ -65,6 +65,7 @@
   </div>
 
   <form #entityNgForm="ngForm" [formGroup]="entityForm">
+
     <fieldset [disabled]="(isLoading$ | async) || !isEdit">
       <mat-form-field class="mat-block">
         <mat-label translate>edge.name</mat-label>
@@ -94,12 +95,13 @@
     </fieldset>
 
       <div fxLayout="row">
-        <fieldset disabled>
-        <mat-form-field class="mat-block" fxFlex>
-          <mat-label translate>edge.edge-key</mat-label>
-          <input matInput formControlName="routingKey">
-        </mat-form-field>
-        </fieldset>
+
+          <fieldset fxFlex disabled>
+          <mat-form-field class="mat-block">
+            <mat-label translate>edge.edge-key</mat-label>
+            <input matInput formControlName="routingKey">
+          </mat-form-field>
+          </fieldset>
 
         <button mat-button mat-icon-button
                 style="margin-top: 14px"
@@ -113,11 +115,12 @@
       </div>
 
       <div fxLayout="row">
-        <fieldset disabled>
-        <mat-form-field class="mat-block" fxFlex>
-          <mat-label translate>edge.edge-secret</mat-label>
-          <input matInput formControlName="secret">
-        </mat-form-field>
+
+        <fieldset fxFlex disabled>
+          <mat-form-field class="mat-block">
+            <mat-label translate>edge.edge-secret</mat-label>
+            <input matInput formControlName="secret">
+          </mat-form-field>
         </fieldset>
 
         <button mat-button mat-icon-button
