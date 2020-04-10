@@ -25,15 +25,15 @@ export interface Edge extends BaseData<EdgeId> {
   customerId?: CustomerId;
   name: string;
   type: string;
+  secret: string;
+  routingKey: string;
   label?: string;
   additionalInfo?: any
 }
 
 export interface EdgeInfo extends Edge {
   customerTitle: string;
-  customerIsPublic: boolean;
-  routingKey: string;
-  secret: string;
+  customerIsPublic: boolean
 }
 
 export interface EdgeSearchQuery extends EntitySearchQuery {

@@ -76,8 +76,7 @@
       <tb-entity-subtype-autocomplete
         formControlName="type"
         [required]="true"
-        [entityType]="entityType.EDGE"
-      >
+        [entityType]="entityType.EDGE">
       </tb-entity-subtype-autocomplete>
 
       <mat-form-field class="mat-block">
@@ -90,40 +89,49 @@
           <mat-label translate>edge.description</mat-label>
           <textarea matInput formControlName="description" rows="2"></textarea>
         </mat-form-field>
-
-        <div fxLayout="row">
-          <mat-form-field class="mat-block" fxFlex>
-            <mat-label translate>edge.edge-key</mat-label>
-            <input matInput formControlName="routingKey" disabled>
-          </mat-form-field>
-<!--          <button mat-button mat-icon-button-->
-<!--                  style="margin-top: 14px"-->
-<!--                  ngxClipboard-->
-<!--                  (cbOnSuccess)="onEdgeKeyCopied($event)"-->
-<!--                  [cbContent]="routingKey"-->
-<!--                  [fxShow]="!isEdit">-->
-<!--            <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>-->
-<!--          </button>-->
-        </div>
-
-        <div fxLayout="row">
-          <mat-form-field class="mat-block" fxFlex>
-            <mat-label translate>edge.edge-secret</mat-label>
-            <input matInput formControlName="secret"  disabled>
-          </mat-form-field>
-<!--          <button mat-button mat-icon-button-->
-<!--                  style="margin-top: 14px"-->
-<!--                  ngxClipboard-->
-<!--                  (cbOnSuccess)="onEdgeSecretCopied($event)"-->
-<!--                  [cbContent]="secret"-->
-<!--                  [fxShow]="!isEdit">-->
-<!--            <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>-->
-<!--          </button>-->
-        </div>
-
-
       </div>
 
     </fieldset>
+
+      <div fxLayout="row">
+        <fieldset disabled>
+        <mat-form-field class="mat-block" fxFlex>
+          <mat-label translate>edge.edge-key</mat-label>
+          <input matInput formControlName="routingKey">
+        </mat-form-field>
+        </fieldset>
+
+        <button mat-button mat-icon-button
+                style="margin-top: 14px"
+                ngxClipboard
+                (cbOnSuccess)="onEdgeKeyCopied($event)"
+                [cbContent]="entity?.routingKey"
+                [fxShow]="!isEdit">
+          <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>
+        </button>
+
+      </div>
+
+      <div fxLayout="row">
+        <fieldset disabled>
+        <mat-form-field class="mat-block" fxFlex>
+          <mat-label translate>edge.edge-secret</mat-label>
+          <input matInput formControlName="secret">
+        </mat-form-field>
+        </fieldset>
+
+        <button mat-button mat-icon-button
+                style="margin-top: 14px"
+                ngxClipboard
+                (cbOnSuccess)="onEdgeSecretCopied($event)"
+                [cbContent]="entity?.secret"
+                [fxShow]="!isEdit">
+          <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>
+        </button>
+
+      </div>
+
+
+
   </form>
 </div>
