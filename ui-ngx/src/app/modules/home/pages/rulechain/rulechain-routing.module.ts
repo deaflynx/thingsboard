@@ -34,7 +34,12 @@ import * as RxJs from 'rxjs';
 import {Observable} from 'rxjs';
 import * as RxJsOperators from 'rxjs/operators';
 import {BreadCrumbConfig, BreadCrumbLabelFunction} from '@shared/components/breadcrumb';
-import {ResolvedRuleChainMetaData, RuleChain, systemRuleChainType} from '@shared/models/rule-chain.models';
+import {
+  edgeRuleChainType,
+  ResolvedRuleChainMetaData,
+  RuleChain,
+  systemRuleChainType
+} from '@shared/models/rule-chain.models';
 import {RuleChainService} from '@core/http/rule-chain.service';
 import {RuleChainPageComponent} from '@home/pages/rulechain/rulechain-page.component';
 import {RuleNodeComponentDescriptor} from '@shared/models/rule-node.models';
@@ -166,6 +171,26 @@ const routes: Routes = [
         },
         resolve: {
           entitiesTableConfig: RuleChainsTableConfigResolver
+        }
+      },
+      {
+        path: 'edge/:ruleChainId',
+        component: RuleChainPageComponent,
+        canDeactivate: [ConfirmOnExitGuard],
+        data: {
+          breadcrumb: {
+            labelFunction: ruleChainBreadcumbLabelFunction,
+            icon: 'settings_ethernet'
+          } as BreadCrumbConfig,
+          auth: [Authority.TENANT_ADMIN],
+          title: 'rulechain.rulechain',
+          import: false,
+          type: edgeRuleChainType
+        },
+        resolve: {
+          ruleChain: RuleChainResolver,
+          ruleChainMetaData: ResolvedRuleChainMetaDataResolver,
+          ruleNodeComponents: RuleNodeComponentsResolver
         }
       },
       {
