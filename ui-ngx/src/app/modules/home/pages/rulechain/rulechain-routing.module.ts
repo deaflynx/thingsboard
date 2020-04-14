@@ -34,7 +34,7 @@ import * as RxJs from 'rxjs';
 import {Observable} from 'rxjs';
 import * as RxJsOperators from 'rxjs/operators';
 import {BreadCrumbConfig, BreadCrumbLabelFunction} from '@shared/components/breadcrumb';
-import {ResolvedRuleChainMetaData, RuleChain} from '@shared/models/rule-chain.models';
+import {ResolvedRuleChainMetaData, RuleChain, systemRuleChainType} from '@shared/models/rule-chain.models';
 import {RuleChainService} from '@core/http/rule-chain.service';
 import {RuleChainPageComponent} from '@home/pages/rulechain/rulechain-page.component';
 import {RuleNodeComponentDescriptor} from '@shared/models/rule-node.models';
@@ -106,7 +106,9 @@ export class RuleNodeComponentsResolver implements Resolve<Array<RuleNodeCompone
   }
 
   resolve(route: ActivatedRouteSnapshot): Observable<Array<RuleNodeComponentDescriptor>> {
-    return this.ruleChainService.getRuleNodeComponents(ruleNodeConfigResourcesModulesMap);
+    console.log("ROUTE", route.data.type);
+    const ruleChainType = route.data.type;
+    return this.ruleChainService.getRuleNodeComponents(ruleNodeConfigResourcesModulesMap, ruleChainType);
   }
 }
 
@@ -193,7 +195,8 @@ const routes: Routes = [
           } as BreadCrumbConfig,
           auth: [Authority.TENANT_ADMIN],
           title: 'rulechain.rulechain',
-          import: false
+          import: false,
+          type: systemRuleChainType
         },
         resolve: {
           ruleChain: RuleChainResolver,
