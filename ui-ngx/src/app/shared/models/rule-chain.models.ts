@@ -24,6 +24,7 @@ import { ComponentType } from '@shared/models/component-descriptor.models';
 export interface RuleChain extends BaseData<RuleChainId> {
   tenantId: TenantId;
   name: string;
+  type:string;
   firstRuleNodeId: RuleNodeId;
   root: boolean;
   debugMode: boolean;

@@ -16,7 +16,14 @@
 
 import {Injectable} from '@angular/core';
 
-import {ActivatedRouteSnapshot, Resolve, Router} from '@angular/router';
+import {
+  ActivatedRoute,
+  ActivatedRouteSnapshot,
+  Resolve,
+  Router,
+  RouterState,
+  RouterStateSnapshot
+} from '@angular/router';
 import {
   checkBoxCell,
   DateEntityTableColumn,
@@ -34,11 +41,14 @@ import {DialogService} from '@core/services/dialog.service';
 import { RuleChainTabsComponent } from '@home/pages/rulechain/rulechain-tabs.component';
 import { ImportExportService } from '@home/components/import-export/import-export.service';
 import { ItemBufferService } from '@core/services/item-buffer.service';
+import {Observable} from "rxjs";
 
 @Injectable()
 export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<RuleChain>> {
 
   private readonly config: EntityTableConfig<RuleChain> = new EntityTableConfig<RuleChain>();
+
+  testType: string;
 
   constructor(private ruleChainService: RuleChainService,
               private dialogService: DialogService,
@@ -142,7 +152,7 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
     if ($event) {
       $event.stopPropagation();
     }
-    this.router.navigateByUrl(`ruleChains/${ruleChain.id.id}`);
+    this.router.navigateByUrl(`ruleChains/${ruleChain.type.toLowerCase()}/${ruleChain.id.id}`);
   }
 
   exportRuleChain($event: Event, ruleChain: RuleChain) {

@@ -111,7 +111,6 @@ export class RuleNodeComponentsResolver implements Resolve<Array<RuleNodeCompone
   }
 
   resolve(route: ActivatedRouteSnapshot): Observable<Array<RuleNodeComponentDescriptor>> {
-    console.log("ROUTE", route.data.type);
     const ruleChainType = route.data.type;
     return this.ruleChainService.getRuleNodeComponents(ruleNodeConfigResourcesModulesMap, ruleChainType);
   }
@@ -156,79 +155,101 @@ const routes: Routes = [
         icon: 'settings_ethernet'
       }
     },
+
     children: [
-      {
-        path: '',
-        component: EntitiesTableComponent,
-        data: {
-          auth: [Authority.TENANT_ADMIN],
-          title: 'rulechain.rulechains',
-          breadcrumb: {
-            label: 'rulechain.system-rulechains',
-            icon: 'settings_ethernet'
-          },
-          ruleChainsType: 'tenant'
-        },
-        resolve: {
-          entitiesTableConfig: RuleChainsTableConfigResolver
-        }
-      },
-      {
-        path: 'edge/:ruleChainId',
-        component: RuleChainPageComponent,
-        canDeactivate: [ConfirmOnExitGuard],
-        data: {
-          breadcrumb: {
-            labelFunction: ruleChainBreadcumbLabelFunction,
-            icon: 'settings_ethernet'
-          } as BreadCrumbConfig,
-          auth: [Authority.TENANT_ADMIN],
-          title: 'rulechain.rulechain',
-          import: false,
-          type: edgeRuleChainType
-        },
-        resolve: {
-          ruleChain: RuleChainResolver,
-          ruleChainMetaData: ResolvedRuleChainMetaDataResolver,
-          ruleNodeComponents: RuleNodeComponentsResolver
-        }
-      },
+
       {
         path: 'edge',
-        component: EntitiesTableComponent,
         data: {
-          auth: [Authority.TENANT_ADMIN],
-          title: 'edge.rulechains',
           breadcrumb: {
             label: 'rulechain.edge-rulechains',
             icon: 'settings_ethernet'
           },
-          ruleChainsType: 'edges'
+        },
+        children: [
+          {
+            path: '',
+            component: EntitiesTableComponent,
+            data: {
+              auth: [Authority.TENANT_ADMIN],
+              title: 'edge.rulechains',
+              ruleChainsType: 'edges'
+            },
+            resolve: {
+              entitiesTableConfig: RuleChainsTableConfigResolver
+            }
           },
-        resolve: {
-          entitiesTableConfig: RuleChainsTableConfigResolver
-        }
+          {
+            path: ':ruleChainId',
+            component: RuleChainPageComponent,
+            canDeactivate: [ConfirmOnExitGuard],
+            data: {
+              breadcrumb: {
+                labelFunction: ruleChainBreadcumbLabelFunction,
+                icon: 'settings_ethernet'
+              } as BreadCrumbConfig,
+              auth: [Authority.TENANT_ADMIN],
+              title: 'rulechain.rulechain',
+              import: false,
+              type: edgeRuleChainType
+            },
+            resolve: {
+              ruleChain: RuleChainResolver,
+              ruleChainMetaData: ResolvedRuleChainMetaDataResolver,
+              ruleNodeComponents: RuleNodeComponentsResolver
+            }
+          }
+        ]
       },
+
       {
-        path: ':ruleChainId',
-        component: RuleChainPageComponent,
-        canDeactivate: [ConfirmOnExitGuard],
+        path: 'system',
         data: {
           breadcrumb: {
-            labelFunction: ruleChainBreadcumbLabelFunction,
+            label: 'rulechain.system-rulechains',
             icon: 'settings_ethernet'
-          } as BreadCrumbConfig,
-          auth: [Authority.TENANT_ADMIN],
-          title: 'rulechain.rulechain',
-          import: false,
-          type: systemRuleChainType
+          }
         },
-        resolve: {
-          ruleChain: RuleChainResolver,
-          ruleChainMetaData: ResolvedRuleChainMetaDataResolver,
-          ruleNodeComponents: RuleNodeComponentsResolver
-        }
+        children: [
+          {
+            path: '',
+            component: EntitiesTableComponent,
+            data: {
+              auth: [Authority.TENANT_ADMIN],
+              title: 'rulechain.rulechains',
+              ruleChainsType: 'tenant',
+              breadcrumb: {
+                label: 'rulechain.system-rulechains',
+                icon: 'settings_ethernet'
+              }
+            },
+            resolve: {
+              entitiesTableConfig: RuleChainsTableConfigResolver
+            },
+          },
+          {
+            path: ':ruleChainId',
+            component: RuleChainPageComponent,
+            canDeactivate: [ConfirmOnExitGuard],
+            data: {
+              breadcrumb: {
+                labelFunction: ruleChainBreadcumbLabelFunction,
+                icon: 'settings_ethernet'
+              } as BreadCrumbConfig,
+              auth: [Authority.TENANT_ADMIN],
+              title: 'rulechain.rulechain',
+              import: false,
+              type: systemRuleChainType
+            },
+            resolve: {
+              ruleChain: RuleChainResolver,
+              ruleChainMetaData: ResolvedRuleChainMetaDataResolver,
+              ruleNodeComponents: RuleNodeComponentsResolver
+            }
+          }
+        ]
       },
+
       {
         path: 'ruleChain/import',
         component: RuleChainPageComponent,
