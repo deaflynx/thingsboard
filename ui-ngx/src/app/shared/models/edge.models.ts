@@ -28,7 +28,7 @@ export interface Edge extends BaseData<EdgeId> {
   secret: string;
   routingKey: string;
   label?: string;
-  additionalInfo?: any
+  additionalInfo?: any;
 }
 
 export interface EdgeInfo extends Edge {

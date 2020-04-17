@@ -77,9 +77,6 @@ import {
 export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<DashboardInfo | Dashboard>> {
 
   private readonly config: EntityTableConfig<DashboardInfo | Dashboard> = new EntityTableConfig<DashboardInfo | Dashboard>();
-
-  private edgeId: string;
-
   constructor(private store: Store<AppState>,
               private dashboardService: DashboardService,
               private customerService: CustomerService,
@@ -112,10 +109,10 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
 
   resolve(route: ActivatedRouteSnapshot): Observable<EntityTableConfig<DashboardInfo | Dashboard>> {
     const routeParams = route.params;
-    this.edgeId = routeParams.edgeId;
     this.config.componentsData = {
       dashboardScope: route.data.dashboardsType,
-      customerId: routeParams.customerId
+      customerId: routeParams.customerId,
+      edgeId: routeParams.edgeId
     };
     return this.store.pipe(select(selectAuthUser), take(1)).pipe(
       tap((authUser) => {
@@ -176,15 +173,10 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
       this.config.entitiesFetchFunction = pageLink =>
         this.dashboardService.getTenantDashboards(pageLink);
       this.config.deleteEntity = id => this.dashboardService.deleteDashboard(id.id);
-    } else if (dashboardScope === 'edge') {
+    } if (dashboardScope === 'edge') {
       this.config.entitiesFetchFunction = pageLink =>
-        this.dashboardService.getEdgeDashboards(this.edgeId, pageLink, this.config.componentsData.dashboardType);
+        this.dashboardService.getEdgeDashboards(this.config.componentsData.edgeId, pageLink, this.config.componentsData.dashboardType);
       this.config.deleteEntity = id => this.dashboardService.deleteDashboard(id.id);
-    }  else {
-      this.config.entitiesFetchFunction = pageLink =>
-        this.dashboardService.getCustomerDashboards(this.config.componentsData.customerId, pageLink);
-      this.config.deleteEntity = id =>
-        this.dashboardService.unassignDashboardFromCustomer(this.config.componentsData.customerId, id.id);
     }
   }
 

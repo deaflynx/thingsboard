@@ -55,6 +55,7 @@ import { historyInterval, HistoryWindowType, Timewindow } from '@shared/models/t
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TbAnchorComponent } from '@shared/components/tb-anchor.component';
 import { isDefined, isUndefined } from '@core/utils';
+import {RuleChain} from "@shared/models/rule-chain.models";
 
 @Component({
   selector: 'tb-entities-table',

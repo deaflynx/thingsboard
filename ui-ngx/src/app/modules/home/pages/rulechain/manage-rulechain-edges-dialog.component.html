@@ -15,8 +15,8 @@
     limitations under the License.
 
 -->
-<form #dashboardEdgesForm="ngForm" style="width: 600px;"
-      [formGroup]="dashboardEdgesFormGroup" (ngSubmit)="submit()">
+<form #ruleChainEdgesForm="ngForm" style="width: 600px;"
+      [formGroup]="ruleChainEdgesFormGroup" (ngSubmit)="submit()">
   <mat-toolbar fxLayout="row" color="primary">
     <h2>{{ titleText | translate }}</h2>
     <span fxFlex></span>
@@ -43,8 +43,8 @@
     <span fxFlex></span>
     <button mat-button mat-raised-button color="primary"
             type="submit"
-            [disabled]="(isLoading$ | async) || dashboardEdgesForm.invalid
-            || !dashboardEdgesForm.dirty">
+            [disabled]="(isLoading$ | async) || ruleChainEdgesForm.invalid
+            || !ruleChainEdgesForm.dirty">
       {{ actionName | translate }}
     </button>
     <button mat-button color="primary"

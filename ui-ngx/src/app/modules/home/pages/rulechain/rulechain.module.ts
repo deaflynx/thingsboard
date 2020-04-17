@@ -28,11 +28,13 @@ import { RuleNodeDetailsComponent } from './rule-node-details.component';
 import { RuleNodeLinkComponent } from './rule-node-link.component';
 import { LinkLabelsComponent } from '@home/pages/rulechain/link-labels.component';
 import { RuleNodeConfigComponent } from './rule-node-config.component';
+import {ManageRuleChainEdgesDialogComponent} from "@home/pages/rulechain/manage-rulechain-edges-dialog.component";
 
 @NgModule({
   declarations: [
     RuleChainComponent,
     RuleChainTabsComponent,
+    ManageRuleChainEdgesDialogComponent,
     RuleChainPageComponent,
     RuleNodeComponent,
     RuleNodeDetailsComponent,

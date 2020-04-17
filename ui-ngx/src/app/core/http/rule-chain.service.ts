@@ -60,8 +60,8 @@ export class RuleChainService {
     private translate: TranslateService
   ) { }
 
-  public getRuleChains(pageLink: PageLink, config?: RequestConfig): Observable<PageData<RuleChain>> {
-    return this.http.get<PageData<RuleChain>>(`/api/ruleChains${pageLink.toQuery()}&type=${systemRuleChainType}`,
+  public getRuleChains(pageLink: PageLink, type: string, config?: RequestConfig): Observable<PageData<RuleChain>> {
+    return this.http.get<PageData<RuleChain>>(`/api/ruleChains${pageLink.toQuery()}&type=${type}`,
       defaultHttpOptionsFromConfig(config));
   }
 
@@ -316,8 +316,7 @@ export class RuleChainService {
   }
 
   public getEdgesRuleChains(pageLink: PageLink, config?: RequestConfig): Observable<PageData<RuleChain>> {
-    return this.http.get<PageData<RuleChain>>(`/api/ruleChains${pageLink.toQuery()}&type=${edgeRuleChainType}`,
-      defaultHttpOptionsFromConfig(config));
+    return this.getRuleChains(pageLink, edgeRuleChainType, config);
   }
 
 }

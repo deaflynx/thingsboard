@@ -106,7 +106,7 @@ const routes: Routes = [
         data: {
           auth: [Authority.TENANT_ADMIN, Authority.CUSTOMER_USER],
           title: 'edge.rulechains',
-          rulechainsType: 'edge',
+          ruleChainsType: 'edge',
           breadcrumb: {
             label: 'edge.rulechains',
             icon: 'settings_ethernet'

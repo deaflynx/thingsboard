@@ -15,35 +15,35 @@
 ///
 
 import {Component, Inject, OnInit, SkipSelf} from '@angular/core';
-import { ErrorStateMatcher } from '@angular/material/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {ErrorStateMatcher} from '@angular/material/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Store} from '@ngrx/store';
 import {AppState} from '@core/core.state';
 import {FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm} from '@angular/forms';
 import {EntityType} from '@shared/models/entity-type.models';
-import {DashboardService} from '@core/http/dashboard.service';
+import {RuleChainService} from "@core/http/rule-chain.service";
 import {forkJoin, Observable} from 'rxjs';
-import { DialogComponent } from '@shared/components/dialog.component';
-import { Router } from '@angular/router';
+import {DialogComponent} from '@shared/components/dialog.component';
+import {Router} from '@angular/router';
 
-export type ManageDashboardEdgesActionType = 'assign' | 'manage' | 'unassign';
+export type ManageRuleChainEdgesActionType = 'assign' | 'manage' | 'unassign';
 
-export interface ManageDashboardEdgesDialogData {
-  actionType: ManageDashboardEdgesActionType;
-  dashboardIds: Array<string>;
+export interface ManageRuleChainEdgesDialogData {
+  actionType: ManageRuleChainEdgesActionType;
+  ruleChainIds: Array<string>;
   assignedEdgesIds?: Array<string>;
 }
 
 @Component({
-  selector: 'tb-manage-dashboard-edges-dialog',
-  templateUrl: './manage-dashboard-edges-dialog.component.html',
-  providers: [{provide: ErrorStateMatcher, useExisting: ManageDashboardEdgesDialogComponent}],
+  selector: 'tb-manage-rulechain-edges-dialog',
+  templateUrl: './manage-rulechain-edges-dialog.component.html',
+  providers: [{provide: ErrorStateMatcher, useExisting: ManageRuleChainEdgesDialogComponent}],
   styleUrls: []
 })
-export class ManageDashboardEdgesDialogComponent extends
-  DialogComponent<ManageDashboardEdgesDialogComponent, boolean> implements OnInit, ErrorStateMatcher {
+export class ManageRuleChainEdgesDialogComponent extends
+  DialogComponent<ManageRuleChainEdgesDialogComponent, boolean> implements OnInit, ErrorStateMatcher {
 
-  dashboardEdgesFormGroup: FormGroup;
+  ruleChainEdgesFormGroup: FormGroup;
 
   submitted = false;
 
@@ -57,35 +57,35 @@ export class ManageDashboardEdgesDialogComponent extends
 
   constructor(protected store: Store<AppState>,
               protected router: Router,
-              @Inject(MAT_DIALOG_DATA) public data: ManageDashboardEdgesDialogData,
-              private dashboardService: DashboardService,
+              @Inject(MAT_DIALOG_DATA) public data: ManageRuleChainEdgesDialogData,
+              private ruleChainService: RuleChainService,
               @SkipSelf() private errorStateMatcher: ErrorStateMatcher,
-              public dialogRef: MatDialogRef<ManageDashboardEdgesDialogComponent, boolean>,
+              public dialogRef: MatDialogRef<ManageRuleChainEdgesDialogComponent, boolean>,
               public fb: FormBuilder) {
     super(store, router, dialogRef);
 
     this.assignedEdgesIds = data.assignedEdgesIds || [];
     switch (data.actionType) {
       case 'assign':
-        this.titleText = 'dashboard.assign-to-edges';
-        this.labelText = 'dashboard.assign-to-edges-text';
+        this.titleText = 'rulechain.assign-to-edges';
+        this.labelText = 'rulechain.assign-to-edges-text';
         this.actionName = 'action.assign';
         break;
       case 'manage':
-        this.titleText = 'dashboard.manage-assigned-edges';
-        this.labelText = 'dashboard.assigned-edges';
+        this.titleText = 'rulechain.manage-assigned-edges';
+        this.labelText = 'rulechain.assigned-edges';
         this.actionName = 'action.update';
         break;
       case 'unassign':
-        this.titleText = 'dashboard.unassign-from-edges';
-        this.labelText = 'dashboard.unassign-from-edges-text';
+        this.titleText = 'rulechain.unassign-from-edges';
+        this.labelText = 'rulechain.unassign-from-edges-text';
         this.actionName = 'action.unassign';
         break;
     }
   }
 
   ngOnInit(): void {
-    this.dashboardEdgesFormGroup = this.fb.group({
+    this.ruleChainEdgesFormGroup = this.fb.group({
       assignedEdgeIds: [[...this.assignedEdgesIds]]
     });
   }
@@ -102,12 +102,12 @@ export class ManageDashboardEdgesDialogComponent extends
 
   submit(): void {
     this.submitted = true;
-    const edgeIds: Array<string> = this.dashboardEdgesFormGroup.get('assignedEdgeIds').value;
+    const edgeIds: Array<string> = this.ruleChainEdgesFormGroup.get('assignedEdgeIds').value;
     const tasks: Observable<any>[] = [];
 
-    this.data.dashboardIds.forEach(
-      (dashboardId) => {
-        tasks.push(this.getManageDashboardEdgesTask(dashboardId, edgeIds));
+    this.data.ruleChainIds.forEach(
+      (ruleChainId) => {
+        tasks.push(this.getManageRuleChainEdgesTask(ruleChainId, edgeIds));
       }
     );
     forkJoin(tasks).subscribe(
@@ -117,16 +117,16 @@ export class ManageDashboardEdgesDialogComponent extends
     );
   }
 
-  private getManageDashboardEdgesTask(dashboardId: string, edgeIds: Array<string>): Observable<any> {
+  private getManageRuleChainEdgesTask(ruleChainId: string, edgeIds: Array<string>): Observable<any> {
     switch (this.data.actionType) {
       case 'assign':
-        return this.dashboardService.addDashboardEdges(dashboardId, edgeIds);
+        return this.ruleChainService.addRuleChainEdges(ruleChainId, edgeIds);
         break;
       case 'manage':
-        return this.dashboardService.updateDashboardEdges(dashboardId, edgeIds);
+        return this.ruleChainService.updateRuleChainEdges(ruleChainId, edgeIds);
         break;
       case 'unassign':
-        return this.dashboardService.removeDashboardEdges(dashboardId, edgeIds);
+        return this.ruleChainService.removeRuleChainEdges(ruleChainId, edgeIds);
         break;
     }
   }

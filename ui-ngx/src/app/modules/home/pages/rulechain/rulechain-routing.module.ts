@@ -165,6 +165,7 @@ const routes: Routes = [
             label: 'rulechain.edge-rulechains',
             icon: 'settings_ethernet'
           },
+          type: 'edge'
         },
         children: [
           {
@@ -173,7 +174,7 @@ const routes: Routes = [
             data: {
               auth: [Authority.TENANT_ADMIN],
               title: 'edge.rulechains',
-              ruleChainsType: 'edges'
+              ruleChainsScope: 'edges'
             },
             resolve: {
               entitiesTableConfig: RuleChainsTableConfigResolver
@@ -217,11 +218,7 @@ const routes: Routes = [
             data: {
               auth: [Authority.TENANT_ADMIN],
               title: 'rulechain.rulechains',
-              ruleChainsType: 'tenant',
-              breadcrumb: {
-                label: 'rulechain.system-rulechains',
-                icon: 'settings_ethernet'
-              }
+              ruleChainsScope: 'tenant'
             },
             resolve: {
               entitiesTableConfig: RuleChainsTableConfigResolver

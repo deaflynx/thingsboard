@@ -17,12 +17,9 @@
 import {Injectable} from '@angular/core';
 
 import {
-  ActivatedRoute,
   ActivatedRouteSnapshot,
   Resolve,
-  Router,
-  RouterState,
-  RouterStateSnapshot
+  Router
 } from '@angular/router';
 import {
   checkBoxCell,
@@ -34,21 +31,26 @@ import {TranslateService} from '@ngx-translate/core';
 import {DatePipe} from '@angular/common';
 import {EntityType, entityTypeResources, entityTypeTranslations} from '@shared/models/entity-type.models';
 import {EntityAction} from '@home/models/entity/entity-component.models';
-import {RuleChain} from '@shared/models/rule-chain.models';
+import {edgeRuleChainType, RuleChain, systemRuleChainType} from '@shared/models/rule-chain.models';
 import {RuleChainService} from '@core/http/rule-chain.service';
 import {RuleChainComponent} from '@modules/home/pages/rulechain/rulechain.component';
 import {DialogService} from '@core/services/dialog.service';
 import { RuleChainTabsComponent } from '@home/pages/rulechain/rulechain-tabs.component';
 import { ImportExportService } from '@home/components/import-export/import-export.service';
 import { ItemBufferService } from '@core/services/item-buffer.service';
-import {Observable} from "rxjs";
+import {isUndefined, isDefined} from "@core/utils";
+import {
+  ManageRuleChainEdgesActionType,
+  ManageRuleChainEdgesDialogComponent,
+  ManageRuleChainEdgesDialogData
+} from "@home/pages/rulechain/manage-rulechain-edges-dialog.component";
+
+import {MatDialog} from "@angular/material/dialog";
 
 @Injectable()
 export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<RuleChain>> {
 
   private readonly config: EntityTableConfig<RuleChain> = new EntityTableConfig<RuleChain>();
-
-  testType: string;
 
   constructor(private ruleChainService: RuleChainService,
               private dialogService: DialogService,
@@ -56,7 +58,8 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
               private itembuffer: ItemBufferService,
               private translate: TranslateService,
               private datePipe: DatePipe,
-              private router: Router) {
+              private router: Router,
+              private dialog: MatDialog) {
 
     this.config.entityType = EntityType.RULE_CHAIN;
     this.config.entityComponent = RuleChainComponent;
@@ -104,36 +107,55 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
       {
         name: this.translate.instant('rulechain.set-root'),
         icon: 'flag',
-        isEnabled: (ruleChain) => !ruleChain.root,
+        isEnabled: (ruleChain) => (!ruleChain.root && ruleChain.type === 'SYSTEM'),
         onAction: ($event, entity) => this.setRootRuleChain($event, entity)
+      },
+      {
+        name: this.translate.instant('rulechain.set-default-root-edge'),
+        icon: 'flag',
+        isEnabled: (ruleChain) => (!ruleChain.root && ruleChain.type === 'EDGE'),
+        onAction: ($event, entity) => this.setRootRuleChain($event, entity)
+      },
+      {
+        name: this.translate.instant('rulechain.manage-assigned-edges'),
+        icon: 'wifi_tethering',
+        isEnabled: (ruleChain) => (ruleChain.type === 'EDGE'),
+        onAction: ($event, entity) => this.manageAssignedEdges($event, entity)
       }
     );
 
     this.config.deleteEntityTitle = ruleChain => this.translate.instant('rulechain.delete-rulechain-title',
-      { ruleChainName: ruleChain.name });
+      {ruleChainName: ruleChain.name});
     this.config.deleteEntityContent = () => this.translate.instant('rulechain.delete-rulechain-text');
     this.config.deleteEntitiesTitle = count => this.translate.instant('rulechain.delete-rulechains-title', {count});
     this.config.deleteEntitiesContent = () => this.translate.instant('rulechain.delete-rulechains-text');
 
     this.config.loadEntity = id => this.ruleChainService.getRuleChain(id.id);
-    this.config.saveEntity = ruleChain => this.ruleChainService.saveRuleChain(ruleChain);
+    this.config.saveEntity = ruleChain => this.saveRuleChain(ruleChain);
     this.config.deleteEntity = id => this.ruleChainService.deleteRuleChain(id.id);
-    this.config.onEntityAction = action => this.onRuleChainAction(action);
     this.config.deleteEnabled = (ruleChain) => ruleChain && !ruleChain.root;
     this.config.entitySelectionEnabled = (ruleChain) => ruleChain && !ruleChain.root;
   }
 
   resolve(route: ActivatedRouteSnapshot): EntityTableConfig<RuleChain> {
+    const routeParams = route.params;
 
-    if (route.data.ruleChainsType === 'edges') {
-      this.config.tableTitle = this.translate.instant('rulechain.edge-rulechains');
-      this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getEdgesRuleChains(pageLink);
-    } else {
+    const stateParams = this.config.componentsData = {
+      ruleChainsScope: route.data.ruleChainsScope,
+      ruleChainsType: routeParams.type,
+      edge: routeParams.edge
+    };
+
+    if (this.config.componentsData.ruleChainsScope === 'tenant') {
       this.config.tableTitle = this.translate.instant('rulechain.system-rulechains');
-      this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getRuleChains(pageLink);
+      this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getRuleChains(pageLink, systemRuleChainType);
+      this.config.onEntityAction = action => this.onRuleChainAction(action);
     }
-
-    return this.config;
+    if (this.config.componentsData.ruleChainsScope === 'edges') {
+      this.config.tableTitle = this.translate.instant('rulechain.edge-rulechains');
+      this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getRuleChains(pageLink, edgeRuleChainType);
+    }
+    return this.config
   }
 
   importRuleChain($event: Event) {
@@ -153,6 +175,17 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
       $event.stopPropagation();
     }
     this.router.navigateByUrl(`ruleChains/${ruleChain.type.toLowerCase()}/${ruleChain.id.id}`);
+  }
+
+  saveRuleChain(ruleChain: RuleChain) {
+    if (isUndefined(ruleChain.type)) {
+      if (this.config.componentsData.ruleChainsScope == 'edges') {
+        ruleChain.type = edgeRuleChainType
+      } else {
+        ruleChain.type = systemRuleChainType
+      }
+    }
+    return this.ruleChainService.saveRuleChain(ruleChain);
   }
 
   exportRuleChain($event: Event, ruleChain: RuleChain) {
@@ -197,6 +230,35 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
         return true;
     }
     return false;
+  }
+
+  manageAssignedEdges($event: Event, ruleChain: RuleChain) {
+    const assignedEdgesIds = ruleChain.assignedEdges ?
+      ruleChain.assignedEdges.map(edgeInfo => edgeInfo.edgeId.id) : [];
+    this.showManageAssignedEdgesDialog($event, [ruleChain.id.id], 'manage', assignedEdgesIds);
+  }
+
+  showManageAssignedEdgesDialog($event: Event, ruleChainIds: Array<string>,
+                                actionType: ManageRuleChainEdgesActionType,
+                                assignedEdgesIds?: Array<string>) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.dialog.open<ManageRuleChainEdgesDialogComponent, ManageRuleChainEdgesDialogData,
+      boolean>(ManageRuleChainEdgesDialogComponent, {
+      disableClose: true,
+      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
+      data: {
+        ruleChainIds,
+        actionType,
+        assignedEdgesIds
+      }
+    }).afterClosed()
+      .subscribe((res) => {
+        if (res) {
+          this.config.table.updateData();
+        }
+      });
   }
 
 }

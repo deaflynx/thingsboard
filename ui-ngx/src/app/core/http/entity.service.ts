@@ -59,6 +59,7 @@ import {Device, DeviceCredentialsType, DeviceSearchQuery} from '@shared/models/d
 import {EntityViewSearchQuery} from '@shared/models/entity-view.models';
 import {AttributeService} from '@core/http/attribute.service';
 import {EdgeSearchQuery} from "@shared/models/edge.models";
+import {RuleChain} from "@shared/models/rule-chain.models";
 
 @Injectable({
   providedIn: 'root'
@@ -308,7 +309,7 @@ export class EntityService {
         break;
       case EntityType.RULE_CHAIN:
         pageLink.sortOrder.property = 'name';
-        entitiesObservable = this.ruleChainService.getRuleChains(pageLink, config);
+        entitiesObservable = this.ruleChainService.getRuleChains(pageLink, subType, config);
         break;
       case EntityType.DASHBOARD:
         pageLink.sortOrder.property = 'title';
