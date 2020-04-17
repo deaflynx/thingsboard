@@ -38,7 +38,7 @@ import {DialogService} from '@core/services/dialog.service';
 import { RuleChainTabsComponent } from '@home/pages/rulechain/rulechain-tabs.component';
 import { ImportExportService } from '@home/components/import-export/import-export.service';
 import { ItemBufferService } from '@core/services/item-buffer.service';
-import {isUndefined, isDefined} from "@core/utils";
+import {isUndefined} from "@core/utils";
 import {
   ManageRuleChainEdgesActionType,
   ManageRuleChainEdgesDialogComponent,
@@ -143,7 +143,8 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
     const stateParams = this.config.componentsData = {
       ruleChainsScope: route.data.ruleChainsScope,
       ruleChainsType: routeParams.type,
-      edge: routeParams.edge
+      edge: routeParams.edge,
+      edgeId: routeParams.edgeId
     };
 
     if (this.config.componentsData.ruleChainsScope === 'tenant') {
@@ -151,9 +152,13 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
       this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getRuleChains(pageLink, systemRuleChainType);
       this.config.onEntityAction = action => this.onRuleChainAction(action);
     }
-    if (this.config.componentsData.ruleChainsScope === 'edges') {
+    else if (this.config.componentsData.ruleChainsScope === 'edges') {
       this.config.tableTitle = this.translate.instant('rulechain.edge-rulechains');
       this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getRuleChains(pageLink, edgeRuleChainType);
+    }
+    else if (this.config.componentsData.ruleChainsScope === 'edge') {
+      this.config.tableTitle = this.translate.instant('rulechain.edge-rulechains');
+      this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getEdgeRuleChains(routeParams.edgeId, pageLink);
     }
     return this.config
   }

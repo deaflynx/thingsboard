@@ -155,9 +155,7 @@ const routes: Routes = [
         icon: 'settings_ethernet'
       }
     },
-
     children: [
-
       {
         path: 'edge',
         data: {
@@ -202,7 +200,6 @@ const routes: Routes = [
           }
         ]
       },
-
       {
         path: 'system',
         data: {

@@ -53,6 +53,22 @@ const routes: Routes = [
         }
       },
       {
+        path: ':edgeId/ruleChains',
+        component: EntitiesTableComponent,
+        data: {
+          auth: [Authority.TENANT_ADMIN, Authority.CUSTOMER_USER],
+          title: 'edge.rulechains',
+          ruleChainsScope: 'edge',
+          breadcrumb: {
+            label: 'edge.rulechains',
+            icon: 'settings_ethernet'
+          },
+        },
+        resolve: {
+          entitiesTableConfig: RuleChainsTableConfigResolver
+        }
+      },
+      {
         path: ':edgeId/assets',
         component: EntitiesTableComponent,
         data: {
@@ -98,22 +114,6 @@ const routes: Routes = [
         },
         resolve: {
           entitiesTableConfig: EntityViewsTableConfigResolver
-        }
-      },
-      {
-        path: ':edgeId/ruleChains',
-        component: EntitiesTableComponent,
-        data: {
-          auth: [Authority.TENANT_ADMIN, Authority.CUSTOMER_USER],
-          title: 'edge.rulechains',
-          ruleChainsType: 'edge',
-          breadcrumb: {
-            label: 'edge.rulechains',
-            icon: 'settings_ethernet'
-          },
-        },
-        resolve: {
-          entitiesTableConfig: RuleChainsTableConfigResolver
         }
       },
       {
@@ -165,3 +165,20 @@ const routes: Routes = [
   ]
 })
 export class EdgeRoutingModule { }
+
+// {
+//   path: ':edgeId/ruleChains',
+//     component: EntitiesTableComponent,
+//   data: {
+//   auth: [Authority.TENANT_ADMIN, Authority.CUSTOMER_USER],
+//     title: 'edge.rulechains',
+//     ruleChainsScope: 'edge',
+//     breadcrumb: {
+//     label: 'edge.rulechains',
+//       icon: 'settings_ethernet'
+//   },
+// },
+//   resolve: {
+//     entitiesTableConfig: RuleChainsTableConfigResolver
+//   }
+// }
