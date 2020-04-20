@@ -17,6 +17,7 @@
 import {Injectable} from '@angular/core';
 
 import {
+  ActivatedRoute,
   ActivatedRouteSnapshot,
   Resolve,
   Router
@@ -59,7 +60,8 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
               private translate: TranslateService,
               private datePipe: DatePipe,
               private router: Router,
-              private dialog: MatDialog) {
+              private dialog: MatDialog,
+              private route: ActivatedRoute) {
 
     this.config.entityType = EntityType.RULE_CHAIN;
     this.config.entityComponent = RuleChainComponent;
@@ -135,6 +137,7 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
     this.config.deleteEntityContent = () => this.translate.instant('rulechain.delete-rulechain-text');
     this.config.deleteEntitiesTitle = count => this.translate.instant('rulechain.delete-rulechains-title', {count});
     this.config.deleteEntitiesContent = () => this.translate.instant('rulechain.delete-rulechains-text');
+    this.config.onEntityAction = action => this.onRuleChainAction(action);
 
     this.config.loadEntity = id => this.ruleChainService.getRuleChain(id.id);
     this.config.saveEntity = ruleChain => this.saveRuleChain(ruleChain);
@@ -146,7 +149,7 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
   resolve(route: ActivatedRouteSnapshot): EntityTableConfig<RuleChain> {
     const routeParams = route.params;
 
-    const stateParams = this.config.componentsData = {
+    this.config.componentsData = {
       ruleChainsScope: route.data.ruleChainsScope,
       ruleChainsType: routeParams.type,
       edge: routeParams.edge,
@@ -156,7 +159,6 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
     if (this.config.componentsData.ruleChainsScope === 'tenant') {
       this.config.tableTitle = this.translate.instant('rulechain.system-rulechains');
       this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getRuleChains(pageLink, systemRuleChainType);
-      this.config.onEntityAction = action => this.onRuleChainAction(action);
     }
     else if (this.config.componentsData.ruleChainsScope === 'edges') {
       this.config.tableTitle = this.translate.instant('rulechain.edge-rulechains');
@@ -176,7 +178,7 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
     this.importExport.importRuleChain().subscribe((ruleChainImport) => {
       if (ruleChainImport) {
         this.itembuffer.storeRuleChainImport(ruleChainImport);
-        this.router.navigateByUrl(`ruleChains/ruleChain/import`);
+        this.router.navigateByUrl(`${this.router.url}/ruleChain/import`);
       }
     });
   }

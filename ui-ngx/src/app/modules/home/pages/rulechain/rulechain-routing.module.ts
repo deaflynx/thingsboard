@@ -179,6 +179,25 @@ const routes: Routes = [
             }
           },
           {
+            path: 'ruleChain/import',
+            component: RuleChainPageComponent,
+            canActivate: [RuleChainImportGuard],
+            canDeactivate: [ConfirmOnExitGuard],
+            data: {
+              breadcrumb: {
+                labelFunction: importRuleChainBreadcumbLabelFunction,
+                icon: 'settings_ethernet'
+              } as BreadCrumbConfig,
+              auth: [Authority.TENANT_ADMIN],
+              title: 'rulechain.rulechain',
+              import: true,
+              type: edgeRuleChainType
+            },
+            resolve: {
+              ruleNodeComponents: RuleNodeComponentsResolver
+            }
+          },
+          {
             path: ':ruleChainId',
             component: RuleChainPageComponent,
             canDeactivate: [ConfirmOnExitGuard],
@@ -240,27 +259,27 @@ const routes: Routes = [
               ruleChainMetaData: ResolvedRuleChainMetaDataResolver,
               ruleNodeComponents: RuleNodeComponentsResolver
             }
+          },
+          {
+            path: 'ruleChain/import',
+            component: RuleChainPageComponent,
+            canActivate: [RuleChainImportGuard],
+            canDeactivate: [ConfirmOnExitGuard],
+            data: {
+              breadcrumb: {
+                labelFunction: importRuleChainBreadcumbLabelFunction,
+                icon: 'settings_ethernet'
+              } as BreadCrumbConfig,
+              auth: [Authority.TENANT_ADMIN],
+              title: 'rulechain.rulechain',
+              import: true,
+              type: systemRuleChainType
+            },
+            resolve: {
+              ruleNodeComponents: RuleNodeComponentsResolver
+            }
           }
         ]
-      },
-
-      {
-        path: 'ruleChain/import',
-        component: RuleChainPageComponent,
-        canActivate: [RuleChainImportGuard],
-        canDeactivate: [ConfirmOnExitGuard],
-        data: {
-          breadcrumb: {
-            labelFunction: importRuleChainBreadcumbLabelFunction,
-            icon: 'settings_ethernet'
-          } as BreadCrumbConfig,
-          auth: [Authority.TENANT_ADMIN],
-          title: 'rulechain.rulechain',
-          import: true
-        },
-        resolve: {
-          ruleNodeComponents: RuleNodeComponentsResolver
-        }
       }
     ]
   }
