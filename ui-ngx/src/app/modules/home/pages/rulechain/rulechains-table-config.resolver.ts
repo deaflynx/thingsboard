@@ -121,7 +121,13 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
         icon: 'wifi_tethering',
         isEnabled: (ruleChain) => (ruleChain.type === 'EDGE'),
         onAction: ($event, entity) => this.manageAssignedEdges($event, entity)
-      }
+      },
+      {
+        name: this.translate.instant('rulechain.set-default-root-edge'),
+        icon: 'flag',
+        isEnabled: (ruleChain) => (!ruleChain.root && ruleChain.type === 'EDGE'),
+        onAction: ($event, entity) => this.setDefaultRootEdgeRuleChain($event, entity)
+      },
     );
 
     this.config.deleteEntityTitle = ruleChain => this.translate.instant('rulechain.delete-rulechain-title',
@@ -160,7 +166,7 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
       this.config.tableTitle = this.translate.instant('rulechain.edge-rulechains');
       this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getEdgeRuleChains(routeParams.edgeId, pageLink);
     }
-    return this.config
+    return this.config;
   }
 
   importRuleChain($event: Event) {
@@ -264,6 +270,28 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
           this.config.table.updateData();
         }
       });
+  }
+
+  setDefaultRootEdgeRuleChain($event: Event, ruleChain: RuleChain) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.dialogService.confirm(
+      this.translate.instant('rulechain.set-default-root-edge-rulechain-title', {ruleChainName: ruleChain.name}),
+      this.translate.instant('rulechain.set-default-root-edge-rulechain-text'),
+      this.translate.instant('action.no'),
+      this.translate.instant('action.yes'),
+      true
+    ).subscribe((res) => {
+        if (res) {
+          this.ruleChainService.setDefaultRootEdgeRuleChain(ruleChain.id.id).subscribe(
+            () => {
+              this.config.table.updateData();
+            }
+          );
+        }
+      }
+    );
   }
 
 }
