@@ -27,6 +27,7 @@ import {DashboardsTableConfigResolver} from '@modules/home/pages/dashboard/dashb
 import { DashboardPageComponent } from '@home/pages/dashboard/dashboard-page.component';
 import { BreadCrumbConfig } from '@shared/components/breadcrumb';
 import { dashboardBreadcumbLabelFunction, DashboardResolver } from '@home/pages/dashboard/dashboard-routing.module';
+import {EdgesTableConfigResolver} from "@home/pages/edge/edges-table-config.resolver";
 
 const routes: Routes = [
   {
@@ -134,7 +135,23 @@ const routes: Routes = [
             }
           }
         ]
-      }
+      },
+      {
+        path: ':customerId/edges',
+        component: EntitiesTableComponent,
+        data: {
+          auth: [Authority.TENANT_ADMIN],
+          title: 'customer.edges',
+          assetsType: 'customer',
+          breadcrumb: {
+            label: 'customer.edges',
+            icon: 'wifi_tethering'
+          }
+        },
+        resolve: {
+          entitiesTableConfig: EdgesTableConfigResolver
+        }
+      },
     ]
   }
 ];

@@ -100,6 +100,17 @@ export class CustomersTableConfigResolver implements Resolve<EntityTableConfig<C
         icon: 'dashboard',
         isEnabled: (customer) => true,
         onAction: ($event, entity) => this.manageCustomerDashboards($event, entity)
+      },
+      {
+        name: this.translate.instant('customer.manage-customer-edges'),
+        nameFunction: (customer) => {
+          return customer.additionalInfo && customer.additionalInfo.isPublic
+            ? this.translate.instant('customer.manage-public-edge')
+            : this.translate.instant('customer.manage-customer-edges');
+        },
+        icon: 'wifi_tethering',
+        isEnabled: (customer) => true,
+        onAction: ($event, entity) => this.manageCustomerEdges($event, entity)
       }
     );
 
@@ -152,6 +163,13 @@ export class CustomersTableConfigResolver implements Resolve<EntityTableConfig<C
     this.router.navigateByUrl(`customers/${customer.id.id}/dashboards`);
   }
 
+  manageCustomerEdges($event: Event, customer: Customer) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.router.navigateByUrl(`customers/${customer.id.id}/edges`);
+  }
+
   onCustomerAction(action: EntityAction<Customer>): boolean {
     switch (action.action) {
       case 'manageUsers':
@@ -165,6 +183,9 @@ export class CustomersTableConfigResolver implements Resolve<EntityTableConfig<C
         return true;
       case 'manageDashboards':
         this.manageCustomerDashboards(action.event, action.entity);
+        return true;
+      case 'manageEdges':
+        this.manageCustomerEdges(action.event, action.entity);
         return true;
     }
     return false;

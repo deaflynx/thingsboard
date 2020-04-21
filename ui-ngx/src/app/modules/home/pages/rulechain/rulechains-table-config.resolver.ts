@@ -113,12 +113,6 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
         onAction: ($event, entity) => this.setRootRuleChain($event, entity)
       },
       {
-        name: this.translate.instant('rulechain.set-default-root-edge'),
-        icon: 'flag',
-        isEnabled: (ruleChain) => (!ruleChain.root && ruleChain.type === 'EDGE'),
-        onAction: ($event, entity) => this.setRootRuleChain($event, entity)
-      },
-      {
         name: this.translate.instant('rulechain.manage-assigned-edges'),
         icon: 'wifi_tethering',
         isEnabled: (ruleChain) => (ruleChain.type === 'EDGE'),

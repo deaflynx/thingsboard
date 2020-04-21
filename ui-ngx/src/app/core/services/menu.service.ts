@@ -181,12 +181,12 @@ export class MenuService {
       {
         name: 'rulechain.rulechains',
         type: 'toggle',
-        path: '/ruleChains/system',
+        path: '/ruleChains',
         height: '80px',
         icon: 'settings_ethernet',
         pages: [
           {
-            name: 'rulechain.rulechains',
+            name: 'rulechain.system-rulechains',
             type: 'link',
             path: '/ruleChains/system',
             icon: 'settings_ethernet'
@@ -258,9 +258,9 @@ export class MenuService {
         name: 'rulechain.management',
         places: [
           {
-            name: 'rulechain.rulechains',
+            name: 'rulechain.system-rulechains',
             icon: 'settings_ethernet',
-            path: '/ruleChains'
+            path: '/ruleChains/system'
           },
           {
             name: 'rulechain.edge-rulechains',
