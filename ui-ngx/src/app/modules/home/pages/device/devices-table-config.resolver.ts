@@ -157,7 +157,7 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
       new EntityTableColumn<DeviceInfo>('type', 'device.device-type', '25%'),
       new EntityTableColumn<DeviceInfo>('label', 'device.label', '25%')
     ];
-    if (deviceScope === 'tenant') {
+    if (deviceScope === 'tenant' || 'edge') {
       columns.push(
         new EntityTableColumn<DeviceInfo>('customerTitle', 'customer.customer', '25%'),
         new EntityTableColumn<DeviceInfo>('customerIsPublic', 'device.public', '60px',
@@ -193,7 +193,7 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
 
   configureCellActions(deviceScope: string): Array<CellActionDescriptor<DeviceInfo>> {
     const actions: Array<CellActionDescriptor<DeviceInfo>> = [];
-    if (deviceScope === 'tenant') {
+    if (deviceScope === 'tenant' || 'edge') {
       actions.push(
         {
           name: this.translate.instant('device.make-public'),
@@ -276,7 +276,7 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
 
   configureGroupActions(deviceScope: string): Array<GroupActionDescriptor<DeviceInfo>> {
     const actions: Array<GroupActionDescriptor<DeviceInfo>> = [];
-    if (deviceScope === 'tenant') {
+    if (deviceScope === 'tenant' || 'edge') {
       actions.push(
         {
           name: this.translate.instant('device.assign-devices'),
