@@ -81,7 +81,6 @@ export class EdgesTableConfigResolver implements Resolve<EntityTableConfig<EdgeI
     this.config.entityComponent = EdgeComponent;
     this.config.entityTabsComponent = EdgeTabsComponent;
     this.config.entityTranslations = entityTypeTranslations.get(EntityType.EDGE);
-    console.log("TTT", this.config.entityTranslations);
     this.config.entityResources = entityTypeResources.get(EntityType.EDGE);
 
     this.config.deleteEntityTitle = edge => this.translate.instant('edge.delete-edge-title', {edgeName: edge.name});

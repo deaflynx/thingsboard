@@ -142,7 +142,7 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
         this.config.cellActionDescriptors = this.configureCellActions(this.config.componentsData.deviceScope);
         this.config.groupActionDescriptors = this.configureGroupActions(this.config.componentsData.deviceScope);
         this.config.addActionDescriptors = this.configureAddActions(this.config.componentsData.deviceScope);
-        this.config.addEnabled = this.config.componentsData.deviceScope !== 'customer_user';
+        this.config.addEnabled = this.config.componentsData.deviceScope !== ('customer_user' && 'edge');
         this.config.entitiesDeleteEnabled = this.config.componentsData.deviceScope === 'tenant';
         this.config.deleteEnabled = () => this.config.componentsData.deviceScope === 'tenant';
         return this.config;
