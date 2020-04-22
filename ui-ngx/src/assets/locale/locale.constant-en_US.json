@@ -928,7 +928,6 @@
         "customer-name-starts-with": "Customers whose names start with '{{prefix}}'",
         "type-user": "User",
         "type-users": "Users",
-        "type-edge": "Edge",
         "list-of-users": "{ count, plural, 1 {One user} other {List of # users} }",
         "user-name-starts-with": "Users whose names start with '{{prefix}}'",
         "type-dashboard": "Dashboard",

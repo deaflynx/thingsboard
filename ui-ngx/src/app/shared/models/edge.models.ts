@@ -33,7 +33,7 @@ export interface Edge extends BaseData<EdgeId> {
 
 export interface EdgeInfo extends Edge {
   customerTitle: string;
-  customerIsPublic: boolean
+  customerIsPublic: boolean;
 }
 
 export interface EdgeSearchQuery extends EntitySearchQuery {

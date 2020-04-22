@@ -91,6 +91,7 @@ const routes: Routes = [
           auth: [Authority.TENANT_ADMIN, Authority.CUSTOMER_USER],
           title: 'edge.devices',
           devicesType: 'edge',
+          edgesType: 'devices',
           breadcrumb: {
             label: 'edge.devices',
             icon: 'devices_other'

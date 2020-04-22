@@ -81,6 +81,7 @@ export class EdgesTableConfigResolver implements Resolve<EntityTableConfig<EdgeI
     this.config.entityComponent = EdgeComponent;
     this.config.entityTabsComponent = EdgeTabsComponent;
     this.config.entityTranslations = entityTypeTranslations.get(EntityType.EDGE);
+    console.log("TTT", this.config.entityTranslations);
     this.config.entityResources = entityTypeResources.get(EntityType.EDGE);
 
     this.config.deleteEntityTitle = edge => this.translate.instant('edge.delete-edge-title', {edgeName: edge.name});
@@ -200,7 +201,7 @@ export class EdgesTableConfigResolver implements Resolve<EntityTableConfig<EdgeI
       {
         name: this.translate.instant('edge.make-private'),
         icon: 'reply',
-        isEnabled: (entity) => (entity.customerId && entity.customerId.id !== NULL_UUID && entity.customerIsPublic),
+        isEnabled: (entity) => (entity.customerId && entity.customerId.id !== NULL_UUID && !entity.customerIsPublic),
         onAction: ($event, entity) => this.unassignFromCustomer($event, entity)
       },
       {
@@ -356,7 +357,7 @@ export class EdgesTableConfigResolver implements Resolve<EntityTableConfig<EdgeI
       true
     ).subscribe((res) => {
         if (res) {
-          this.edgeService.makeEdgePublic(edge.id.id).subscribe(
+          this.edgeService.assignEdgeToPublicCustomer(edge.id.id).subscribe(
             () => {
               this.config.table.updateData();
             }

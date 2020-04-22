@@ -101,17 +101,6 @@ export class EntityFilterViewComponent implements ControlValueAccessor {
               {deviceType});
           }
           break;
-        case AliasFilterType.edgeType:
-          const edgeType = this.filter.edgeType;
-          prefix = this.filter.edgeNameFilter;
-          if (prefix && prefix.length) {
-            this.filterDisplayValue = this.translate.instant('alias.filter-type-edge-type-and-name-description',
-              {edgeType, prefix});
-          } else {
-            this.filterDisplayValue = this.translate.instant('alias.filter-type-edge-type-description',
-              {edgeType});
-          }
-          break;
         case AliasFilterType.entityViewType:
           const entityViewType = this.filter.entityViewType;
           prefix = this.filter.entityViewNameFilter;
@@ -121,6 +110,17 @@ export class EntityFilterViewComponent implements ControlValueAccessor {
           } else {
             this.filterDisplayValue = this.translate.instant('alias.filter-type-entity-view-type-description',
               {entityViewType});
+          }
+          break;
+        case AliasFilterType.edgeType:
+          const edgeType = this.filter.edgeType;
+          prefix = this.filter.edgeNameFilter;
+          if (prefix && prefix.length) {
+            this.filterDisplayValue = this.translate.instant('alias.filter-type-edge-type-and-name-description',
+              {edgeType, prefix});
+          } else {
+            this.filterDisplayValue = this.translate.instant('alias.filter-type-edge-type-description',
+              {edgeType});
           }
           break;
         case AliasFilterType.relationsQuery:
@@ -219,17 +219,7 @@ export class EntityFilterViewComponent implements ControlValueAccessor {
             this.filterDisplayValue = this.translate.instant('alias.filter-type-device-search-query-description',
               translationValues
             );
-          } else if (this.filter.type === AliasFilterType.edgeSearchQuery) {
-          const edgeTypesQuoted = [];
-          this.filter.edgeTypes.forEach((filterEdgeType) => {
-            edgeTypesQuoted.push(`'${filterEdgeType}'`);
-          });
-          const edgeTypesText = edgeTypesQuoted.join(', ');
-          translationValues.edgeTypes = edgeTypesText;
-          this.filterDisplayValue = this.translate.instant('alias.filter-type-edge-search-query-description',
-            translationValues
-          );
-        } else if (this.filter.type === AliasFilterType.entityViewSearchQuery) {
+          } else if (this.filter.type === AliasFilterType.entityViewSearchQuery) {
             const entityViewTypesQuoted = [];
             this.filter.entityViewTypes.forEach((filterEntityViewType) => {
               entityViewTypesQuoted.push(`'${filterEntityViewType}'`);
@@ -239,11 +229,21 @@ export class EntityFilterViewComponent implements ControlValueAccessor {
             this.filterDisplayValue = this.translate.instant('alias.filter-type-entity-view-search-query-description',
               translationValues
             );
+          } else if (this.filter.type === AliasFilterType.edgeSearchQuery) {
+            const edgeTypesQuoted = [];
+            this.filter.edgeTypes.forEach((filterEdgeType) => {
+              edgeTypesQuoted.push(`'${filterEdgeType}'`);
+            });
+            const edgeTypesText = edgeTypesQuoted.join(', ');
+            translationValues.edgeTypes = edgeTypesText;
+            this.filterDisplayValue = this.translate.instant('alias.filter-type-edge-search-query-description',
+              translationValues
+            );
           }
           break;
-        default:
-          this.filterDisplayValue = this.filter.type;
-          break;
+          default:
+            this.filterDisplayValue = this.filter.type;
+            break;
       }
     } else {
       this.filterDisplayValue = '';

@@ -117,19 +117,19 @@ export class EntitySubTypeAutocompleteComponent implements ControlValueAccessor,
           this.subTypes = null;
         });
         break;
-      case EntityType.EDGE:
-        this.selectEntitySubtypeText = 'edge.select-edge-type';
-        this.entitySubtypeText = 'edge.edge-type';
-        this.entitySubtypeRequiredText = 'edge.edge-type-required';
-        this.broadcastSubscription = this.broadcast.on('edgeSaved', () => {
-          this.subTypes = null;
-        });
-        break;
       case EntityType.ENTITY_VIEW:
         this.selectEntitySubtypeText = 'entity-view.select-entity-view-type';
         this.entitySubtypeText = 'entity-view.entity-view-type';
         this.entitySubtypeRequiredText = 'entity-view.entity-view-type-required';
         this.broadcastSubscription = this.broadcast.on('entityViewSaved', () => {
+          this.subTypes = null;
+        });
+        break;
+      case EntityType.EDGE:
+        this.selectEntitySubtypeText = 'edge.select-edge-type';
+        this.entitySubtypeText = 'edge.edge-type';
+        this.entitySubtypeRequiredText = 'edge.edge-type-required';
+        this.broadcastSubscription = this.broadcast.on('edgeSaved', () => {
           this.subTypes = null;
         });
         break;
@@ -212,11 +212,11 @@ export class EntitySubTypeAutocompleteComponent implements ControlValueAccessor,
         case EntityType.DEVICE:
           subTypesObservable = this.deviceService.getDeviceTypes({ignoreLoading: true});
           break;
-        case EntityType.EDGE:
-          subTypesObservable = this.edgeService.getEdgeTypes({ignoreLoading: true});
-          break;
         case EntityType.ENTITY_VIEW:
           subTypesObservable = this.entityViewService.getEntityViewTypes({ignoreLoading: true});
+          break;
+        case EntityType.EDGE:
+          subTypesObservable = this.edgeService.getEdgeTypes({ignoreLoading: true});
           break;
       }
       if (subTypesObservable) {

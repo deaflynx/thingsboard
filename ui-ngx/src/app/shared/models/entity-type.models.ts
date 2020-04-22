@@ -227,7 +227,7 @@ export const entityTypeTranslations = new Map<EntityType | AliasEntityType, Enti
         type: 'entity.type-edge',
         typePlural: 'entity.type-edges',
         list: 'entity.list-of-edges',
-        nameStartsWith: 'edge.name-starts-with',
+        nameStartsWith: 'entity.edge-name-starts-with',
         details: 'edge.edge-details',
         add: 'edge.add',
         noEntities: 'edge.no-edges-text',
