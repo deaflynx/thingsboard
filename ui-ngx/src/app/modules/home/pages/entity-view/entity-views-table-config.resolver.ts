@@ -57,6 +57,10 @@ import {EntityViewTableHeaderComponent} from '@modules/home/pages/entity-view/en
 import {EntityViewId} from '@shared/models/id/entity-view-id';
 import { EntityViewTabsComponent } from '@home/pages/entity-view/entity-view-tabs.component';
 import {AssignToEdgeDialogComponent, AssignToEdgeDialogData} from "@home/dialogs/assign-to-edge-dialog.component";
+import {
+  AddEntitiesToEdgeDialogComponent,
+  AddEntitiesToEdgeDialogData
+} from "@home/dialogs/add-entities-to-edge-dialog.component";
 
 @Injectable()
 export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig<EntityViewInfo>> {
@@ -279,6 +283,16 @@ export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig
         }
       );
     }
+    if (entityViewScope === 'edge') {
+      actions.push(
+        {
+          name: this.translate.instant('entity-view.assign-new-entity-view'),
+          icon: 'add',
+          isEnabled: () => true,
+          onAction: ($event) => this.addEntityViewsToEdge($event)
+        }
+      );
+    }
     return actions;
   }
 
@@ -292,6 +306,26 @@ export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig
       panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
       data: {
         customerId: this.customerId,
+        entityType: EntityType.ENTITY_VIEW
+      }
+    }).afterClosed()
+      .subscribe((res) => {
+        if (res) {
+          this.config.table.updateData();
+        }
+      });
+  }
+
+  addEntityViewsToEdge($event: Event) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.dialog.open<AddEntitiesToEdgeDialogComponent, AddEntitiesToEdgeDialogData,
+      boolean>(AddEntitiesToEdgeDialogComponent, {
+      disableClose: true,
+      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
+      data: {
+        edgeId: this.edgeId,
         entityType: EntityType.ENTITY_VIEW
       }
     }).afterClosed()

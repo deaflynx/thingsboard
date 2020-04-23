@@ -165,20 +165,3 @@ const routes: Routes = [
   ]
 })
 export class EdgeRoutingModule { }
-
-// {
-//   path: ':edgeId/ruleChains',
-//     component: EntitiesTableComponent,
-//   data: {
-//   auth: [Authority.TENANT_ADMIN, Authority.CUSTOMER_USER],
-//     title: 'edge.rulechains',
-//     ruleChainsScope: 'edge',
-//     breadcrumb: {
-//     label: 'edge.rulechains',
-//       icon: 'settings_ethernet'
-//   },
-// },
-//   resolve: {
-//     entitiesTableConfig: RuleChainsTableConfigResolver
-//   }
-// }

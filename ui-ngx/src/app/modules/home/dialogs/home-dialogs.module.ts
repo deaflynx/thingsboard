@@ -18,16 +18,18 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '@app/shared/shared.module';
 import { AssignToCustomerDialogComponent } from '@modules/home/dialogs/assign-to-customer-dialog.component';
-import { AssignToEdgeDialogComponent } from "@home/dialogs/assign-to-edge-dialog.component";
 import { AddEntitiesToCustomerDialogComponent } from '@modules/home/dialogs/add-entities-to-customer-dialog.component';
 import { HomeDialogsService } from './home-dialogs.service';
+import { AssignToEdgeDialogComponent } from "@modules/home/dialogs/assign-to-edge-dialog.component";
+import { AddEntitiesToEdgeDialogComponent } from "@modules/home/dialogs/add-entities-to-edge-dialog.component";
 
 @NgModule({
   declarations:
   [
     AssignToCustomerDialogComponent,
     AddEntitiesToCustomerDialogComponent,
-    AssignToEdgeDialogComponent
+    AssignToEdgeDialogComponent,
+    AddEntitiesToEdgeDialogComponent
   ],
   imports: [
     CommonModule,
@@ -35,7 +37,9 @@ import { HomeDialogsService } from './home-dialogs.service';
   ],
   exports: [
     AssignToCustomerDialogComponent,
-    AddEntitiesToCustomerDialogComponent
+    AddEntitiesToCustomerDialogComponent,
+    AssignToEdgeDialogComponent,
+    AddEntitiesToEdgeDialogComponent
   ],
   providers: [
     HomeDialogsService

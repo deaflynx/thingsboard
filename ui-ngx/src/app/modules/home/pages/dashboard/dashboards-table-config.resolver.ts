@@ -71,6 +71,10 @@ import {
   ManageDashboardEdgesDialogComponent,
   ManageDashboardEdgesDialogData
 } from "@home/pages/dashboard/manage-dashboard-edges-dialog.component";
+import {
+  AddEntitiesToEdgeDialogComponent,
+  AddEntitiesToEdgeDialogData
+} from "@home/dialogs/add-entities-to-edge-dialog.component";
 
 
 @Injectable()
@@ -327,6 +331,16 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
         }
       );
     }
+    if (dashboardScope === 'edge') {
+      actions.push(
+        {
+          name: this.translate.instant('dashboard.assign-new-dashboard'),
+          icon: 'add',
+          isEnabled: () => true,
+          onAction: ($event) => this.addDashboardsToEdge($event)
+        }
+      );
+    }
     return actions;
   }
 
@@ -368,6 +382,26 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
       panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
       data: {
         customerId: this.config.componentsData.customerId,
+        entityType: EntityType.DASHBOARD
+      }
+    }).afterClosed()
+      .subscribe((res) => {
+        if (res) {
+          this.config.table.updateData();
+        }
+      });
+  }
+
+  addDashboardsToEdge($event: Event) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.dialog.open<AddEntitiesToEdgeDialogComponent, AddEntitiesToEdgeDialogData,
+      boolean>(AddEntitiesToEdgeDialogComponent, {
+      disableClose: true,
+      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
+      data: {
+        edgeId: this.config.componentsData.edgeId,
         entityType: EntityType.DASHBOARD
       }
     }).afterClosed()

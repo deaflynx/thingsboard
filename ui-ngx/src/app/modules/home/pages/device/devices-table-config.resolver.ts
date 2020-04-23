@@ -62,6 +62,10 @@ import {
 import { DeviceTabsComponent } from '@home/pages/device/device-tabs.component';
 import { HomeDialogsService } from '@home/dialogs/home-dialogs.service';
 import { AssignToEdgeDialogComponent, AssignToEdgeDialogData } from "@home/dialogs/assign-to-edge-dialog.component";
+import {
+  AddEntitiesToEdgeDialogComponent,
+  AddEntitiesToEdgeDialogData
+} from "@home/dialogs/add-entities-to-edge-dialog.component";
 
 @Injectable()
 export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<DeviceInfo>> {
@@ -142,7 +146,7 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
         this.config.cellActionDescriptors = this.configureCellActions(this.config.componentsData.deviceScope);
         this.config.groupActionDescriptors = this.configureGroupActions(this.config.componentsData.deviceScope);
         this.config.addActionDescriptors = this.configureAddActions(this.config.componentsData.deviceScope);
-        this.config.addEnabled = this.config.componentsData.deviceScope !== ('customer_user' && 'edge');
+        this.config.addEnabled = this.config.componentsData.deviceScope !== 'customer_user';
         this.config.entitiesDeleteEnabled = this.config.componentsData.deviceScope === 'tenant';
         this.config.deleteEnabled = () => this.config.componentsData.deviceScope === 'tenant';
         return this.config;
@@ -327,6 +331,16 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
         }
       );
     }
+    if (deviceScope === 'edge') {
+      actions.push(
+        {
+          name: this.translate.instant('device.assign-new-device'),
+          icon: 'add',
+          isEnabled: () => true,
+          onAction: ($event) => this.addDevicesToEdge($event)
+        }
+      );
+    }
     return actions;
   }
 
@@ -349,6 +363,26 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
       panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
       data: {
         customerId: this.customerId,
+        entityType: EntityType.DEVICE
+      }
+    }).afterClosed()
+      .subscribe((res) => {
+        if (res) {
+          this.config.table.updateData();
+        }
+      });
+  }
+
+  addDevicesToEdge($event: Event) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.dialog.open<AddEntitiesToEdgeDialogComponent, AddEntitiesToEdgeDialogData,
+      boolean>(AddEntitiesToEdgeDialogComponent, {
+      disableClose: true,
+      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
+      data: {
+        edgeId: this.edgeId,
         entityType: EntityType.DEVICE
       }
     }).afterClosed()

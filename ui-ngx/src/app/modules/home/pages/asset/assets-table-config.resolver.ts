@@ -48,7 +48,7 @@ import {
 } from '@modules/home/dialogs/assign-to-customer-dialog.component';
 import {
   AddEntitiesToCustomerDialogComponent,
-  AddEntitiesToCustomerDialogData
+  AddEntitiesToCustomerDialogData,
 } from '../../dialogs/add-entities-to-customer-dialog.component';
 import { Asset, AssetInfo } from '@app/shared/models/asset.models';
 import { AssetService } from '@app/core/http/asset.service';
@@ -62,6 +62,10 @@ import {
   AssignToEdgeDialogComponent,
   AssignToEdgeDialogData
 } from "@home/dialogs/assign-to-edge-dialog.component";
+import {
+  AddEntitiesToEdgeDialogComponent,
+  AddEntitiesToEdgeDialogData
+} from "@home/dialogs/add-entities-to-edge-dialog.component";
 
 @Injectable()
 export class AssetsTableConfigResolver implements Resolve<EntityTableConfig<AssetInfo>> {
@@ -299,6 +303,16 @@ export class AssetsTableConfigResolver implements Resolve<EntityTableConfig<Asse
         }
       );
     }
+    if (assetScope === 'edge') {
+      actions.push(
+        {
+          name: this.translate.instant('asset.assign-new-asset'),
+          icon: 'add',
+          isEnabled: () => true,
+          onAction: ($event) => this.addAssetsToEdge($event)
+        }
+      );
+    }
     return actions;
   }
 
@@ -321,6 +335,26 @@ export class AssetsTableConfigResolver implements Resolve<EntityTableConfig<Asse
       panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
       data: {
         customerId: this.customerId,
+        entityType: EntityType.ASSET
+      }
+    }).afterClosed()
+      .subscribe((res) => {
+        if (res) {
+          this.config.table.updateData();
+        }
+      });
+  }
+
+  addAssetsToEdge($event: Event) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.dialog.open<AddEntitiesToEdgeDialogComponent, AddEntitiesToEdgeDialogData,
+      boolean>(AddEntitiesToEdgeDialogComponent, {
+      disableClose: true,
+      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
+      data: {
+        edgeId: this.edgeId,
         entityType: EntityType.ASSET
       }
     }).afterClosed()

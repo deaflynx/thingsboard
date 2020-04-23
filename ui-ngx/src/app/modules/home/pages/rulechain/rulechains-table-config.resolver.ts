@@ -60,8 +60,7 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
               private translate: TranslateService,
               private datePipe: DatePipe,
               private router: Router,
-              private dialog: MatDialog,
-              private route: ActivatedRoute) {
+              private dialog: MatDialog) {
 
     this.config.entityType = EntityType.RULE_CHAIN;
     this.config.entityComponent = RuleChainComponent;
