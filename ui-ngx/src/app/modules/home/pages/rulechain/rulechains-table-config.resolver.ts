@@ -122,7 +122,6 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
     this.config.deleteEntityContent = () => this.translate.instant('rulechain.delete-rulechain-text');
     this.config.deleteEntitiesTitle = count => this.translate.instant('rulechain.delete-rulechains-title', {count});
     this.config.deleteEntitiesContent = () => this.translate.instant('rulechain.delete-rulechains-text');
-    this.config.onEntityAction = action => this.onRuleChainAction(action);
 
     this.config.loadEntity = id => this.ruleChainService.getRuleChain(id.id);
     this.config.saveEntity = ruleChain => this.saveRuleChain(ruleChain);
@@ -141,6 +140,8 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
     let ruleChainsScope = this.config.componentsData.ruleChainsScope;
     this.edgeId = routeParams.edgeId;
     this.config.addActionDescriptors = this.configureAddActions(ruleChainsScope);
+    this.config.onEntityAction = action => this.onRuleChainAction(action, ruleChainsScope);
+
     if (ruleChainsScope === 'tenant') {
       this.config.tableTitle = this.translate.instant('rulechain.system-rulechains');
       this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getRuleChains(pageLink, systemRuleChainType);
@@ -282,7 +283,7 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
     );
   }
 
-  onRuleChainAction(action: EntityAction<RuleChain>): boolean {
+  onRuleChainAction(action: EntityAction<RuleChain>, ruleChainsScope): boolean {
     switch (action.action) {
       case 'open':
         this.openRuleChain(action.event, action.entity);
@@ -291,8 +292,14 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
         this.exportRuleChain(action.event, action.entity);
         return true;
       case 'setRoot':
-        this.setRootRuleChain(action.event, action.entity);
-        return true;
+        if (ruleChainsScope === 'tenant') {
+          this.setRootRuleChain(action.event, action.entity);
+          return true;
+        }
+        if (ruleChainsScope === 'edges' || 'edge') {
+          this.setDefaultRootEdgeRuleChain(action.event, action.entity);
+          return true;
+        }
     }
     return false;
   }
@@ -350,7 +357,5 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
       }
     );
   }
-
-
 
 }
