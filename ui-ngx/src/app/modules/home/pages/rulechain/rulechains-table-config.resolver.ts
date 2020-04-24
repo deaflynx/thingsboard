@@ -26,7 +26,7 @@ import {
   checkBoxCell,
   DateEntityTableColumn,
   EntityTableColumn,
-  EntityTableConfig
+  EntityTableConfig, HeaderActionDescriptor
 } from '@home/models/entity/entities-table-config.models';
 import {TranslateService} from '@ngx-translate/core';
 import {DatePipe} from '@angular/common';
@@ -47,11 +47,18 @@ import {
 } from "@home/pages/rulechain/manage-rulechain-edges-dialog.component";
 
 import {MatDialog} from "@angular/material/dialog";
+import {
+  AddEntitiesToEdgeDialogComponent,
+  AddEntitiesToEdgeDialogData
+} from "@home/dialogs/add-entities-to-edge-dialog.component";
+import {Browser} from "leaflet";
+import edge = Browser.edge;
 
 @Injectable()
 export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<RuleChain>> {
 
   private readonly config: EntityTableConfig<RuleChain> = new EntityTableConfig<RuleChain>();
+  private edgeId: string;
 
   constructor(private ruleChainService: RuleChainService,
               private dialogService: DialogService,
@@ -77,21 +84,6 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
         }),
     );
 
-    this.config.addActionDescriptors.push(
-      {
-        name: this.translate.instant('rulechain.create-new-rulechain'),
-        icon: 'insert_drive_file',
-        isEnabled: () => true,
-        onAction: ($event) => this.config.table.addEntity($event)
-      },
-      {
-        name: this.translate.instant('rulechain.import'),
-        icon: 'file_upload',
-        isEnabled: () => true,
-        onAction: ($event) => this.importRuleChain($event)
-      }
-    );
-
     this.config.cellActionDescriptors.push(
       {
         name: this.translate.instant('rulechain.open-rulechain'),
@@ -108,19 +100,19 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
       {
         name: this.translate.instant('rulechain.set-root'),
         icon: 'flag',
-        isEnabled: (ruleChain) => (!ruleChain.root && ruleChain.type === 'SYSTEM'),
+        isEnabled: (ruleChain) => (!ruleChain.root && ruleChain.type === systemRuleChainType),
         onAction: ($event, entity) => this.setRootRuleChain($event, entity)
       },
       {
         name: this.translate.instant('rulechain.manage-assigned-edges'),
         icon: 'wifi_tethering',
-        isEnabled: (ruleChain) => (ruleChain.type === 'EDGE'),
+        isEnabled: (ruleChain) => (ruleChain.type === edgeRuleChainType),
         onAction: ($event, entity) => this.manageAssignedEdges($event, entity)
       },
       {
         name: this.translate.instant('rulechain.set-default-root-edge'),
         icon: 'flag',
-        isEnabled: (ruleChain) => (!ruleChain.root && ruleChain.type === 'EDGE'),
+        isEnabled: (ruleChain) => (!ruleChain.root && ruleChain.type === edgeRuleChainType),
         onAction: ($event, entity) => this.setDefaultRootEdgeRuleChain($event, entity)
       },
     );
@@ -141,27 +133,94 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
 
   resolve(route: ActivatedRouteSnapshot): EntityTableConfig<RuleChain> {
     const routeParams = route.params;
-
     this.config.componentsData = {
       ruleChainsScope: route.data.ruleChainsScope,
-      ruleChainsType: routeParams.type,
-      edge: routeParams.edge,
-      edgeId: routeParams.edgeId
+      ruleChainsType: routeParams.type
     };
 
-    if (this.config.componentsData.ruleChainsScope === 'tenant') {
+    let ruleChainsScope = this.config.componentsData.ruleChainsScope;
+    this.edgeId = routeParams.edgeId;
+    this.config.addActionDescriptors = this.configureAddActions(ruleChainsScope);
+    if (ruleChainsScope === 'tenant') {
       this.config.tableTitle = this.translate.instant('rulechain.system-rulechains');
       this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getRuleChains(pageLink, systemRuleChainType);
     }
-    else if (this.config.componentsData.ruleChainsScope === 'edges') {
+    if (ruleChainsScope === 'edges') {
       this.config.tableTitle = this.translate.instant('rulechain.edge-rulechains');
       this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getRuleChains(pageLink, edgeRuleChainType);
     }
-    else if (this.config.componentsData.ruleChainsScope === 'edge') {
+    if (ruleChainsScope === 'edge') {
       this.config.tableTitle = this.translate.instant('rulechain.edge-rulechains');
-      this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getEdgeRuleChains(routeParams.edgeId, pageLink);
+      this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getEdgeRuleChains(this.edgeId, pageLink);
     }
     return this.config;
+  }
+
+  configureAddActions(ruleChainsScope: string): Array<HeaderActionDescriptor> {
+    const actions: Array<HeaderActionDescriptor> = [];
+    if (ruleChainsScope === 'tenant') {
+      actions.push(
+        {
+          name: this.translate.instant('rulechain.create-new-rulechain'),
+            icon: 'insert_drive_file',
+          isEnabled: () => true,
+          onAction: ($event) => this.config.table.addEntity($event)
+        },
+        {
+          name: this.translate.instant('rulechain.import'),
+            icon: 'file_upload',
+          isEnabled: () => true,
+          onAction: ($event) => this.importRuleChain($event)
+        }
+      )
+    }
+    if (ruleChainsScope === 'edges') {
+      actions.push(
+        {
+          name: this.translate.instant('rulechain.create-new-edge-rulechain'),
+          icon: 'insert_drive_file',
+          isEnabled: () => true,
+          onAction: ($event) => this.config.table.addEntity($event)
+        },
+        {
+          name: this.translate.instant('rulechain.import-edge'),
+          icon: 'file_upload',
+          isEnabled: () => true,
+          onAction: ($event) => this.importRuleChain($event)
+        }
+      )
+    }
+    if (ruleChainsScope === 'edge') {
+      actions.push(
+        {
+          name: this.translate.instant('rulechain.assign-new-rulechain'),
+          icon: 'add',
+          isEnabled: () => true,
+          onAction: ($event) => this.addRuleChainsToEdge($event)
+        }
+      )
+    }
+    return actions;
+  }
+
+  addRuleChainsToEdge($event: Event) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.dialog.open<AddEntitiesToEdgeDialogComponent, AddEntitiesToEdgeDialogData,
+      boolean>(AddEntitiesToEdgeDialogComponent, {
+      disableClose: true,
+      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
+      data: {
+        edgeId: this.edgeId,
+        entityType: EntityType.RULE_CHAIN
+      }
+    }).afterClosed()
+      .subscribe((res) => {
+        if (res) {
+          this.config.table.updateData();
+        }
+      });
   }
 
   importRuleChain($event: Event) {
@@ -240,7 +299,10 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
 
   manageAssignedEdges($event: Event, ruleChain: RuleChain) {
     const assignedEdgesIds = ruleChain.assignedEdges ?
-      ruleChain.assignedEdges.map(edgeInfo => edgeInfo.edgeId.id) : [];
+      ruleChain.assignedEdges.map(
+        edgeInfo => edgeInfo.edgeId.id,
+        type => type.edge.type
+      ) : [];
     this.showManageAssignedEdgesDialog($event, [ruleChain.id.id], 'manage', assignedEdgesIds);
   }
 
@@ -288,5 +350,7 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
       }
     );
   }
+
+
 
 }

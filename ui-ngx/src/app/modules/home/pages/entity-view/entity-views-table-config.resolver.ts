@@ -157,7 +157,7 @@ export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig
       new EntityTableColumn<EntityViewInfo>('name', 'entity-view.name', '33%'),
       new EntityTableColumn<EntityViewInfo>('type', 'entity-view.entity-view-type', '33%'),
     ];
-    if (entityViewScope === 'tenant') {
+    if (entityViewScope === 'tenant' || 'edge') {
       columns.push(
         new EntityTableColumn<EntityViewInfo>('customerTitle', 'customer.customer', '33%'),
         new EntityTableColumn<EntityViewInfo>('customerIsPublic', 'entity-view.public', '60px',
@@ -187,7 +187,7 @@ export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig
 
   configureCellActions(entityViewScope: string): Array<CellActionDescriptor<EntityViewInfo>> {
     const actions: Array<CellActionDescriptor<EntityViewInfo>> = [];
-    if (entityViewScope === 'tenant') {
+    if (entityViewScope === 'tenant' || 'edge') {
       actions.push(
         {
           name: this.translate.instant('entity-view.make-public'),
@@ -248,7 +248,7 @@ export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig
 
   configureGroupActions(entityViewScope: string): Array<GroupActionDescriptor<EntityViewInfo>> {
     const actions: Array<GroupActionDescriptor<EntityViewInfo>> = [];
-    if (entityViewScope === 'tenant') {
+    if (entityViewScope === 'tenant' || 'edge') {
       actions.push(
         {
           name: this.translate.instant('entity-view.assign-entity-views'),

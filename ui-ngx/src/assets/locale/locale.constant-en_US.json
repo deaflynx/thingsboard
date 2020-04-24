@@ -1601,7 +1601,10 @@
         "set-default-root-edge-rulechain-title": "Are you sure you want to make the rule chain '{{ruleChainName}}' default edge root?",
         "set-default-root-edge-rulechain-text": "After the confirmation the rule chain will become default edge root and will handle all incoming transport messages.",
         "invalid-rulechain-type-error": "Unable to import rule chain: Invalid rule chain type. Expected type is {{expectedRuleChainType}}.",
-        "assign-new-edge": "Assign new edge"
+        "assign-new-edge": "Assign new edge",
+        "assign-new-rulechain": "Assign new rulechain",
+        "create-new-edge-rulechain": "Create new edge rule chain",
+        "import-edge": "Import edge rule chain"
     },
     "rulenode": {
         "details": "Details",

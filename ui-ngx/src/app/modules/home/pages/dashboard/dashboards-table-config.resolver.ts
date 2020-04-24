@@ -157,7 +157,7 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
       new DateEntityTableColumn<DashboardInfo>('createdTime', 'dashboard.created-time', this.datePipe, '150px'),
       new EntityTableColumn<DashboardInfo>('title', 'dashboard.title', '50%')
     ];
-    if (dashboardScope === 'tenant') {
+    if (dashboardScope === 'tenant' || 'edge') {
       columns.push(
         new EntityTableColumn<DashboardInfo>('customersTitle', 'dashboard.assignedToCustomers',
           '50%', entity => {
@@ -194,7 +194,7 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
         onAction: ($event, entity) => this.openDashboard($event, entity)
       }
     );
-    if (dashboardScope === 'tenant') {
+    if (dashboardScope === 'tenant' || 'edge') {
       actions.push(
         {
           name: this.translate.instant('dashboard.export'),
@@ -255,7 +255,7 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
 
   configureGroupActions(dashboardScope: string): Array<GroupActionDescriptor<DashboardInfo>> {
     const actions: Array<GroupActionDescriptor<DashboardInfo>> = [];
-    if (dashboardScope === 'tenant') {
+    if (dashboardScope === 'tenant' || 'edge') {
       actions.push(
         {
           name: this.translate.instant('dashboard.assign-dashboards'),

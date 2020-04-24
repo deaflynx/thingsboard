@@ -59,7 +59,9 @@ import {Device, DeviceCredentialsType, DeviceSearchQuery} from '@shared/models/d
 import {EntityViewSearchQuery} from '@shared/models/entity-view.models';
 import {AttributeService} from '@core/http/attribute.service';
 import {EdgeSearchQuery} from "@shared/models/edge.models";
-import {RuleChain} from "@shared/models/rule-chain.models";
+import {edgeRuleChainType, RuleChain} from "@shared/models/rule-chain.models";
+import {ActivatedRouteSnapshot, Router} from "@angular/router";
+import {resolve} from "@angular/compiler-cli/src/ngtsc/file_system";
 
 @Injectable({
   providedIn: 'root'
@@ -80,7 +82,8 @@ export class EntityService {
     private dashboardService: DashboardService,
     private entityRelationService: EntityRelationService,
     private attributeService: AttributeService,
-    private utils: UtilsService
+    private utils: UtilsService,
+    private route: Router
   ) { }
 
   private getEntityObservable(entityType: EntityType, entityId: string,
@@ -309,7 +312,10 @@ export class EntityService {
         break;
       case EntityType.RULE_CHAIN:
         pageLink.sortOrder.property = 'name';
-        entitiesObservable = this.ruleChainService.getRuleChains(pageLink, subType, config);
+        console.log("TTT", this.route.routerState.snapshot.url);
+        if (this.route.url.includes('edges')) {
+          entitiesObservable = this.ruleChainService.getRuleChains(pageLink, edgeRuleChainType, config);
+        } else { entitiesObservable = this.ruleChainService.getRuleChains(pageLink, subType, config); }
         break;
       case EntityType.DASHBOARD:
         pageLink.sortOrder.property = 'title';
