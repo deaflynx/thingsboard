@@ -53,6 +53,8 @@ import {
 } from "@home/dialogs/add-entities-to-edge-dialog.component";
 import {Browser} from "leaflet";
 import edge = Browser.edge;
+import {map} from "rxjs/operators";
+import {EdgeService} from "@core/http/edge.service";
 
 @Injectable()
 export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<RuleChain>> {
@@ -62,6 +64,7 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
 
   constructor(private ruleChainService: RuleChainService,
               private dialogService: DialogService,
+              private edgeService: EdgeService,
               private importExport: ImportExportService,
               private itembuffer: ItemBufferService,
               private translate: TranslateService,
@@ -151,7 +154,13 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
       this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getRuleChains(pageLink, edgeRuleChainType);
     }
     if (ruleChainsScope === 'edge') {
-      this.config.tableTitle = this.translate.instant('rulechain.edge-rulechains');
+      // this.config.tableTitle = this.translate.instant('rulechain.edge-rulechains');
+      if (this.edgeId) {
+        this.edgeService.getEdgeById(this.edgeId)
+          .pipe(map(edge =>
+            this.config.tableTitle = edge.name + ': ' + this.translate.instant('rulechain.edge-rulechains') ),
+          ).subscribe();
+      }
       this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getEdgeRuleChains(this.edgeId, pageLink);
     }
     return this.config;

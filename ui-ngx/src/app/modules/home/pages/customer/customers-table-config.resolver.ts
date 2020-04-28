@@ -105,7 +105,7 @@ export class CustomersTableConfigResolver implements Resolve<EntityTableConfig<C
         name: this.translate.instant('customer.manage-customer-edges'),
         nameFunction: (customer) => {
           return customer.additionalInfo && customer.additionalInfo.isPublic
-            ? this.translate.instant('customer.manage-public-edge')
+            ? this.translate.instant('customer.manage-public-edges')
             : this.translate.instant('customer.manage-customer-edges');
         },
         icon: 'wifi_tethering',

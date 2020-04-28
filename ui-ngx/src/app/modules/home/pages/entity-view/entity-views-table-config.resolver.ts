@@ -61,6 +61,7 @@ import {
   AddEntitiesToEdgeDialogComponent,
   AddEntitiesToEdgeDialogData
 } from "@home/dialogs/add-entities-to-edge-dialog.component";
+import {EdgeService} from "@core/http/edge.service";
 
 @Injectable()
 export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig<EntityViewInfo>> {
@@ -74,6 +75,7 @@ export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig
               private broadcast: BroadcastService,
               private entityViewService: EntityViewService,
               private customerService: CustomerService,
+              private edgeService: EdgeService,
               private dialogService: DialogService,
               private translate: TranslateService,
               private datePipe: DatePipe,
@@ -135,7 +137,14 @@ export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig
           } else {
             this.config.tableTitle = parentCustomer.title + ': ' + this.translate.instant('entity-view.entity-views');
           }
-        } else {
+        }
+        if (this.edgeId) {
+          this.edgeService.getEdgeById(this.edgeId)
+            .pipe(map(edge =>
+              this.config.tableTitle = edge.name + ': ' + this.translate.instant('entity-view.entity-views') ),
+            ).subscribe();
+        }
+        else {
           this.config.tableTitle = this.translate.instant('entity-view.entity-views');
         }
         this.config.columns = this.configureColumns(this.config.componentsData.entityViewScope);

@@ -66,6 +66,7 @@ import {
   AddEntitiesToEdgeDialogComponent,
   AddEntitiesToEdgeDialogData
 } from "@home/dialogs/add-entities-to-edge-dialog.component";
+import {EdgeService} from "@core/http/edge.service";
 
 @Injectable()
 export class AssetsTableConfigResolver implements Resolve<EntityTableConfig<AssetInfo>> {
@@ -79,6 +80,7 @@ export class AssetsTableConfigResolver implements Resolve<EntityTableConfig<Asse
               private broadcast: BroadcastService,
               private assetService: AssetService,
               private customerService: CustomerService,
+              private edgeService: EdgeService,
               private dialogService: DialogService,
               private homeDialogs: HomeDialogsService,
               private translate: TranslateService,
@@ -138,7 +140,14 @@ export class AssetsTableConfigResolver implements Resolve<EntityTableConfig<Asse
           } else {
             this.config.tableTitle = parentCustomer.title + ': ' + this.translate.instant('asset.assets');
           }
-        } else {
+        }
+        if (this.edgeId) {
+          this.edgeService.getEdgeById(this.edgeId)
+            .pipe(map(edge =>
+              this.config.tableTitle = edge.name + ': ' + this.translate.instant('asset.assets') ),
+            ).subscribe();
+        }
+        else {
           this.config.tableTitle = this.translate.instant('asset.assets');
         }
         this.config.columns = this.configureColumns(this.config.componentsData.assetScope);

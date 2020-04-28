@@ -66,6 +66,8 @@ import {
   AddEntitiesToEdgeDialogComponent,
   AddEntitiesToEdgeDialogData
 } from "@home/dialogs/add-entities-to-edge-dialog.component";
+import {EdgeService} from "@core/http/edge.service";
+import {Edge, EdgeInfo} from "@shared/models/edge.models";
 
 @Injectable()
 export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<DeviceInfo>> {
@@ -79,6 +81,7 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
               private broadcast: BroadcastService,
               private deviceService: DeviceService,
               private customerService: CustomerService,
+              private edgeService: EdgeService,
               private dialogService: DialogService,
               private homeDialogs: HomeDialogsService,
               private translate: TranslateService,
@@ -138,7 +141,14 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
           } else {
             this.config.tableTitle = parentCustomer.title + ': ' + this.translate.instant('device.devices');
           }
-        } else {
+        }
+        if (this.edgeId) {
+          this.edgeService.getEdgeById(this.edgeId)
+            .pipe(map(edge =>
+              this.config.tableTitle = edge.name + ': ' + this.translate.instant('device.devices') ),
+            ).subscribe();
+        }
+        else {
           this.config.tableTitle = this.translate.instant('device.devices');
         }
         this.config.columns = this.configureColumns(this.config.componentsData.deviceScope);
