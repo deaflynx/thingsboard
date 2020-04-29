@@ -137,7 +137,7 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
     const routeParams = route.params;
     this.config.componentsData = {
       ruleChainScope: route.data.ruleChainScope,
-      ruleChainsType: routeParams.type,
+      ruleChainsType: route.data.type,
       edgeId: routeParams.edgeId
     };
     let ruleChainScope = this.config.componentsData.ruleChainScope;
@@ -307,10 +307,11 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
   }
 
   importRuleChain($event: Event) {
+    console.log("ABC", this.config.componentsData.ruleChainsType);
     if ($event) {
       $event.stopPropagation();
     }
-    this.importExport.importRuleChain().subscribe((ruleChainImport) => {
+    this.importExport.importRuleChain(this.config.componentsData.ruleChainsType).subscribe((ruleChainImport) => {
       if (ruleChainImport) {
         this.itembuffer.storeRuleChainImport(ruleChainImport);
         this.router.navigateByUrl(`${this.router.url}/ruleChain/import`);
