@@ -63,7 +63,6 @@ import {EdgeTabsComponent} from "@home/pages/edge/edge-tabs.component";
 export class EdgesTableConfigResolver implements Resolve<EntityTableConfig<EdgeInfo>> {
 
   private readonly config: EntityTableConfig<EdgeInfo> = new EntityTableConfig<EdgeInfo>();
-
   private customerId: string;
 
   constructor(private store: Store<AppState>,
@@ -108,7 +107,7 @@ export class EdgesTableConfigResolver implements Resolve<EntityTableConfig<EdgeI
   resolve(route: ActivatedRouteSnapshot): Observable<EntityTableConfig<EdgeInfo>> {
     const routeParams = route.params;
     this.config.componentsData = {
-      edgeScope: route.data.edgesType,
+      edgeScope: route.data.edgeScope,
       edgeType: ''
     };
     this.customerId = routeParams.customerId;
@@ -178,63 +177,63 @@ export class EdgesTableConfigResolver implements Resolve<EntityTableConfig<EdgeI
 
   configureCellActions(edgeScope: string): Array<CellActionDescriptor<EdgeInfo>> {
     const actions: Array<CellActionDescriptor<EdgeInfo>> = [];
-    actions.push(
-      {
-        name: this.translate.instant('edge.make-public'),
-        icon: 'share',
-        isEnabled: (entity) => (!entity.customerId || entity.customerId.id === NULL_UUID),
-        onAction: ($event, entity) => this.makePublic($event, entity)
-      },
-      {
-        name: this.translate.instant('edge.assign-to-customer'),
-        icon: 'assignment_ind',
-        isEnabled: (entity) => (!entity.customerId || entity.customerId.id === NULL_UUID),
-        onAction: ($event, entity) => this.assignToCustomer($event, [entity.id])
-      },
-      {
-        name: this.translate.instant('edge.unassign-from-customer'),
-        icon: 'assignment_return',
-        isEnabled: (entity) => (entity.customerId && entity.customerId.id !== NULL_UUID && !entity.customerIsPublic),
-        onAction: ($event, entity) => this.unassignFromCustomer($event, entity)
-      },
-      {
-        name: this.translate.instant('edge.make-private'),
-        icon: 'reply',
-        isEnabled: (entity) => (entity.customerId && entity.customerId.id !== NULL_UUID && !entity.customerIsPublic),
-        onAction: ($event, entity) => this.unassignFromCustomer($event, entity)
-      },
-      {
-        name: this.translate.instant('edge.manage-edge-assets'),
-        icon: 'domain',
-        isEnabled: (entity) => true,
-        onAction: ($event, entity) => this.openEdgeAssets($event, entity)
-      },
-      {
-        name: this.translate.instant('edge.manage-edge-devices'),
-        icon: 'devices_other',
-        isEnabled: (entity) => true,
-        onAction: ($event, entity) => this.openEdgeDevices($event, entity)
-      },
-      {
-        name: this.translate.instant('edge.manage-edge-entity-views'),
-        icon: 'view_quilt',
-        isEnabled: (entity) => true,
-        onAction: ($event, entity) => this.openEdgeEntityViews($event, entity)
-      },
-      {
-        name: this.translate.instant('edge.manage-edge-dashboards'),
-        icon: 'dashboard',
-        isEnabled: (entity) => true,
-        onAction: ($event, entity) => this.openEdgeDashboards($event, entity)
-      },
-      {
-        name: this.translate.instant('edge.manage-edge-rulechains'),
-        icon: 'settings_ethernet',
-        isEnabled: (entity) => true,
-        onAction: ($event, entity) => this.openEdgeRuleChains($event, entity)
-      }
-    );
     if (edgeScope === 'tenant') {
+      actions.push(
+        {
+          name: this.translate.instant('edge.make-public'),
+          icon: 'share',
+          isEnabled: (entity) => (!entity.customerId || entity.customerId.id === NULL_UUID),
+          onAction: ($event, entity) => this.makePublic($event, entity)
+        },
+        {
+          name: this.translate.instant('edge.assign-to-customer'),
+          icon: 'assignment_ind',
+          isEnabled: (entity) => (!entity.customerId || entity.customerId.id === NULL_UUID),
+          onAction: ($event, entity) => this.assignToCustomer($event, [entity.id])
+        },
+        {
+          name: this.translate.instant('edge.unassign-from-customer'),
+          icon: 'assignment_return',
+          isEnabled: (entity) => (entity.customerId && entity.customerId.id !== NULL_UUID && !entity.customerIsPublic),
+          onAction: ($event, entity) => this.unassignFromCustomer($event, entity)
+        },
+        {
+          name: this.translate.instant('edge.make-private'),
+          icon: 'reply',
+          isEnabled: (entity) => (entity.customerId && entity.customerId.id !== NULL_UUID && !entity.customerIsPublic),
+          onAction: ($event, entity) => this.unassignFromCustomer($event, entity)
+        },
+        {
+          name: this.translate.instant('edge.manage-edge-assets'),
+          icon: 'domain',
+          isEnabled: (entity) => true,
+          onAction: ($event, entity) => this.openEdgeAssets($event, entity)
+        },
+        {
+          name: this.translate.instant('edge.manage-edge-devices'),
+          icon: 'devices_other',
+          isEnabled: (entity) => true,
+          onAction: ($event, entity) => this.openEdgeDevices($event, entity)
+        },
+        {
+          name: this.translate.instant('edge.manage-edge-entity-views'),
+          icon: 'view_quilt',
+          isEnabled: (entity) => true,
+          onAction: ($event, entity) => this.openEdgeEntityViews($event, entity)
+        },
+        {
+          name: this.translate.instant('edge.manage-edge-dashboards'),
+          icon: 'dashboard',
+          isEnabled: (entity) => true,
+          onAction: ($event, entity) => this.openEdgeDashboards($event, entity)
+        },
+        {
+          name: this.translate.instant('edge.manage-edge-rulechains'),
+          icon: 'settings_ethernet',
+          isEnabled: (entity) => true,
+          onAction: ($event, entity) => this.openEdgeRuleChains($event, entity)
+        }
+      );
     }
     if (edgeScope === 'customer') {
       actions.push(
@@ -250,10 +249,6 @@ export class EdgesTableConfigResolver implements Resolve<EntityTableConfig<EdgeI
           isEnabled: (entity) => (entity.customerId && entity.customerId.id !== NULL_UUID && entity.customerIsPublic),
           onAction: ($event, entity) => this.unassignFromCustomer($event, entity)
         },
-      );
-    }
-    if (edgeScope === 'customer_user') {
-      actions.push(
       );
     }
     return actions;
@@ -429,7 +424,7 @@ export class EdgesTableConfigResolver implements Resolve<EntityTableConfig<EdgeI
     let title;
     let content;
     if (isPublic) {
-      title = this.translate.instant('edge.make-private-edge-text', {edgeName: edge.name});
+      title = this.translate.instant('edge.make-private-edge-title', {edgeName: edge.name});
       content = this.translate.instant('edge.make-private-edge-text');
     } else {
       title = this.translate.instant('edge.unassign-edge-title', {edgeName: edge.name});

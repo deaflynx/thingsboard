@@ -25,7 +25,6 @@ import {EdgeId} from "@shared/models/id/edge-id";
 export interface Device extends BaseData<DeviceId> {
   tenantId?: TenantId;
   customerId?: CustomerId;
-  edgeId?: EdgeId;
   name: string;
   type: string;
   label: string;
@@ -35,6 +34,7 @@ export interface Device extends BaseData<DeviceId> {
 export interface DeviceInfo extends Device {
   customerTitle: string;
   customerIsPublic: boolean;
+  edgeId?: EdgeId;
 }
 
 export enum DeviceCredentialsType {

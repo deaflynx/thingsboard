@@ -23,10 +23,11 @@ import {
   Router
 } from '@angular/router';
 import {
+  CellActionDescriptor,
   checkBoxCell,
   DateEntityTableColumn,
   EntityTableColumn,
-  EntityTableConfig, HeaderActionDescriptor
+  EntityTableConfig, GroupActionDescriptor, HeaderActionDescriptor
 } from '@home/models/entity/entities-table-config.models';
 import {TranslateService} from '@ngx-translate/core';
 import {DatePipe} from '@angular/common';
@@ -51,16 +52,15 @@ import {
   AddEntitiesToEdgeDialogComponent,
   AddEntitiesToEdgeDialogData
 } from "@home/dialogs/add-entities-to-edge-dialog.component";
-import {Browser} from "leaflet";
-import edge = Browser.edge;
 import {map} from "rxjs/operators";
 import {EdgeService} from "@core/http/edge.service";
+import {DeviceInfo} from "@shared/models/device.models";
+import {forkJoin, Observable} from "rxjs";
 
 @Injectable()
 export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<RuleChain>> {
 
   private readonly config: EntityTableConfig<RuleChain> = new EntityTableConfig<RuleChain>();
-  private edgeId: string;
 
   constructor(private ruleChainService: RuleChainService,
               private dialogService: DialogService,
@@ -87,38 +87,38 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
         }),
     );
 
-    this.config.cellActionDescriptors.push(
-      {
-        name: this.translate.instant('rulechain.open-rulechain'),
-        icon: 'settings_ethernet',
-        isEnabled: () => true,
-        onAction: ($event, entity) => this.openRuleChain($event, entity)
-      },
-      {
-        name: this.translate.instant('rulechain.export'),
-        icon: 'file_download',
-        isEnabled: () => true,
-        onAction: ($event, entity) => this.exportRuleChain($event, entity)
-      },
-      {
-        name: this.translate.instant('rulechain.set-root'),
-        icon: 'flag',
-        isEnabled: (ruleChain) => (!ruleChain.root && ruleChain.type === systemRuleChainType),
-        onAction: ($event, entity) => this.setRootRuleChain($event, entity)
-      },
-      {
-        name: this.translate.instant('rulechain.manage-assigned-edges'),
-        icon: 'wifi_tethering',
-        isEnabled: (ruleChain) => (ruleChain.type === edgeRuleChainType),
-        onAction: ($event, entity) => this.manageAssignedEdges($event, entity)
-      },
-      {
-        name: this.translate.instant('rulechain.set-default-root-edge'),
-        icon: 'flag',
-        isEnabled: (ruleChain) => (!ruleChain.root && ruleChain.type === edgeRuleChainType),
-        onAction: ($event, entity) => this.setDefaultRootEdgeRuleChain($event, entity)
-      },
-    );
+    // this.config.cellActionDescriptors.push(
+    //   {
+    //     name: this.translate.instant('rulechain.open-rulechain'),
+    //     icon: 'settings_ethernet',
+    //     isEnabled: () => true,
+    //     onAction: ($event, entity) => this.openRuleChain($event, entity)
+    //   },
+    //   {
+    //     name: this.translate.instant('rulechain.export'),
+    //     icon: 'file_download',
+    //     isEnabled: () => true,
+    //     onAction: ($event, entity) => this.exportRuleChain($event, entity)
+    //   },
+    //   {
+    //     name: this.translate.instant('rulechain.set-root'),
+    //     icon: 'flag',
+    //     isEnabled: (ruleChain) => (!ruleChain.root && ruleChain.type === systemRuleChainType),
+    //     onAction: ($event, entity) => this.setRootRuleChain($event, entity)
+    //   },
+    //   {
+    //     name: this.translate.instant('rulechain.manage-assigned-edges'),
+    //     icon: 'wifi_tethering',
+    //     isEnabled: (ruleChain) => (ruleChain.type === edgeRuleChainType),
+    //     onAction: ($event, entity) => this.manageAssignedEdges($event, entity)
+    //   },
+    //   {
+    //     name: this.translate.instant('rulechain.set-default-root-edge'),
+    //     icon: 'flag',
+    //     isEnabled: (ruleChain) => (!ruleChain.root && ruleChain.type === edgeRuleChainType),
+    //     onAction: ($event, entity) => this.setDefaultRootEdgeRuleChain($event, entity)
+    //   },
+    // );
 
     this.config.deleteEntityTitle = ruleChain => this.translate.instant('rulechain.delete-rulechain-title',
       {ruleChainName: ruleChain.name});
@@ -136,39 +136,38 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
   resolve(route: ActivatedRouteSnapshot): EntityTableConfig<RuleChain> {
     const routeParams = route.params;
     this.config.componentsData = {
-      ruleChainsScope: route.data.ruleChainsScope,
-      ruleChainsType: routeParams.type
+      ruleChainScope: route.data.ruleChainScope,
+      ruleChainsType: routeParams.type,
+      edgeId: routeParams.edgeId
     };
-
-    let ruleChainsScope = this.config.componentsData.ruleChainsScope;
-    this.edgeId = routeParams.edgeId;
-    this.config.addActionDescriptors = this.configureAddActions(ruleChainsScope);
-    this.config.onEntityAction = action => this.onRuleChainAction(action, ruleChainsScope);
-
-    if (ruleChainsScope === 'tenant') {
+    let ruleChainScope = this.config.componentsData.ruleChainScope;
+    this.config.addActionDescriptors = this.configureAddActions(ruleChainScope);
+    this.config.onEntityAction = action => this.onRuleChainAction(action, ruleChainScope);
+    this.config.cellActionDescriptors = this.configureCellActions(ruleChainScope);
+    this.config.groupActionDescriptors = this.configureGroupActions(ruleChainScope);
+    if (ruleChainScope === 'tenant') {
       this.config.tableTitle = this.translate.instant('rulechain.system-rulechains');
       this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getRuleChains(pageLink, systemRuleChainType);
     }
-    if (ruleChainsScope === 'edges') {
+    if (ruleChainScope === 'edges') {
       this.config.tableTitle = this.translate.instant('rulechain.edge-rulechains');
       this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getRuleChains(pageLink, edgeRuleChainType);
     }
-    if (ruleChainsScope === 'edge') {
-      // this.config.tableTitle = this.translate.instant('rulechain.edge-rulechains');
-      if (this.edgeId) {
-        this.edgeService.getEdgeById(this.edgeId)
+    if (ruleChainScope === 'edge') {
+      if (this.config.componentsData.edgeId) {
+        this.edgeService.getEdgeById(this.config.componentsData.edgeId)
           .pipe(map(edge =>
             this.config.tableTitle = edge.name + ': ' + this.translate.instant('rulechain.edge-rulechains') ),
           ).subscribe();
       }
-      this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getEdgeRuleChains(this.edgeId, pageLink);
+      this.config.entitiesFetchFunction = pageLink => this.ruleChainService.getEdgeRuleChains(this.config.componentsData.edgeId, pageLink);
     }
     return this.config;
   }
 
-  configureAddActions(ruleChainsScope: string): Array<HeaderActionDescriptor> {
+  configureAddActions(ruleChainScope: string): Array<HeaderActionDescriptor> {
     const actions: Array<HeaderActionDescriptor> = [];
-    if (ruleChainsScope === 'tenant') {
+    if (ruleChainScope === 'tenant') {
       actions.push(
         {
           name: this.translate.instant('rulechain.create-new-rulechain'),
@@ -184,7 +183,7 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
         }
       )
     }
-    if (ruleChainsScope === 'edges') {
+    if (ruleChainScope === 'edges') {
       actions.push(
         {
           name: this.translate.instant('rulechain.create-new-edge-rulechain'),
@@ -200,7 +199,7 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
         }
       )
     }
-    if (ruleChainsScope === 'edge') {
+    if (ruleChainScope === 'edge') {
       actions.push(
         {
           name: this.translate.instant('rulechain.assign-new-rulechain'),
@@ -213,6 +212,80 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
     return actions;
   }
 
+  configureGroupActions(ruleChainScope: string): Array<GroupActionDescriptor<RuleChain>> {
+    const actions: Array<GroupActionDescriptor<RuleChain>> = [];
+    if (ruleChainScope === 'edges') {
+      actions.push(
+        {
+          name: this.translate.instant('rulechain.assign-edges'),
+          icon: 'wifi_tethering',
+          isEnabled: true,
+          onAction: ($event, entities) => this.assignRuleChainsToEdges($event, entities.map((entity) => entity.id.id))
+        },
+        {
+          name: this.translate.instant('rulechain.unassign-edges'),
+          icon: 'portable_wifi_off',
+          isEnabled: true,
+          onAction: ($event, entities) => this.unassignRuleChainsFromEdges($event, entities.map((entity) => entity.id.id))
+        }
+      )
+    }
+    if (ruleChainScope === 'edge') {
+      actions.push(
+        {
+          name: this.translate.instant('rulechain.unassign-rulechains-from-edge'),
+          icon: 'portable_wifi_off',
+          isEnabled: true,
+          onAction: ($event, entities) => this.unassignRuleChainsFromEdge($event, entities)
+        }
+      )
+    }
+    return actions;
+  }
+
+  configureCellActions(ruleChainScope: string): Array<CellActionDescriptor<RuleChain>> {
+    const actions: Array<CellActionDescriptor<RuleChain>> = [];
+      actions.push(
+        {
+          name: this.translate.instant('rulechain.open-rulechain'),
+          icon: 'settings_ethernet',
+          isEnabled: () => true,
+          onAction: ($event, entity) => this.openRuleChain($event, entity)
+        },
+        {
+          name: this.translate.instant('rulechain.export'),
+          icon: 'file_download',
+          isEnabled: () => true,
+          onAction: ($event, entity) => this.exportRuleChain($event, entity)
+        },
+        {
+          name: this.translate.instant('rulechain.set-root'),
+          icon: 'flag',
+          isEnabled: (ruleChain) => (!ruleChain.root && ruleChain.type === systemRuleChainType && ruleChainScope === 'tenant'),
+          onAction: ($event, entity) => this.setRootRuleChain($event, entity)
+        },
+        {
+          name: this.translate.instant('rulechain.manage-assigned-edges'),
+          icon: 'wifi_tethering',
+          isEnabled: (ruleChain) => (ruleChain.type === edgeRuleChainType && ruleChainScope === 'edges'),
+          onAction: ($event, entity) => this.manageAssignedEdges($event, entity)
+        },
+        {
+          name: this.translate.instant('rulechain.set-default-root-edge'),
+          icon: 'flag',
+          isEnabled: (ruleChain) => (!ruleChain.root && ruleChain.type === edgeRuleChainType && ruleChainScope === ('edges' || 'edge')),
+          onAction: ($event, entity) => this.setDefaultRootEdgeRuleChain($event, entity)
+        },
+        {
+          name: this.translate.instant('rulechain.unassign-from-edge'),
+          icon: 'portable_wifi_off',
+          isEnabled: (ruleChain) => (ruleChainScope === 'edge' && !ruleChain.root),
+          onAction: ($event, entity) => this.unassignFromEdge($event, entity)
+        }
+      )
+    return actions;
+  }
+
   addRuleChainsToEdge($event: Event) {
     if ($event) {
       $event.stopPropagation();
@@ -222,7 +295,7 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
       disableClose: true,
       panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
       data: {
-        edgeId: this.edgeId,
+        edgeId: this.config.componentsData.edgeId,
         entityType: EntityType.RULE_CHAIN
       }
     }).afterClosed()
@@ -254,7 +327,7 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
 
   saveRuleChain(ruleChain: RuleChain) {
     if (isUndefined(ruleChain.type)) {
-      if (this.config.componentsData.ruleChainsScope == 'edges') {
+      if (this.config.componentsData.ruleChainScope == 'edges') {
         ruleChain.type = edgeRuleChainType
       } else {
         ruleChain.type = systemRuleChainType
@@ -292,7 +365,7 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
     );
   }
 
-  onRuleChainAction(action: EntityAction<RuleChain>, ruleChainsScope): boolean {
+  onRuleChainAction(action: EntityAction<RuleChain>, ruleChainScope): boolean {
     switch (action.action) {
       case 'open':
         this.openRuleChain(action.event, action.entity);
@@ -301,11 +374,11 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
         this.exportRuleChain(action.event, action.entity);
         return true;
       case 'setRoot':
-        if (ruleChainsScope === 'tenant') {
+        if (ruleChainScope === 'tenant') {
           this.setRootRuleChain(action.event, action.entity);
           return true;
         }
-        if (ruleChainsScope === 'edges' || 'edge') {
+        if (ruleChainScope === 'edges' || 'edge') {
           this.setDefaultRootEdgeRuleChain(action.event, action.entity);
           return true;
         }
@@ -358,6 +431,64 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
     ).subscribe((res) => {
         if (res) {
           this.ruleChainService.setDefaultRootEdgeRuleChain(ruleChain.id.id).subscribe(
+            () => {
+              this.config.table.updateData();
+            }
+          );
+        }
+      }
+    );
+  }
+
+  assignRuleChainsToEdges($event: Event, ruleChainIds: Array<string>) {
+    this.showManageAssignedEdgesDialog($event, ruleChainIds, 'assign');
+  }
+
+  unassignRuleChainsFromEdges($event: Event, ruleChainIds: Array<string>) {
+    this.showManageAssignedEdgesDialog($event, ruleChainIds, 'unassign');
+  }
+
+  unassignFromEdge($event: Event, ruleChain: RuleChain) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.dialogService.confirm(
+      this.translate.instant('rulechain.unassign-from-edges'),
+      this.translate.instant('rulechain.unassign-from-edges-text'),
+      this.translate.instant('action.no'),
+      this.translate.instant('action.yes'),
+      true
+    ).subscribe((res) => {
+        if (res) {
+          this.ruleChainService.unassignRuleChainFromEdge(this.config.componentsData.edgeId, ruleChain.id.id).subscribe(
+            () => {
+              this.config.table.updateData();
+            }
+          );
+        }
+      }
+    );
+  }
+
+  unassignRuleChainsFromEdge($event: Event, ruleChains: Array<RuleChain>) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.dialogService.confirm(
+      this.translate.instant('rulechain.unassign-rulechains-from-edge-title', {count: ruleChains.length}),
+      this.translate.instant('rulechain.unassign-rulechains-from-edge-text'),
+      this.translate.instant('action.no'),
+      this.translate.instant('action.yes'),
+      true
+    ).subscribe((res) => {
+        if (res) {
+          const tasks: Observable<any>[] = [];
+          ruleChains.forEach(
+            (ruleChain) => {
+              tasks.push(this.ruleChainService.unassignRuleChainFromEdge(this.config.componentsData.edgeId, ruleChain.id.id));
+            }
+          );
+          forkJoin(tasks).subscribe(
             () => {
               this.config.table.updateData();
             }

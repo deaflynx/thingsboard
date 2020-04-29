@@ -176,7 +176,7 @@ const routes: Routes = [
             data: {
               auth: [Authority.TENANT_ADMIN],
               title: 'rulechain.rulechains',
-              ruleChainsScope: 'tenant'
+              ruleChainScope: 'tenant'
             },
             resolve: {
               entitiesTableConfig: RuleChainsTableConfigResolver
@@ -239,7 +239,7 @@ const routes: Routes = [
             data: {
               auth: [Authority.TENANT_ADMIN],
               title: 'edge.rulechains',
-              ruleChainsScope: 'edges'
+              ruleChainScope: 'edges'
             },
             resolve: {
               entitiesTableConfig: RuleChainsTableConfigResolver

@@ -200,7 +200,7 @@ export class AssetsTableConfigResolver implements Resolve<EntityTableConfig<Asse
 
   configureCellActions(assetScope: string): Array<CellActionDescriptor<AssetInfo>> {
     const actions: Array<CellActionDescriptor<AssetInfo>> = [];
-    if (assetScope === 'tenant' || 'edge') {
+    if (assetScope === 'tenant') {
       actions.push(
         {
           name: this.translate.instant('asset.make-public'),
@@ -240,6 +240,16 @@ export class AssetsTableConfigResolver implements Resolve<EntityTableConfig<Asse
         }
       );
     }
+    if (assetScope === 'edge') {
+      actions.push(
+        {
+          name: this.translate.instant('asset.unassign-from-edge'),
+          icon: 'portable_wifi_off',
+          isEnabled: (entity) => (entity.edgeId && entity.edgeId.id !== NULL_UUID),
+          onAction: ($event, entity) => this.unassignFromEdge($event, entity)
+        }
+      );
+    }
     if (assetScope === 'customer') {
       actions.push(
         {
@@ -261,13 +271,29 @@ export class AssetsTableConfigResolver implements Resolve<EntityTableConfig<Asse
 
   configureGroupActions(assetScope: string): Array<GroupActionDescriptor<AssetInfo>> {
     const actions: Array<GroupActionDescriptor<AssetInfo>> = [];
-    if (assetScope === 'tenant' || 'edge') {
+    if (assetScope === 'tenant') {
       actions.push(
         {
           name: this.translate.instant('asset.assign-assets'),
           icon: 'assignment_ind',
           isEnabled: true,
           onAction: ($event, entities) => this.assignToCustomer($event, entities.map((entity) => entity.id))
+        },
+        {
+          name: this.translate.instant('asset.assign-assets-to-edge'),
+            icon: 'wifi_tethering',
+          isEnabled: true,
+          onAction: ($event, entities) => this.assignToEdge($event, entities.map((entity) => entity.id))
+        }
+      );
+    }
+    if (assetScope === 'edge') {
+      actions.push(
+        {
+          name: this.translate.instant('asset.unassign-assets-from-edge'),
+          icon: 'portable_wifi_off',
+          isEnabled: true,
+          onAction: ($event, entities) => this.unassignAssetsFromEdge($event, entities)
         }
       );
     }
@@ -530,6 +556,34 @@ export class AssetsTableConfigResolver implements Resolve<EntityTableConfig<Asse
     ).subscribe((res) => {
         if (res) {
           this.assetService.unassignAssetFromEdge(asset.id.id).subscribe(
+            () => {
+              this.config.table.updateData();
+            }
+          );
+        }
+      }
+    );
+  }
+
+  unassignAssetsFromEdge($event: Event, assets: Array<AssetInfo>) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.dialogService.confirm(
+      this.translate.instant('asset.unassign-assets-from-edge-title', {count: assets.length}),
+      this.translate.instant('asset.unassign-assets-from-edge-text'),
+      this.translate.instant('action.no'),
+      this.translate.instant('action.yes'),
+      true
+    ).subscribe((res) => {
+        if (res) {
+          const tasks: Observable<any>[] = [];
+          assets.forEach(
+            (asset) => {
+              tasks.push(this.assetService.unassignAssetFromEdge(asset.id.id));
+            }
+          );
+          forkJoin(tasks).subscribe(
             () => {
               this.config.table.updateData();
             }

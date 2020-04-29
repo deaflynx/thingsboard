@@ -79,8 +79,7 @@ export class EdgeService {
     return this.http.delete(`/api/customer/edge/${edgeId}`, defaultHttpOptionsFromConfig(config));
   }
 
-  public findByQuery(query: EdgeSearchQuery,
-                     config?: RequestConfig): Observable<Array<Edge>> {
+  public findByQuery(query: EdgeSearchQuery, config?: RequestConfig): Observable<Array<Edge>> {
     return this.http.post<Array<Edge>>('/api/edges', query, defaultHttpOptionsFromConfig(config));
   }
 

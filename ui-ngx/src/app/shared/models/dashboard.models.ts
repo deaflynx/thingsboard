@@ -22,8 +22,6 @@ import { Widget } from './widget.models';
 import { Timewindow } from '@shared/models/time/time.models';
 import { EntityType } from '@shared/models/entity-type.models';
 import { EntityAlias, EntityAliases } from './alias.models';
-import {EdgeInfo} from "@shared/models/edge.models";
-import {EdgeId} from "@shared/models/id/edge-id";
 
 export interface DashboardInfo extends BaseData<DashboardId> {
   tenantId?: TenantId;

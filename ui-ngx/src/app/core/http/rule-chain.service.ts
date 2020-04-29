@@ -291,8 +291,8 @@ export class RuleChainService {
     return this.http.post<RuleChain>(`/api/edge/${edgeId}/ruleChain/${ruleChainId}`, null, defaultHttpOptionsFromConfig(config));
   }
 
-  public unassignRuleChainFromEdge(ruleChainId: string, config?: RequestConfig) {
-    return this.http.delete(`/api/edge/ruleChain/${ruleChainId}`, defaultHttpOptionsFromConfig(config));
+  public unassignRuleChainFromEdge(edgeId: string, ruleChainId: string, config?: RequestConfig) {
+    return this.http.delete(`/api/edge/${edgeId}/ruleChain/${ruleChainId}`, defaultHttpOptionsFromConfig(config));
   }
 
   public getEdgeRuleChains(edgeId: string, pageLink: PageLink, config?:RequestConfig): Observable<PageData<RuleChain>> {

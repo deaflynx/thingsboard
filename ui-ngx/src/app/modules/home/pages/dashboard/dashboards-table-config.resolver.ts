@@ -64,8 +64,6 @@ import {
 } from '@modules/home/pages/dashboard/make-dashboard-public-dialog.component';
 import { DashboardTabsComponent } from '@home/pages/dashboard/dashboard-tabs.component';
 import { ImportExportService } from '@home/components/import-export/import-export.service';
-import {AssignToEdgeDialogComponent, AssignToEdgeDialogData} from "@home/dialogs/assign-to-edge-dialog.component";
-import {DashboardId} from "@shared/models/id/dashboard-id";
 import {
   ManageDashboardEdgesActionType,
   ManageDashboardEdgesDialogComponent,
@@ -203,7 +201,7 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
         onAction: ($event, entity) => this.openDashboard($event, entity)
       }
     );
-    if (dashboardScope === 'tenant' || 'edge') {
+    if (dashboardScope === 'tenant') {
       actions.push(
         {
           name: this.translate.instant('dashboard.export'),
@@ -237,6 +235,22 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
         }
       );
     }
+    if (dashboardScope === 'edge') {
+      actions.push(
+        {
+          name: this.translate.instant('dashboard.export'),
+          icon: 'file_download',
+          isEnabled: () => true,
+          onAction: ($event, entity) => this.exportDashboard($event, entity)
+        },
+        {
+          name: this.translate.instant('dashboard.unassign-from-edge'),
+          icon: 'portable_wifi_off',
+          isEnabled: (entity) => true,
+          onAction: ($event, entity) => this.unassignFromEdge($event, entity, this.config.componentsData.edgeId)
+        }
+      );
+    }
     if (dashboardScope === 'customer') {
       actions.push(
         {
@@ -264,7 +278,7 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
 
   configureGroupActions(dashboardScope: string): Array<GroupActionDescriptor<DashboardInfo>> {
     const actions: Array<GroupActionDescriptor<DashboardInfo>> = [];
-    if (dashboardScope === 'tenant' || 'edge') {
+    if (dashboardScope === 'tenant') {
       actions.push(
         {
           name: this.translate.instant('dashboard.assign-dashboards'),
@@ -289,6 +303,16 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
           onAction: ($event, entities) => this.assignDashboardsToEdges($event, entities.map((entity) => entity.id.id))
         }
       );
+      actions.push(
+        {
+          name: this.translate.instant('dashboard.unassign-edges'),
+          icon: 'portable_wifi_off',
+          isEnabled: true,
+          onAction: ($event, entities) => this.unassignDashboardsFromEdges($event, entities.map((entity) => entity.id.id))
+        }
+      );
+    }
+    if (dashboardScope === 'edge') {
       actions.push(
         {
           name: this.translate.instant('dashboard.unassign-edges'),
@@ -579,26 +603,6 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
         return true;
     }
     return false;
-  }
-
-  assignToEdge($event: Event, dashboardIds: Array<DashboardId>) {
-    if ($event) {
-      $event.stopPropagation();
-    }
-    this.dialog.open<AssignToEdgeDialogComponent, AssignToEdgeDialogData,
-      boolean>(AssignToEdgeDialogComponent, {
-      disableClose: true,
-      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
-      data: {
-        entityIds: dashboardIds,
-        entityType: EntityType.DASHBOARD
-      }
-    }).afterClosed()
-      .subscribe((res) => {
-        if (res) {
-          this.config.table.updateData();
-        }
-      });
   }
 
   manageAssignedEdges($event: Event, dashboard: DashboardInfo) {

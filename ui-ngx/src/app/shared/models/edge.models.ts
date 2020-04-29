@@ -42,33 +42,3 @@ export interface EdgeInfo extends Edge {
 export interface EdgeSearchQuery extends EntitySearchQuery {
   edgeTypes: Array<string>;
 }
-
-export function getEdgeAssignedCustomersText(edge: EdgeInfo): string {
-  if (edge && edge.assignedCustomers && edge.assignedCustomers.length > 0) {
-    return edge.assignedCustomers
-      .filter(customerInfo => !customerInfo.public)
-      .map(customerInfo => customerInfo.title)
-      .join(', ');
-  } else {
-    return '';
-  }
-}
-
-export function isPublicEdge(edge: EdgeInfo): boolean {
-  if (edge && edge.assignedCustomers) {
-    return edge.assignedCustomers
-      .filter(customerInfo => customerInfo.public).length > 0;
-  } else {
-    return false;
-  }
-}
-
-export function isCurrentPublicEdgeCustomer(edge: EdgeInfo, customerId: string): boolean {
-  if (customerId && edge && edge.assignedCustomers) {
-    return edge.assignedCustomers.filter(customerInfo => {
-      return customerInfo.public && customerId === customerInfo.customerId.id;
-    }).length > 0;
-  } else {
-    return false;
-  }
-}

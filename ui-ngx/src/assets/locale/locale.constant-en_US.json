@@ -298,7 +298,11 @@
         "assign-to-edge-text": "Please select the edge to assign the asset(s)",
         "unassign-asset-from-edge-title": "Are you sure you want to unassign the asset '{{assetName}}'?",
         "unassign-asset-from-edge-text": "After the confirmation the asset will be unassigned and won't be accessible by the edge.",
-        "assign-new-edge": "Assign new edge"
+        "assign-new-edge": "Assign new edge",
+        "assign-assets-to-edge": "Assign assets to edge",
+        "unassign-assets-from-edge": "Unassign assets from edge",
+        "unassign-assets-from-edge-title": "Are you sure you want to unassign { count, plural, 1 {1 asset} other {# assets} }?",
+        "unassign-assets-from-edge-text": "After the confirmation all selected assets will be unassigned and won't be accessible by the edge."
     },
     "attribute": {
         "attributes": "Attributes",
@@ -766,14 +770,18 @@
         "device-file": "Device file",
         "search": "Search devices",
         "selected-devices": "{ count, plural, 1 {1 device} other {# devices} } selected",
+        "assign-new-edge": "Assign new edge",
         "assign-device-to-edge": "Assign Device(s) To Edge",
         "assign-device-to-edge-text":"Please select the devices to assign to the edge",
-        "unassign-from-edge": "Unassign from edge",
         "assign-to-edge": "Assign to edge",
         "assign-to-edge-text": "Please select the edge to assign the device(s)",
+        "unassign-from-edge": "Unassign from edge",
         "unassign-device-from-edge-title": "Are you sure you want to unassign the device '{{deviceName}}'?",
         "unassign-device-from-edge-text": "After the confirmation the device will be unassigned and won't be accessible by the edge.",
-        "assign-new-edge": "Assign new edge"
+        "assign-devices-to-edge": "Assign devices to edge",
+        "unassign-devices-from-edge": "Unassign devices from edge",
+        "unassign-devices-from-edge-title": "Are you sure you want to unassign { count, plural, 1 {1 device} other {# devices} }?",
+        "unassign-devices-from-edge-text": "After the confirmation all selected devices will be unassigned and won't be accessible by the edge."
     },
     "edge": {
         "edge": "Edge",
@@ -1088,7 +1096,11 @@
         "assign-to-edge-text": "Please select the edge to assign the entity view(s)",
         "unassign-entity-view-from-edge-title": "Are you sure you want to unassign the entity view '{{entityViewName}}'?",
         "unassign-entity-view-from-edge-text": "After the confirmation the entity view will be unassigned and won't be accessible by the edge.",
-        "assign-new-edge": "Assign new edge"
+        "assign-new-edge": "Assign new edge",
+        "assign-entity-views-to-edge": "Assign entity views to edge",
+        "unassign-entity-views-from-edge": "Unassign entity views from edge",
+        "unassign-entity-views-from-edge-title": "Are you sure you want to unassign { count, plural, 1 {1 entity view} other {# entity views} }?",
+        "unassign-entity-views-from-edge-text": "After the confirmation all selected entity views will be unassigned and won't be accessible by the edge."
     },
     "event": {
         "event-type": "Event type",
@@ -1584,6 +1596,7 @@
         "unassign-rulechain-from-edge-text": "After the confirmation the rulechain will be unassigned and won't be accessible by the edge.",
         "assigned-edges": "Assigned edges",
         "unassign-from-edge": "Unassign from edge",
+        "unassign-rulechains-from-edge-title": "Are you sure you want to unassign { count, plural, 1 {1 rulechain} other {# rulechains} } from edge?",
         "unassign-rulechains-from-edge-action-title": "Unassign { count, plural, 1 {1 rulechain} other {# rulechains} } from edge",
         "unassign-rulechains-from-edge-text": "After the confirmation all selected rulechains will be unassigned and won't be accessible by the edge.",
         "assign-rulechains-to-edge-text": "Assign { count, plural, 1 {1 rulechain} other {# rulechains} } to edges",
@@ -1604,7 +1617,10 @@
         "assign-new-edge": "Assign new edge",
         "assign-new-rulechain": "Assign new rulechain",
         "create-new-edge-rulechain": "Create new edge rule chain",
-        "import-edge": "Import edge rule chain"
+        "import-edge": "Import edge rule chain",
+        "unassign-rulechains-from-edge": "Unassign rulechains from edge",
+        "assign-edges": "Assign edges",
+        "unassign-edges": "Unassign edges"
     },
     "rulenode": {
         "details": "Details",

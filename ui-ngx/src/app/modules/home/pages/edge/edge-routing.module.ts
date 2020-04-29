@@ -46,7 +46,7 @@ const routes: Routes = [
         data: {
           auth: [Authority.TENANT_ADMIN, Authority.CUSTOMER_USER],
           title: 'edge.edges',
-          edgesType: 'tenant'
+          edgeScope: 'tenant'
         },
         resolve: {
           entitiesTableConfig: EdgesTableConfigResolver
@@ -58,7 +58,7 @@ const routes: Routes = [
         data: {
           auth: [Authority.TENANT_ADMIN, Authority.CUSTOMER_USER],
           title: 'edge.rulechains',
-          ruleChainsScope: 'edge',
+          ruleChainScope: 'edge',
           breadcrumb: {
             label: 'edge.rulechains',
             icon: 'settings_ethernet'

@@ -142,7 +142,7 @@ const routes: Routes = [
         data: {
           auth: [Authority.TENANT_ADMIN],
           title: 'customer.edges',
-          assetsType: 'customer',
+          edgeScope: 'customer',
           breadcrumb: {
             label: 'customer.edges',
             icon: 'wifi_tethering'

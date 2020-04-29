@@ -196,7 +196,7 @@ export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig
 
   configureCellActions(entityViewScope: string): Array<CellActionDescriptor<EntityViewInfo>> {
     const actions: Array<CellActionDescriptor<EntityViewInfo>> = [];
-    if (entityViewScope === 'tenant' || 'edge') {
+    if (entityViewScope === 'tenant') {
       actions.push(
         {
           name: this.translate.instant('entity-view.make-public'),
@@ -236,6 +236,16 @@ export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig
         }
       );
     }
+    if (entityViewScope === 'edge') {
+      actions.push(
+        {
+          name: this.translate.instant('entity-view.unassign-from-edge'),
+          icon: 'portable_wifi_off',
+          isEnabled: (entity) => (entity.edgeId && entity.edgeId.id !== NULL_UUID),
+          onAction: ($event, entity) => this.unassignFromEdge($event,entity)
+        }
+      );
+    }
     if (entityViewScope === 'customer') {
       actions.push(
         {
@@ -257,13 +267,29 @@ export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig
 
   configureGroupActions(entityViewScope: string): Array<GroupActionDescriptor<EntityViewInfo>> {
     const actions: Array<GroupActionDescriptor<EntityViewInfo>> = [];
-    if (entityViewScope === 'tenant' || 'edge') {
+    if (entityViewScope === 'tenant') {
       actions.push(
         {
           name: this.translate.instant('entity-view.assign-entity-views'),
           icon: 'assignment_ind',
           isEnabled: true,
           onAction: ($event, entities) => this.assignToCustomer($event, entities.map((entity) => entity.id))
+        },
+        {
+          name: this.translate.instant('entity-view.assign-entity-views-to-edge'),
+          icon: 'wifi_tethering',
+          isEnabled: true,
+          onAction: ($event, entities) => this.assignToEdge($event, entities.map((entity) => entity.id))
+        }
+      );
+    }
+    if (entityViewScope === 'edge') {
+      actions.push(
+        {
+          name: this.translate.instant('entity-view.unassign-entity-views-from-edge'),
+          icon: 'portable_wifi_off',
+          isEnabled: true,
+          onAction: ($event, entities) => this.unassignEntityViewsFromEdge($event, entities)
         }
       );
     }
@@ -501,6 +527,34 @@ export class EntityViewsTableConfigResolver implements Resolve<EntityTableConfig
     ).subscribe((res) => {
         if (res) {
           this.entityViewService.unassignEntityViewFromEdge(entityView.id.id).subscribe(
+            () => {
+              this.config.table.updateData();
+            }
+          );
+        }
+      }
+    );
+  }
+
+  unassignEntityViewsFromEdge($event: Event, entityViews: Array<EntityViewInfo>) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.dialogService.confirm(
+      this.translate.instant('entity-view.unassign-entity-views-from-edge-title', {count: entityViews.length}),
+      this.translate.instant('entity-view.unassign-entity-views-from-edge-text'),
+      this.translate.instant('action.no'),
+      this.translate.instant('action.yes'),
+      true
+    ).subscribe((res) => {
+        if (res) {
+          const tasks: Observable<any>[] = [];
+          entityViews.forEach(
+            (entityView) => {
+              tasks.push(this.entityViewService.unassignEntityViewFromEdge(entityView.id.id));
+            }
+          );
+          forkJoin(tasks).subscribe(
             () => {
               this.config.table.updateData();
             }

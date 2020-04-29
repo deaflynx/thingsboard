@@ -35,7 +35,7 @@ import { DeviceComponent } from '@modules/home/pages/device/device.component';
 import { forkJoin, Observable, of } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 import { selectAuthUser } from '@core/auth/auth.selectors';
-import { map, mergeMap, take, tap } from 'rxjs/operators';
+import {count, map, mergeMap, take, tap} from 'rxjs/operators';
 import { AppState } from '@core/core.state';
 import { DeviceService } from '@app/core/http/device.service';
 import { Authority } from '@app/shared/models/authority.enum';
@@ -66,8 +66,7 @@ import {
   AddEntitiesToEdgeDialogComponent,
   AddEntitiesToEdgeDialogData
 } from "@home/dialogs/add-entities-to-edge-dialog.component";
-import {EdgeService} from "@core/http/edge.service";
-import {Edge, EdgeInfo} from "@shared/models/edge.models";
+import { EdgeService} from "@core/http/edge.service";
 
 @Injectable()
 export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<DeviceInfo>> {
@@ -207,7 +206,7 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
 
   configureCellActions(deviceScope: string): Array<CellActionDescriptor<DeviceInfo>> {
     const actions: Array<CellActionDescriptor<DeviceInfo>> = [];
-    if (deviceScope === 'tenant' || 'edge') {
+    if (deviceScope === 'tenant') {
       actions.push(
         {
           name: this.translate.instant('device.make-public'),
@@ -253,6 +252,16 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
         }
         );
     }
+    if (deviceScope === 'edge') {
+      actions.push(
+        {
+          name: this.translate.instant('device.unassign-from-edge'),
+          icon: 'portable_wifi_off',
+          isEnabled: (entity) => (entity.edgeId && entity.edgeId.id !== NULL_UUID),
+          onAction: ($event, entity) => this.unassignFromEdge($event,entity)
+        }
+      );
+    }
     if (deviceScope === 'customer') {
       actions.push(
         {
@@ -290,13 +299,29 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
 
   configureGroupActions(deviceScope: string): Array<GroupActionDescriptor<DeviceInfo>> {
     const actions: Array<GroupActionDescriptor<DeviceInfo>> = [];
-    if (deviceScope === 'tenant' || 'edge') {
+    if (deviceScope === 'tenant') {
       actions.push(
         {
           name: this.translate.instant('device.assign-devices'),
           icon: 'assignment_ind',
           isEnabled: true,
           onAction: ($event, entities) => this.assignToCustomer($event, entities.map((entity) => entity.id))
+        },
+        {
+          name: this.translate.instant('device.assign-devices-to-edge'),
+          icon: 'wifi_tethering',
+          isEnabled: true,
+          onAction: ($event, entities) => this.assignToEdge($event, entities.map((entity) => entity.id))
+        }
+      );
+    }
+    if (deviceScope === 'edge') {
+      actions.push(
+        {
+          name: this.translate.instant('device.unassign-devices-from-edge'),
+          icon: 'portable_wifi_off',
+          isEnabled: true,
+          onAction: ($event, entities) => this.unassignDevicesFromEdge($event, entities)
         }
       );
     }
@@ -577,6 +602,34 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
     ).subscribe((res) => {
         if (res) {
           this.deviceService.unassignDeviceFromEdge(device.id.id).subscribe(
+            () => {
+              this.config.table.updateData();
+            }
+          );
+        }
+      }
+    );
+  }
+
+  unassignDevicesFromEdge($event: Event, devices: Array<DeviceInfo>) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.dialogService.confirm(
+      this.translate.instant('device.unassign-devices-from-edge-title', {count: devices.length}),
+      this.translate.instant('device.unassign-devices-from-edge-text'),
+      this.translate.instant('action.no'),
+      this.translate.instant('action.yes'),
+      true
+    ).subscribe((res) => {
+        if (res) {
+          const tasks: Observable<any>[] = [];
+          devices.forEach(
+            (device) => {
+              tasks.push(this.deviceService.unassignDeviceFromEdge(device.id.id));
+            }
+          );
+          forkJoin(tasks).subscribe(
             () => {
               this.config.table.updateData();
             }
