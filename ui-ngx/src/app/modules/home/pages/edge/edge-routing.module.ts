@@ -16,10 +16,8 @@
 
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from "@angular/router";
-
 import {EntitiesTableComponent} from "@home/components/entity/entities-table.component";
 import {Authority} from "@shared/models/authority.enum";
-
 import {EdgesTableConfigResolver} from "@home/pages/edge/edges-table-config.resolver"
 import {AssetsTableConfigResolver} from "@home/pages/asset/assets-table-config.resolver";
 import {DevicesTableConfigResolver} from "@home/pages/device/devices-table-config.resolver";
@@ -94,7 +92,7 @@ const routes: Routes = [
           breadcrumb: {
             label: 'edge.devices',
             icon: 'devices_other'
-          },
+          }
         },
         resolve: {
           entitiesTableConfig: DevicesTableConfigResolver

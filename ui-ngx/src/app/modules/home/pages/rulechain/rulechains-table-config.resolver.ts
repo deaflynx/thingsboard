@@ -307,7 +307,6 @@ export class RuleChainsTableConfigResolver implements Resolve<EntityTableConfig<
   }
 
   importRuleChain($event: Event) {
-    console.log("ABC", this.config.componentsData.ruleChainsType);
     if ($event) {
       $event.stopPropagation();
     }

@@ -401,7 +401,6 @@ export class ImportExportService {
           throw new Error('Invalid rule chain file');
         }
         else if (ruleChainImport.ruleChain.type !== expectedRuleChainType) {
-          console.log("TTT", ruleChainImport.ruleChain.type);
           this.store.dispatch(new ActionNotificationShow(
             {message: this.translate.instant('rulechain.invalid-rulechain-type-error', {expectedRuleChainType: expectedRuleChainType}),
             type: 'error'}));
