@@ -274,7 +274,7 @@ export class EntityService {
         if (authUser.authority === Authority.CUSTOMER_USER) {
           entitiesObservable = this.edgeService.getCustomerEdges(customerId, pageLink, subType, config);
         } else {
-          entitiesObservable = this.edgeService.getTenantEdges(pageLink, subType, config);
+          entitiesObservable = this.edgeService.getTenantEdgeInfos(pageLink, subType, config);
         }
         break;
       case EntityType.ASSET:

@@ -166,9 +166,10 @@ export class EdgesTableConfigResolver implements Resolve<EntityTableConfig<EdgeI
   configureEntityFunctions(edgeScope: string): void {
     if (edgeScope === 'tenant') {
       this.config.entitiesFetchFunction = pageLink =>
-        this.edgeService.getTenantEdges(pageLink, this.config.componentsData.edgeType);
+        this.edgeService.getTenantEdgeInfos(pageLink, this.config.componentsData.edgeType);
       this.config.deleteEntity = id => this.edgeService.deleteEdge(id.id);
-    } else {
+    }
+    if (edgeScope === 'customer') {
       this.config.entitiesFetchFunction = pageLink =>
         this.edgeService.getCustomerEdges(this.customerId, pageLink, this.config.componentsData.edgeType);
       this.config.deleteEntity = id => this.edgeService.unassignEdgeFromCustomer(id.id);
@@ -200,7 +201,7 @@ export class EdgesTableConfigResolver implements Resolve<EntityTableConfig<EdgeI
         {
           name: this.translate.instant('edge.make-private'),
           icon: 'reply',
-          isEnabled: (entity) => (entity.customerId && entity.customerId.id !== NULL_UUID && !entity.customerIsPublic),
+          isEnabled: (entity) => (entity.customerId && entity.customerId.id !== NULL_UUID && entity.customerIsPublic),
           onAction: ($event, entity) => this.unassignFromCustomer($event, entity)
         },
         {
