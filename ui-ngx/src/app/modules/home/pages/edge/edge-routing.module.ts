@@ -116,42 +116,19 @@ const routes: Routes = [
       },
       {
         path: ':edgeId/dashboards',
+        component: EntitiesTableComponent,
         data: {
+          auth: [Authority.TENANT_ADMIN, Authority.CUSTOMER_USER],
+          title: 'edge.dashboards',
+          dashboardsType: 'edge',
           breadcrumb: {
             label: 'edge.dashboards',
             icon: 'dashboard'
           }
         },
-        children: [
-          {
-            path: '',
-            component: EntitiesTableComponent,
-            data: {
-              auth: [Authority.TENANT_ADMIN, Authority.CUSTOMER_USER],
-              title: 'edge.dashboards',
-              dashboardsType: 'edge'
-            },
-            resolve: {
-              entitiesTableConfig: DashboardsTableConfigResolver
-            }
-          },
-          {
-            path: ':dashboardId',
-            component: DashboardPageComponent,
-            data: {
-              breadcrumb: {
-                labelFunction: dashboardBreadcumbLabelFunction,
-                icon: 'dashboard'
-              } as BreadCrumbConfig,
-              auth: [Authority.TENANT_ADMIN, Authority.CUSTOMER_USER],
-              title: 'edge.dashboard',
-              widgetEditMode: false
-            },
-            resolve: {
-              dashboard: DashboardResolver
-            }
-          }
-      ]
+        resolve: {
+          entitiesTableConfig: DashboardsTableConfigResolver
+        }
       }]
   }]
 

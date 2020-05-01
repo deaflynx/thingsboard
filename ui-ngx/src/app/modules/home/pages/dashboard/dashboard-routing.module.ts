@@ -39,6 +39,7 @@ export class DashboardResolver implements Resolve<Dashboard> {
   }
 
   resolve(route: ActivatedRouteSnapshot): Observable<Dashboard> {
+    console.log("AAA BBB");
     const dashboardId = route.params.dashboardId;
     return this.dashboardService.getDashboard(dashboardId).pipe(
       map((dashboard) => this.dashboardUtils.validateAndUpdateDashboard(dashboard))
