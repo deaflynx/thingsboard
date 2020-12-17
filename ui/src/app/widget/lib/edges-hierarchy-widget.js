@@ -24,7 +24,7 @@ import edgesHierarchyWidgetTemplate from './edges-hierarchy-widget.tpl.html';
 export default angular.module('thingsboard.widgets.edgesHierarchyWidget', [])
     .directive('tbEdgesHierarchyWidget', EdgesHierarchyWidget)
     .name;
-/* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-vars, no-undef */
 /*@ngInject*/
 function EdgesHierarchyWidget() {
     return {
@@ -53,7 +53,6 @@ function EdgesHierarchyWidgetController($element, $scope, $q, $timeout, toast, t
 
     vm.nodesMap = {};
     vm.pendingUpdateNodeTasks = {};
-    vm.edgeGroupsNodesMap = {};
 
     vm.query = {
         search: null
@@ -282,6 +281,13 @@ function EdgesHierarchyWidgetController($element, $scope, $q, $timeout, toast, t
         return nodeIcon + nodeText;
     }
 
+    function prepareEgeGroupText(node) {
+        var nodeIcon = prepareNodeIcon(node.data.nodeCtx);
+        var nodeText = "Edge rule chains";
+        node.data.searchText = nodeText ? nodeText.replace(/<[^>]+>/g, '').toLowerCase() : "";
+        return nodeIcon + nodeText;
+    }
+
     function loadNodes(node, cb) {
         if (node.id === '#') {
             var tasks = [];
@@ -294,8 +300,8 @@ function EdgesHierarchyWidgetController($element, $scope, $q, $timeout, toast, t
                 updateNodeData(vm.subscription.data);
             });
         } else {
-            if (node.data && node.data.nodeCtx.entity && node.data.nodeCtx.entity.id && node.data.nodeCtx.entity.id.entityType !== 'function') {
-                if (node.data.nodeCtx.entity.id.entityType === types.entityType.edge) {
+            if (node.data && node.data.nodeCtx.entity && node.data.nodeCtx.entity.id &&
+                node.data.nodeCtx.entity.id.entityType === types.entityType.edge) {
                     /* assetService.getEdgeAssets(node.data.nodeCtx.entity.id.id, {limit: 20}, null).then(
                         (entities) => {
                             var tasks = [];
@@ -348,47 +354,65 @@ function EdgesHierarchyWidgetController($element, $scope, $q, $timeout, toast, t
                             });
                         }
                     )
-                    ruleChainService.getEdgeRuleChains(node.data.nodeCtx.entity.id.id, {limit: 20}, null).then(
+                                        ruleChainService.getEdgeRuleChains(node.data.nodeCtx.entity.id.id, {limit: 20}, null).then(
                         (entities) => {
-                            var tasks = [];
-                            for (var i=0;i<entities.data.length;i++) {
-                                var relation = entities.data[i];
-                                var targetId = node.data.nodeCtx.entity.id.entityType === types.entityType.edge ? relation.id : node.data.nodeCtx.entity.id;
-                                tasks.push(entityIdToNode(targetId.entityType, targetId.id, node.data.datasource, node.data.nodeCtx));
-                            }
-                            $q.all(tasks).then((nodes) => {
-                                cb(prepareNodes(nodes));
-                            });
-                        }
-                    )
-                    */
+                            if (entities) {
+                                var tasks = [];
+                                for (var i=0;i<entities.data.length;i++) {
+                                    var relation = entities.data[i];
+                                    var targetId = node.data.nodeCtx.entity.id.entityType === types.entityType.edge ? relation.id : node.data.nodeCtx.entity.id;
+                                    tasks.push(entityIdToNode(targetId.entityType, targetId.id, node.data.datasource, node.data.nodeCtx));
+                                }
+                                $q.all(tasks).then((nodes) => {
+                                    cb(prepareNodes(nodes));
+                                });
 
-                    entityIdToNodeEdge("edgeGroup", "001", node.data.datasource, )
-
-                } else {
-                    var relationQuery = prepareNodeRelationQuery(node.data.nodeCtx);
-                    entityRelationService.findByQuery(relationQuery, {ignoreErrors: true, ignoreLoading: true}).then(
-                        (entityRelations) => {
-                            var tasks = [];
-                            for (var i=0;i<entityRelations.length;i++) {
-                                var relation = entityRelations[i];
-                                var targetId = relationQuery.parameters.direction === types.entitySearchDirection.from ? relation.to : relation.from;
-                                tasks.push(entityIdToNode(targetId.entityType, targetId.id, node.data.datasource, node.data.nodeCtx));
                             }
-                            $q.all(tasks).then((nodes) => {
-                                cb(prepareNodes(nodes));
-                            });
-                        },
-                        (error) => {
-                            var errorText = "Failed to get relations!";
-                            if (error && error.status === 400) {
-                                errorText = "Invalid relations query returned by 'Node relations query function'! Please check widget configuration!";
-                            }
-                            showError(errorText);
                         }
                     );
-                }
-            } else {
+                    */
+                    ruleChainService.getEdgeRuleChains(node.data.nodeCtx.entity.id.id, {limit: 20}, null).then(
+                        (entities) => {
+                            if (entities.data.length) {
+                                var tasks = [];
+
+                                var edgeGroupNode = getEdgeGroupNode(types.entityType.rulechain, node.data.datasource, node.data.nodeCtx);
+                                tasks.push(edgeGroupToNode(types.entityType.rulechain, node.data.datasource, node.data.nodeCtx));
+
+                                for (var i=0;i<entities.data.length;i++) {
+                                    var relation = entities.data[i];
+                                    var targetId = node.data.nodeCtx.entity.id.entityType === types.entityType.edge ? relation.id : node.data.nodeCtx.entity.id;
+                                    // tasks.push(entityIdToNode(targetId.entityType, targetId.id, node.data.datasource, node.data.nodeCtx));
+                                    tasks.push(entityIdToEdgeGroupNode(targetId.entityType, targetId.id, edgeGroupNode.data.datasource, edgeGroupNode.data.nodeCtx));
+                                }
+                                $q.all(tasks).then((nodes) => {
+                                    cb(prepareNodes(nodes));
+                                });
+                            }
+                        }
+                    );
+            }
+            // else if (node.data.nodeCtx.type === "groups") {
+            //     if (node.data.nodeCtx.entity.id.entityType === types.entityType.rulechain) {
+            //         ruleChainService.getEdgeRuleChains(node.data.nodeCtx.edge.entity.id.id, {limit: 20}, null).then(
+            //             (entities) => {
+            //                 if (entities) {
+            //                     var tasks = [];
+            //                     for (var i=0;i<entities.data.length;i++) {
+            //                         var relation = entities.data[i];
+            //                         var targetId = node.data.nodeCtx.entity.id.entityType === types.entityType.edge ? relation.id : node.data.nodeCtx.entity.id;
+            //                         tasks.push(entityIdToNode(targetId.entityType, targetId.id, node.data.datasource, node.data.nodeCtx));
+            //                     }
+            //                     $q.all(tasks).then((nodes) => {
+            //                         cb(prepareNodes(nodes));
+            //                     });
+            //
+            //                 }
+            //             }
+            //         );
+            //     }
+            // }
+            else {
                 cb([]);
             }
         }
@@ -441,44 +465,52 @@ function EdgesHierarchyWidgetController($element, $scope, $q, $timeout, toast, t
         return deferred.promise;
     }
 
-    function datasourceToNodeEdge(datasource, parentNodeCtx) {
+    function edgeGroupToNode(entityType, parentDatasource, parentNodeCtx) {
         var deferred = $q.defer();
-        resolveEntity(datasource).then(
-            (entity) => {
-                if (entity != null) {
-                    var node = {
-                        id: ++vm.nodeIdCounter
-                    };
-                    vm.nodesMap[node.id] = node;
-                    datasource.nodeId = node.id;
-                    node.icon = false;
-                    var nodeCtx = {
-                        parentNodeCtx: parentNodeCtx,
-                        entity: entity,
-                        data: {}
-                    };
-                    nodeCtx.level = parentNodeCtx ? parentNodeCtx.level + 1 : 1;
-                    node.data = {
-                        datasource: datasource,
-                        nodeCtx: nodeCtx
-                    };
-                    node.state = {
-                        disabled: vm.nodeDisabledFunction(node.data.nodeCtx),
-                        opened: vm.nodeOpenedFunction(node.data.nodeCtx)
-                    };
-                    node.text = prepareNodeText(node);
-                    node.children = vm.nodeHasChildrenFunction(node.data.nodeCtx);
-                    deferred.resolve(node);
-                } else {
-                    deferred.resolve(null);
-                }
-            }
-        );
+        deferred.resolve(getEdgeGroupNode(entityType, parentDatasource, parentNodeCtx));
         return deferred.promise;
     }
 
+    function getEdgeGroupNode(entityType, parentDatasource, parentNodeCtx) {
+        var datasource = {
+            dataKeys: parentDatasource.dataKeys,
+            entityId: parentDatasource.entity.id.id + '_' + entityType,
+            type: "edgeGroup",
+            entityType: entityType
+        };
 
-    function entityIdToNodeEdge(entityType, entityId, parentDatasource, parentNodeCtx) {
+        var node = {
+            id: ++vm.nodeIdCounter
+        };
+        vm.nodesMap[node.id] = node;
+        datasource.nodeId = node.id;
+        node.icon = false;
+        var nodeCtx = {
+            parentNodeCtx: 3,
+            data: {},
+            entity: {
+                id: {
+                    id: parentDatasource.entity.id.id + '_' + entityType,
+                    entityType: 'group'
+                },
+                name: "Edge Group RC"
+            }
+        };
+        nodeCtx.level = parentNodeCtx ? parentNodeCtx.level + 1 : 1;
+        node.data = {
+            datasource: datasource,
+            nodeCtx: nodeCtx
+        };
+        node.state = {
+            disabled: vm.nodeDisabledFunction(node.data.nodeCtx),
+            opened: vm.nodeOpenedFunction(node.data.nodeCtx)
+        };
+        node.text = prepareEgeGroupText(node);
+        node.children = vm.nodeHasChildrenFunction(node.data.nodeCtx);
+        return node;
+    }
+
+    function entityIdToEdgeGroupNode(entityType, entityId, parentDatasource, parentNodeCtx) {
         var deferred = $q.defer();
         var datasource = {
             dataKeys: parentDatasource.dataKeys,
@@ -486,7 +518,7 @@ function EdgesHierarchyWidgetController($element, $scope, $q, $timeout, toast, t
             entityType: entityType,
             entityId: entityId
         };
-        datasourceToNodeEdge(datasource, parentNodeCtx).then(
+        datasourceToNode(datasource, parentNodeCtx).then(
             (node) => {
                 if (node != null) {
                     var subscriptionOptions = {
