@@ -42,7 +42,7 @@ function EdgesHierarchyWidget() {
 
 /*@ngInject*/
 function EdgesHierarchyWidgetController($element, $scope, $q, $timeout, toast, types, entityService, entityRelationService,
-                                           assetService, deviceService, entityViewService, dashboardService, ruleChainService /*$filter, $mdMedia, $mdPanel, $document, $translate, $timeout, utils, types*/) {
+                                           assetService, deviceService, entityViewService, dashboardService, ruleChainService, edgeService/*$filter, $mdMedia, $mdPanel, $document, $translate, $timeout, utils, types*/) {
     var vm = this;
 
     vm.showData = true;
@@ -52,6 +52,7 @@ function EdgesHierarchyWidgetController($element, $scope, $q, $timeout, toast, t
     vm.nodeIdCounter = 0;
 
     vm.nodesMap = {};
+    vm.edgesMap = {};
     vm.pendingUpdateNodeTasks = {};
 
     vm.query = {
@@ -290,132 +291,163 @@ function EdgesHierarchyWidgetController($element, $scope, $q, $timeout, toast, t
 
     function loadNodes(node, cb) {
         if (node.id === '#') {
-            var tasks = [];
-            for (var i=0;i<vm.datasources.length;i++) {
-                var datasource = vm.datasources[i];
-                tasks.push(datasourceToNode(datasource));
-            }
-            $q.all(tasks).then((nodes) => {
-                cb(prepareNodes(nodes));
-                updateNodeData(vm.subscription.data);
-            });
-        } else {
-            if (node.data && node.data.nodeCtx.entity && node.data.nodeCtx.entity.id &&
-                node.data.nodeCtx.entity.id.entityType === types.entityType.edge) {
-                    /* assetService.getEdgeAssets(node.data.nodeCtx.entity.id.id, {limit: 20}, null).then(
-                        (entities) => {
-                            var tasks = [];
-                            for (var i=0;i<entities.data.length;i++) {
-                                var relation = entities.data[i];
-                                var targetId = node.data.nodeCtx.entity.id.entityType === types.entityType.edge ? relation.id : node.data.nodeCtx.entity.id;
-                                tasks.push(entityIdToNode(targetId.entityType, targetId.id, node.data.datasource, node.data.nodeCtx));
-                            }
-                            $q.all(tasks).then((nodes) => {
-                                cb(prepareNodes(nodes));
-                            });
-                        }
-                    );
-                    deviceService.getEdgeDevices(node.data.nodeCtx.entity.id.id, {limit: 20}, null).then(
-                        (entities) => {
-                            var tasks = [];
-                            for (var i=0;i<entities.data.length;i++) {
-                                var relation = entities.data[i];
-                                var targetId = node.data.nodeCtx.entity.id.entityType === types.entityType.edge ? relation.id : node.data.nodeCtx.entity.id;
-                                tasks.push(entityIdToNode(targetId.entityType, targetId.id, node.data.datasource, node.data.nodeCtx));
-                            }
-                            $q.all(tasks).then((nodes) => {
-                                cb(prepareNodes(nodes));
-                            });
-                        }
-                    );
-                    entityViewService.getEdgeEntityViews(node.data.nodeCtx.entity.id.id, {limit: 20}, null).then(
-                        (entities) => {
-                            var tasks = [];
-                            for (var i=0;i<entities.data.length;i++) {
-                                var relation = entities.data[i];
-                                var targetId = node.data.nodeCtx.entity.id.entityType === types.entityType.edge ? relation.id : node.data.nodeCtx.entity.id;
-                                tasks.push(entityIdToNode(targetId.entityType, targetId.id, node.data.datasource, node.data.nodeCtx));
-                            }
-                            $q.all(tasks).then((nodes) => {
-                                cb(prepareNodes(nodes));
-                            });
-                        }
-                    );
-                    dashboardService.getEdgeDashboards(node.data.nodeCtx.entity.id.id, {limit: 20}, null).then(
-                        (entities) => {
-                            var tasks = [];
-                            for (var i=0;i<entities.data.length;i++) {
-                                var relation = entities.data[i];
-                                var targetId = node.data.nodeCtx.entity.id.entityType === types.entityType.edge ? relation.id : node.data.nodeCtx.entity.id;
-                                tasks.push(entityIdToNode(targetId.entityType, targetId.id, node.data.datasource, node.data.nodeCtx));
-                            }
-                            $q.all(tasks).then((nodes) => {
-                                cb(prepareNodes(nodes));
-                            });
-                        }
-                    )
-                                        ruleChainService.getEdgeRuleChains(node.data.nodeCtx.entity.id.id, {limit: 20}, null).then(
-                        (entities) => {
-                            if (entities) {
-                                var tasks = [];
-                                for (var i=0;i<entities.data.length;i++) {
-                                    var relation = entities.data[i];
-                                    var targetId = node.data.nodeCtx.entity.id.entityType === types.entityType.edge ? relation.id : node.data.nodeCtx.entity.id;
-                                    tasks.push(entityIdToNode(targetId.entityType, targetId.id, node.data.datasource, node.data.nodeCtx));
-                                }
-                                $q.all(tasks).then((nodes) => {
-                                    cb(prepareNodes(nodes));
-                                });
-
-                            }
-                        }
-                    );
-                    */
-                    ruleChainService.getEdgeRuleChains(node.data.nodeCtx.entity.id.id, {limit: 20}, null).then(
-                        (entities) => {
-                            if (entities.data.length) {
-                                var tasks = [];
-
-                                var edgeGroupNode = getEdgeGroupNode(types.entityType.rulechain, node.data.datasource, node.data.nodeCtx);
-                                tasks.push(edgeGroupToNode(types.entityType.rulechain, node.data.datasource, node.data.nodeCtx));
-
-                                for (var i=0;i<entities.data.length;i++) {
-                                    var relation = entities.data[i];
-                                    var targetId = node.data.nodeCtx.entity.id.entityType === types.entityType.edge ? relation.id : node.data.nodeCtx.entity.id;
-                                    // tasks.push(entityIdToNode(targetId.entityType, targetId.id, node.data.datasource, node.data.nodeCtx));
-                                    tasks.push(entityIdToEdgeGroupNode(targetId.entityType, targetId.id, edgeGroupNode.data.datasource, edgeGroupNode.data.nodeCtx));
-                                }
-                                $q.all(tasks).then((nodes) => {
-                                    cb(prepareNodes(nodes));
-                                });
-                            }
-                        }
-                    );
-            }
-            // else if (node.data.nodeCtx.type === "groups") {
-            //     if (node.data.nodeCtx.entity.id.entityType === types.entityType.rulechain) {
-            //         ruleChainService.getEdgeRuleChains(node.data.nodeCtx.edge.entity.id.id, {limit: 20}, null).then(
-            //             (entities) => {
-            //                 if (entities) {
-            //                     var tasks = [];
-            //                     for (var i=0;i<entities.data.length;i++) {
-            //                         var relation = entities.data[i];
-            //                         var targetId = node.data.nodeCtx.entity.id.entityType === types.entityType.edge ? relation.id : node.data.nodeCtx.entity.id;
-            //                         tasks.push(entityIdToNode(targetId.entityType, targetId.id, node.data.datasource, node.data.nodeCtx));
-            //                     }
-            //                     $q.all(tasks).then((nodes) => {
-            //                         cb(prepareNodes(nodes));
-            //                     });
-            //
-            //                 }
-            //             }
-            //         );
-            //     }
+            edgeService.getEdges({limit: -1}, null).then(
+                (edges) => {
+                    cb(edgesToNodes(node.id, null, edges));
+                }
+            )
+            // var tasks = [];
+            // for (var i=0;i<vm.datasources.length;i++) {
+            //     var datasource = vm.datasources[i];
+            //     tasks.push(datasourceToNode(datasource));
             // }
-            else {
-                cb([]);
+            // $q.all(tasks).then((nodes) => {
+            //     cb(prepareNodes(nodes));
+            //     updateNodeData(vm.subscription.data);
+            // });
+        }
+        // else {
+        //     if (node.data && node.data.nodeCtx.entity && node.data.nodeCtx.entity.id &&
+        //         node.data.nodeCtx.entity.id.entityType === types.entityType.edge) {
+        //             /* assetService.getEdgeAssets(node.data.nodeCtx.entity.id.id, {limit: 20}, null).then(
+        //                 (entities) => {
+        //                     var tasks = [];
+        //                     for (var i=0;i<entities.data.length;i++) {
+        //                         var relation = entities.data[i];
+        //                         var targetId = node.data.nodeCtx.entity.id.entityType === types.entityType.edge ? relation.id : node.data.nodeCtx.entity.id;
+        //                         tasks.push(entityIdToNode(targetId.entityType, targetId.id, node.data.datasource, node.data.nodeCtx));
+        //                     }
+        //                     $q.all(tasks).then((nodes) => {
+        //                         cb(prepareNodes(nodes));
+        //                     });
+        //                 }
+        //             );
+        //             deviceService.getEdgeDevices(node.data.nodeCtx.entity.id.id, {limit: 20}, null).then(
+        //                 (entities) => {
+        //                     var tasks = [];
+        //                     for (var i=0;i<entities.data.length;i++) {
+        //                         var relation = entities.data[i];
+        //                         var targetId = node.data.nodeCtx.entity.id.entityType === types.entityType.edge ? relation.id : node.data.nodeCtx.entity.id;
+        //                         tasks.push(entityIdToNode(targetId.entityType, targetId.id, node.data.datasource, node.data.nodeCtx));
+        //                     }
+        //                     $q.all(tasks).then((nodes) => {
+        //                         cb(prepareNodes(nodes));
+        //                     });
+        //                 }
+        //             );
+        //             entityViewService.getEdgeEntityViews(node.data.nodeCtx.entity.id.id, {limit: 20}, null).then(
+        //                 (entities) => {
+        //                     var tasks = [];
+        //                     for (var i=0;i<entities.data.length;i++) {
+        //                         var relation = entities.data[i];
+        //                         var targetId = node.data.nodeCtx.entity.id.entityType === types.entityType.edge ? relation.id : node.data.nodeCtx.entity.id;
+        //                         tasks.push(entityIdToNode(targetId.entityType, targetId.id, node.data.datasource, node.data.nodeCtx));
+        //                     }
+        //                     $q.all(tasks).then((nodes) => {
+        //                         cb(prepareNodes(nodes));
+        //                     });
+        //                 }
+        //             );
+        //             dashboardService.getEdgeDashboards(node.data.nodeCtx.entity.id.id, {limit: 20}, null).then(
+        //                 (entities) => {
+        //                     var tasks = [];
+        //                     for (var i=0;i<entities.data.length;i++) {
+        //                         var relation = entities.data[i];
+        //                         var targetId = node.data.nodeCtx.entity.id.entityType === types.entityType.edge ? relation.id : node.data.nodeCtx.entity.id;
+        //                         tasks.push(entityIdToNode(targetId.entityType, targetId.id, node.data.datasource, node.data.nodeCtx));
+        //                     }
+        //                     $q.all(tasks).then((nodes) => {
+        //                         cb(prepareNodes(nodes));
+        //                     });
+        //                 }
+        //             )
+        //                                 ruleChainService.getEdgeRuleChains(node.data.nodeCtx.entity.id.id, {limit: 20}, null).then(
+        //                 (entities) => {
+        //                     if (entities) {
+        //                         var tasks = [];
+        //                         for (var i=0;i<entities.data.length;i++) {
+        //                             var relation = entities.data[i];
+        //                             var targetId = node.data.nodeCtx.entity.id.entityType === types.entityType.edge ? relation.id : node.data.nodeCtx.entity.id;
+        //                             tasks.push(entityIdToNode(targetId.entityType, targetId.id, node.data.datasource, node.data.nodeCtx));
+        //                         }
+        //                         $q.all(tasks).then((nodes) => {
+        //                             cb(prepareNodes(nodes));
+        //                         });
+        //
+        //                     }
+        //                 }
+        //             );
+        //             */
+        //         cb(loadNodesForEdge(node));
+        //     }
+        //     // else if (node.data.nodeCtx.type === "groups") {
+        //     //     if (node.data.nodeCtx.entity.id.entityType === types.entityType.rulechain) {
+        //     //         ruleChainService.getEdgeRuleChains(node.data.nodeCtx.edge.entity.id.id, {limit: 20}, null).then(
+        //     //             (entities) => {
+        //     //                 if (entities) {
+        //     //                     var tasks = [];
+        //     //                     for (var i=0;i<entities.data.length;i++) {
+        //     //                         var relation = entities.data[i];
+        //     //                         var targetId = node.data.nodeCtx.entity.id.entityType === types.entityType.edge ? relation.id : node.data.nodeCtx.entity.id;
+        //     //                         tasks.push(entityIdToNode(targetId.entityType, targetId.id, node.data.datasource, node.data.nodeCtx));
+        //     //                     }
+        //     //                     $q.all(tasks).then((nodes) => {
+        //     //                         cb(prepareNodes(nodes));
+        //     //                     });
+        //     //
+        //     //                 }
+        //     //             }
+        //     //         );
+        //     //     }
+        //     // }
+        //     else {
+        //         cb([]);
+        //     }
+        // }
+    }
+
+    // entityGroupsToNodes
+    function edgesToNodes(parentNodeId, parentEntityGroupId, entityGroups) {
+        var nodes = [];
+        var nodesMap = {};
+        vm.entityGroupNodesMap[parentNodeId] = nodesMap;
+        if (entityGroups) {
+            for (var i = 0; i < entityGroups.length; i++) {
+                var entityGroup = entityGroups[i];
+                var node = createEntityGroupNode(parentNodeId, entityGroup, parentEntityGroupId);
+                nodes.push(node);
+                if (entityGroup.groupAll) {
+                    vm.parentIdToGroupAllNodeId[parentNodeId] = node.id;
+                }
             }
         }
+        return nodes;
+    }
+
+    function loadNodesForEdge(node) {
+        var edgeGroupNode = getEdgeGroupNode(types.entityType.rulechain, node.data.datasource, node.data.nodeCtx);
+        tasks.push(edgeGroupToNode(types.entityType.rulechain, node.data.datasource, node.data.nodeCtx));
+
+        ruleChainService.getEdgeRuleChains(node.data.nodeCtx.entity.id.id, {limit: 20}, null).then(
+            (entities) => {
+                if (entities.data.length) {
+                    var tasks = [];
+
+                    var edgeGroupNode = getEdgeGroupNode(types.entityType.rulechain, node.data.datasource, node.data.nodeCtx);
+                    tasks.push(edgeGroupToNode(types.entityType.rulechain, node.data.datasource, node.data.nodeCtx));
+
+                    for (var i=0;i<entities.data.length;i++) {
+                        var relation = entities.data[i];
+                        var targetId = node.data.nodeCtx.entity.id.entityType === types.entityType.edge ? relation.id : node.data.nodeCtx.entity.id;
+                        // tasks.push(entityIdToNode(targetId.entityType, targetId.id, node.data.datasource, node.data.nodeCtx));
+                        tasks.push(entityIdToEdgeGroupNode(targetId.entityType, targetId.id, edgeGroupNode.data.datasource, edgeGroupNode.data.nodeCtx));
+                    }
+                    $q.all(tasks).then((nodes) => {
+                        cb(prepareNodes(nodes));
+                    });
+                }
+            }
+        );
     }
 
     function showError(errorText) {
