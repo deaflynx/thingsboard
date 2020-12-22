@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.util.concurrent.ListenableFuture;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -221,9 +222,9 @@ public abstract class BaseController {
     @Getter
     private boolean logControllerErrorStackTrace;
 
-    @Value("${edges.rpc.enabled}")
+    @Value("${edges.enabled}")
     @Getter
-    private boolean edgesRpcEnabled;
+    protected boolean edgesEnabled;
 
     @ExceptionHandler(ThingsboardException.class)
     public void handleThingsboardException(ThingsboardException ex, HttpServletResponse response) {
@@ -761,7 +762,7 @@ public abstract class BaseController {
     }
 
     protected void sendNotificationMsgToEdgeService(TenantId tenantId, EdgeId edgeId, CustomerId customerId, EdgeEventActionType action) {
-        if (!edgesRpcEnabled) {
+        if (!edgesEnabled) {
             return;
         }
         try {
@@ -772,7 +773,7 @@ public abstract class BaseController {
     }
 
     protected void sendNotificationMsgToEdgeService(TenantId tenantId, EntityId entityId, CustomerId customerId, EdgeEventActionType action) {
-        if (!edgesRpcEnabled) {
+        if (!edgesEnabled) {
             return;
         }
         EdgeEventType type = EdgeUtils.getEdgeEventTypeByEntityType(entityId.getEntityType());
@@ -786,7 +787,7 @@ public abstract class BaseController {
     }
 
     protected void sendNotificationMsgToEdgeService(TenantId tenantId, EntityRelation relation, EdgeEventActionType action) {
-        if (!edgesRpcEnabled) {
+        if (!edgesEnabled) {
             return;
         }
         try {
@@ -799,15 +800,39 @@ public abstract class BaseController {
         }
     }
 
-    protected void sendNotificationMsgToEdgeService(TenantId tenantId, EntityId entityId, EdgeEventActionType action) {
-        sendNotificationMsgToEdgeService(tenantId, null, entityId, action);
+    protected List<EdgeId> findRelatedEdgeIds(TenantId tenantId, EntityId entityId) {
+        if (!edgesEnabled) {
+            return null;
+        }
+        List<EdgeId> result = null;
+        try {
+            result = edgeService.findRelatedEdgeIdsByEntityId(tenantId, entityId).get();
+        } catch (Exception e) {
+            log.error("[{}] can't find related edge ids for entity [{}]", tenantId, entityId, e);
+        }
+        return result;
     }
 
-    protected void sendNotificationMsgToEdgeService(TenantId tenantId, EdgeId edgeId, EntityId entityId, EdgeEventActionType action) {
-        if (!edgesRpcEnabled) {
+    protected void sendDeleteNotificationMsgToEdgeService(TenantId tenantId, EntityId entityId, EntityType entityType, List<EdgeId> edgeIds) {
+        if (!edgesEnabled) {
             return;
         }
-        EdgeEventType type = EdgeUtils.getEdgeEventTypeByEntityType(entityId.getEntityType());
+        if (edgeIds != null && !edgeIds.isEmpty()) {
+            for (EdgeId edgeId : edgeIds) {
+                sendNotificationMsgToEdgeService(tenantId, edgeId, entityId, entityType, EdgeEventActionType.DELETED);
+            }
+        }
+    }
+
+    protected void sendNotificationMsgToEdgeService(TenantId tenantId, EntityId entityId, EntityType entityType, EdgeEventActionType action) {
+        sendNotificationMsgToEdgeService(tenantId, null, entityId, entityType, action);
+    }
+
+    protected void sendNotificationMsgToEdgeService(TenantId tenantId, EdgeId edgeId, EntityId entityId, EntityType entityType, EdgeEventActionType action) {
+        if (!edgesEnabled) {
+            return;
+        }
+        EdgeEventType type = EdgeUtils.getEdgeEventTypeByEntityType(entityType);
         if (type != null) {
             sendNotificationMsgToEdgeService(tenantId, edgeId, entityId, null, type, action);
         }

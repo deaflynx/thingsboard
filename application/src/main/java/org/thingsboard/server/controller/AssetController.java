@@ -92,7 +92,7 @@ public class AssetController extends BaseController {
                     asset.getId() == null ? ActionType.ADDED : ActionType.UPDATED, null);
 
             if (asset.getId() != null) {
-                sendNotificationMsgToEdgeService(savedAsset.getTenantId(), savedAsset.getId(), EdgeEventActionType.UPDATED);
+                sendNotificationMsgToEdgeService(savedAsset.getTenantId(), savedAsset.getId(), EntityType.ASSET, EdgeEventActionType.UPDATED);
             }
 
             return savedAsset;
@@ -111,13 +111,16 @@ public class AssetController extends BaseController {
         try {
             AssetId assetId = new AssetId(toUUID(strAssetId));
             Asset asset = checkAssetId(assetId, Operation.DELETE);
+
+            List<EdgeId> relatedEdgeIds = findRelatedEdgeIds(getTenantId(), assetId);
+
             assetService.deleteAsset(getTenantId(), assetId);
 
             logEntityAction(assetId, asset,
                     asset.getCustomerId(),
                     ActionType.DELETED, null, strAssetId);
 
-            sendNotificationMsgToEdgeService(getTenantId(), assetId, EdgeEventActionType.DELETED);
+            sendDeleteNotificationMsgToEdgeService(getTenantId(), assetId, EntityType.ASSET, relatedEdgeIds);
         } catch (Exception e) {
             logEntityAction(emptyId(EntityType.ASSET),
                     null,
@@ -366,7 +369,7 @@ public class AssetController extends BaseController {
                     savedAsset.getCustomerId(),
                     ActionType.ASSIGNED_TO_EDGE, null, strAssetId, strEdgeId, edge.getName());
 
-            sendNotificationMsgToEdgeService(getTenantId(), edgeId, savedAsset.getId(), EdgeEventActionType.ASSIGNED_TO_EDGE);
+            sendNotificationMsgToEdgeService(getTenantId(), edgeId, savedAsset.getId(), EntityType.ASSET, EdgeEventActionType.ASSIGNED_TO_EDGE);
 
             return  savedAsset;
         } catch (Exception e) {
@@ -399,7 +402,7 @@ public class AssetController extends BaseController {
                     asset.getCustomerId(),
                     ActionType.UNASSIGNED_FROM_EDGE, null, strAssetId, strEdgeId, edge.getName());
 
-            sendNotificationMsgToEdgeService(getTenantId(), edgeId, savedAsset.getId(), EdgeEventActionType.UNASSIGNED_FROM_EDGE);
+            sendNotificationMsgToEdgeService(getTenantId(), edgeId, savedAsset.getId(), EntityType.ASSET, EdgeEventActionType.UNASSIGNED_FROM_EDGE);
 
             return savedAsset;
         } catch (Exception e) {
