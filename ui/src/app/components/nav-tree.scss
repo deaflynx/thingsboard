@@ -126,6 +126,18 @@
         }
       }
 
+      &.tb-rule-chain-group {
+        &::before {
+          content: "code";
+        }
+      }
+
+      &.tb-edge-group {
+        &::before {
+          content: "router";
+        }
+      }
+
       &.tb-customer {
         &::before {
           content: "supervisor_account";
