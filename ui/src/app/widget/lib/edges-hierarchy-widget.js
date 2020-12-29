@@ -295,30 +295,13 @@ function EdgesHierarchyWidgetController($element, $scope, $q, $timeout, toast, t
                 }
             )
         }
-        else if (node.data.type === "edge") {
+        else if (node.data.type === 'edge') {
             var edge = node.data.entity;
             parentEntityGroupId = node.data.parentEntityGroupId;
             cb(loadNodesForEdge(node.id, parentEntityGroupId, edge));
-        } else if (node.data.type === "groups") {
+        } else if (node.data.type === 'edgeGroup') {
             parentEntityGroupId = node.data.parentEntityGroupId;
-            var promise;
-            switch (node.data.groupType) {
-                case (types.entityType.asset):
-                    promise = assetService.getEdgeAssets(node.data.edge.id.id, {limit: 100}, null);
-                    break;
-                case (types.entityType.device):
-                    promise = deviceService.getEdgeDevices(node.data.edge.id.id, {limit: 100}, null);
-                    break;
-                case (types.entityType.entityView):
-                    promise = entityViewService.getEdgeEntityViews(node.data.edge.id.id, {limit: 100}, null);
-                    break;
-                case (types.entityType.rulechain):
-                    promise = ruleChainService.getEdgeRuleChains(node.data.edge.id.id, {limit: 100}, null);
-                    break;
-                case (types.entityType.dashboard):
-                    promise = dashboardService.getEdgeDashboards(node.data.edge.id.id, {limit: 100}, null);
-                    break;
-            }
+            let promise = getPromiseByGroupType(node, node.data.groupType);
             promise.then(
                 (entityGroups) => {
                     if (entityGroups.data.length) {
@@ -328,6 +311,21 @@ function EdgesHierarchyWidgetController($element, $scope, $q, $timeout, toast, t
                     }
                 }
             )
+        }
+    }
+
+    function getPromiseByGroupType(node, groupType) {
+        switch (groupType) {
+            case (types.entityType.asset):
+                return assetService.getEdgeAssets(node.data.edge.id.id, {limit: 100}, null);
+            case (types.entityType.device):
+                return deviceService.getEdgeDevices(node.data.edge.id.id, {limit: 100}, null);
+            case (types.entityType.entityView):
+                return entityViewService.getEdgeEntityViews(node.data.edge.id.id, {limit: 100}, null);
+            case (types.entityType.rulechain):
+                return ruleChainService.getEdgeRuleChains(node.data.edge.id.id, {limit: 100}, null);
+            case (types.entityType.dashboard):
+                return dashboardService.getEdgeDashboards(node.data.edge.id.id, {limit: 100}, null);
         }
     }
 
@@ -389,7 +387,7 @@ function EdgesHierarchyWidgetController($element, $scope, $q, $timeout, toast, t
                 text: textForGroupType(groupType),
                 children: true,
                 data: {
-                    type: "groups",
+                    type: 'edgeGroup',
                     groupType: groupType,
                     edge: edge,
                     parentEntityGroupId: parentEntityGroupId,
