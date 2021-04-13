@@ -22,6 +22,7 @@ import {
 } from '@home/models/entity/entities-table-config.models';
 import {
   EdgeEvent,
+  EdgeEventActionType,
   edgeEventActionTypeTranslations,
   EdgeEventStatus,
   edgeEventStatusColor,
@@ -126,7 +127,7 @@ export class EdgeDownlinkTableConfig extends EntityTableConfig<EdgeEvent, TimePa
         {
           name: this.translate.instant('action.view'),
           icon: 'more_horiz',
-          isEnabled: (entity) => this.isEdgeEventHasData(entity.type),
+          isEnabled: (entity) => this.isEdgeEventHasData(entity),
           onAction: ($event, entity) =>
             {
               this.prepareEdgeEventContent(entity).subscribe((content) => {
@@ -153,13 +154,9 @@ export class EdgeDownlinkTableConfig extends EntityTableConfig<EdgeEvent, TimePa
     return createdTime > this.queueStartTs;
   }
 
-  isEdgeEventHasData(edgeEventType: EdgeEventType): boolean {
-    switch (edgeEventType) {
-      case EdgeEventType.ADMIN_SETTINGS:
-        return false;
-      default:
-        return true;
-    }
+  isEdgeEventHasData(edgeEvent: EdgeEvent): boolean {
+    return !(edgeEvent.type === EdgeEventType.ADMIN_SETTINGS ||
+             edgeEvent.action === EdgeEventActionType.DELETED);
   }
 
   prepareEdgeEventContent(entity: any): Observable<string> {
