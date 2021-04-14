@@ -50,6 +50,9 @@ import { EdgeDownlinkTableHeaderComponent } from '@home/components/edge/edge-dow
 import { EdgeService } from '@core/http/edge.service';
 import { map } from 'rxjs/operators';
 import { EntityService } from "@core/http/entity.service";
+import { Store } from '@ngrx/store';
+import { AppState } from '@core/core.state';
+import { ActionNotificationShow } from '@core/notification/notification.actions';
 
 export class EdgeDownlinkTableConfig extends EntityTableConfig<EdgeEvent, TimePageLink> {
 
@@ -62,6 +65,7 @@ export class EdgeDownlinkTableConfig extends EntityTableConfig<EdgeEvent, TimePa
               private attributeService: AttributeService,
               private datePipe: DatePipe,
               private dialog: MatDialog,
+              private store: Store<AppState>,
               public entityId: EntityId) {
     super();
 
@@ -97,7 +101,7 @@ export class EdgeDownlinkTableConfig extends EntityTableConfig<EdgeEvent, TimePa
       );
   }
 
-  onUpdate(attributes) {
+  onUpdate(attributes): void {
     this.queueStartTs = 0;
     let edge = attributes.reduce(function (map, attribute) {
       map[attribute.key] = attribute;
@@ -130,9 +134,10 @@ export class EdgeDownlinkTableConfig extends EntityTableConfig<EdgeEvent, TimePa
           isEnabled: (entity) => this.isEdgeEventHasData(entity),
           onAction: ($event, entity) =>
             {
-              this.prepareEdgeEventContent(entity).subscribe((content) => {
-                this.showEdgeEventContent($event, content,'event.data');
-              });
+              this.prepareEdgeEventContent(entity).subscribe(
+                (content) => this.showEdgeEventContent($event, content,'event.data'),
+                () => this.showEntityNotFoundError()
+              )
             }
         },
         '40px'),
@@ -179,4 +184,15 @@ export class EdgeDownlinkTableConfig extends EntityTableConfig<EdgeEvent, TimePa
       }
     });
   }
+
+  showEntityNotFoundError(): void {
+    this.store.dispatch(new ActionNotificationShow(
+      {
+        message: this.translate.instant('edge.load-entity-error'),
+        type: 'error',
+        verticalPosition: 'top',
+        horizontalPosition: 'left'
+      }));
+  }
+
 }

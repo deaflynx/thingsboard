@@ -1333,7 +1333,7 @@ export class EntityService {
     return entitiesObservable;
   }
 
-  public getEdgeEventContentByEntityType(entity: any): Observable<any> {
+  public getEdgeEventContentByEntityType(entity: any): Observable<any> { //TODO change with BaseDataHasID and string
     let entityObservable: Observable<any>;
     const entityId: string = entity.entityId;
     const entityType: any = entity.type;
