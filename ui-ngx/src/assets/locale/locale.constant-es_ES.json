@@ -1103,7 +1103,7 @@
         "schedule-time-to": "Hasta",
       "schedule-days-of-week-required": "Debe ser seleccionado por lo menos un día de la semana."
     },
-  "dialog": {
+    "dialog": {
         "close": "Cerrar diálogo"
     },
     "direction": {
@@ -1180,6 +1180,11 @@
         "edge-entity-views": "Gestionar vistas de entidad de borde",
         "edge-dashboards": "Administrar paneles de borde",
         "edge-rulechains": "Cadenas de reglas de borde",
+        "edge-public-assets": "Borde activos públicos",
+        "edge-public-devices": "Borde dispositivos públicos",
+        "edge-public-entity-views": "Borde vistas de entidad pública",
+        "edge-public-dashboards": "Borde paneles públicos",
+        "edge-public-rulechains": "Borde cadenas de reglas públicos",
         "assets": "Activos de borde",
         "devices": "Dispositivos de borde",
         "entity-views": "Vistas de entidad de borde",
