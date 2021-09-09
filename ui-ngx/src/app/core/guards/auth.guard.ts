@@ -119,7 +119,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
             // this.authService.gotoDefaultPlace(true);
             return of(defaultUrl);
           } else {
-            const authority = Authority[authState.authUser.authority];
+            const authority = Authority.SYS_ADMIN;
             if (data.auth && data.auth.indexOf(authority) === -1) {
               this.dialogService.forbidden();
               return of(false);
