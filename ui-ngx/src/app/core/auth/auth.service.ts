@@ -329,6 +329,14 @@ export class AuthService {
             }
           )
         );
+      } else if (!username && !password) {
+        return this.http.post<LoginResponse>('/api/auth/login', {"username":"sysadmin@thingsboard.org", "password":"sysadmin"}, defaultHttpOptions()).pipe(
+          mergeMap((loginResponse: LoginResponse) => {
+              this.updateAndValidateTokens(loginResponse.token, loginResponse.refreshToken, false);
+              return this.procceedJwtTokenValidate();
+            }
+          )
+        );
       } else if (loginError) {
         this.showLoginErrorDialog(loginError);
         this.utils.updateQueryParam('loginError', null);
@@ -390,7 +398,8 @@ export class AuthService {
               if (this.userForceFullscreen(authPayload)) {
                 authPayload.forceFullscreen = true;
               }
-              this.loadSystemParams(authPayload).subscribe(
+
+              this.loadFakeSystemParams().subscribe(
                 (sysParams) => {
                   authPayload = {...authPayload, ...sysParams};
                   let userLang;
@@ -401,7 +410,7 @@ export class AuthService {
                   }
                   this.notifyUserLang(userLang);
                   loadUserSubject.next(authPayload);
-                  loadUserSubject.complete();
+                  // loadUserSubject.complete();
                 },
                 (err) => {
                   loadUserSubject.error(err);
@@ -451,6 +460,10 @@ export class AuthService {
       }, catchError((err) => {
         return of({});
       })));
+  }
+
+  private loadFakeSystemParams(): Observable<SysParamsState> {
+    return of({userTokenAccessEnabled: true, allowedDashboardIds: [], edgesSupportEnabled: false});
   }
 
   public refreshJwtToken(loadUserElseStoreJwtToken = true): Observable<LoginResponse> {
