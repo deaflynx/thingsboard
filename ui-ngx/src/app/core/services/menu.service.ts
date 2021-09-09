@@ -50,19 +50,20 @@ export class MenuService {
         if (authState.authUser) {
           let menuSections: Array<MenuSection>;
           let homeSections: Array<HomeSection>;
-          switch (authState.authUser.authority) {
+          switch (Authority.SYS_ADMIN) {
+          // switch (authState.authUser.authority) {
             case Authority.SYS_ADMIN:
               menuSections = this.buildSysAdminMenu(authState);
               homeSections = this.buildSysAdminHome(authState);
               break;
-            case Authority.TENANT_ADMIN:
+/*            case Authority.TENANT_ADMIN:
               menuSections = this.buildTenantAdminMenu(authState);
               homeSections = this.buildTenantAdminHome(authState);
               break;
             case Authority.CUSTOMER_USER:
               menuSections = this.buildCustomerUserMenu(authState);
               homeSections = this.buildCustomerUserHome(authState);
-              break;
+              break;*/
           }
           this.menuSections$.next(menuSections);
           this.homeSections$.next(homeSections);
@@ -74,6 +75,15 @@ export class MenuService {
   private buildSysAdminMenu(authState: AuthState): Array<MenuSection> {
     const sections: Array<MenuSection> = [];
     sections.push(
+      {
+        id: guid(),
+        name: 'home.home',
+        type: 'link',
+        path: '/home',
+        icon: 'home'
+      }
+    );
+/*    sections.push(
       {
         id: guid(),
         name: 'home.home',
@@ -155,7 +165,7 @@ export class MenuService {
           }
         ]
       }
-    );
+    );*/
     return sections;
   }
 
