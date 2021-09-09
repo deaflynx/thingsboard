@@ -14,21 +14,30 @@
 /// limitations under the License.
 ///
 
-import { EntityType } from '@shared/models/entity-type.models';
-
-export interface MqttBaseData<T> {
-  createdTime?: number;
-  id?: T;
-  name?: string;
-  label?: string;
+export enum MqttClientType {
+  DEVICE = 'DEVICE',
+  APPLICATION = 'APPLICATION'
 }
 
-export interface MqttClient extends MqttClientInfo, MqttBaseData<string> {
+export interface MqttBaseData {
+  createdTime?: number;
+  id?: string;
+  name?: string;
+}
+
+export interface MqttAdminDto extends MqttBaseData {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  password?: string;
+}
+
+export interface MqttClient extends MqttClientInfo, MqttBaseData {
 }
 
 export interface MqttClientInfo {
-  clientId: string,
-  type?: EntityType
+  clientId?: string,
+  type?: MqttClientType
 }
 
 export interface MqttSessionInfo {
@@ -44,7 +53,7 @@ export interface MqttClientSession {
   lastUpdateTime: number;
 }
 
-export interface MqttClientCredentials extends MqttClientInfo, MqttBaseData<string> {
+export interface MqttClientCredentials extends MqttClientInfo, MqttBaseData {
   credentialsId: string,
   credentialsType: "MQTT_BASIC",
   credentialsValue: string
