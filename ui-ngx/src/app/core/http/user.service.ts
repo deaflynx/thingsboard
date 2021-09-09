@@ -18,11 +18,10 @@ import { Injectable } from '@angular/core';
 import { defaultHttpOptionsFromConfig, RequestConfig } from './http-utils';
 import { User } from '@shared/models/user.model';
 import { Observable } from 'rxjs';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { PageLink } from '@shared/models/page/page-link';
 import { PageData } from '@shared/models/page/page-data';
 import { isDefined } from '@core/utils';
-import { InterceptorHttpParams } from '@core/interceptors/interceptor-http-params';
 
 @Injectable({
   providedIn: 'root'
@@ -52,7 +51,8 @@ export class UserService {
   }
 
   public getUser(userId: string, config?: RequestConfig): Observable<User> {
-    return this.http.get<User>(`/api/user/${userId}`, defaultHttpOptionsFromConfig(config));
+    // return this.http.get<User>(`/api/user/${userId}`, defaultHttpOptionsFromConfig(config));
+    return this.http.get<User>(`/api/auth/user`, defaultHttpOptionsFromConfig(config));
   }
 
   public saveUser(user: User, sendActivationMail: boolean = false,
