@@ -28,7 +28,7 @@ const routes: Routes = [
       auth: [Authority.SYS_ADMIN, Authority.TENANT_ADMIN, Authority.CUSTOMER_USER],
       title: 'home.home',
       breadcrumb: {
-        label: 'home.home',
+        label: 'device-profile.transport-type-mqtt',
         icon: 'home'
       }
     }

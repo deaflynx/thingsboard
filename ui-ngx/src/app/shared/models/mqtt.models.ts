@@ -19,6 +19,11 @@ export enum MqttClientType {
   APPLICATION = 'APPLICATION'
 }
 
+export enum MqttClientCredentialsType {
+  MQTT_BASIC = 'MQTT_BASIC',
+  SSL = 'SSL'
+}
+
 export interface MqttBaseData {
   createdTime?: number;
   id?: string;
@@ -54,9 +59,9 @@ export interface MqttClientSession {
 }
 
 export interface MqttClientCredentials extends MqttClientInfo, MqttBaseData {
-  credentialsId: string,
-  credentialsType: "MQTT_BASIC",
-  credentialsValue: string
+  credentialsId?: string,
+  credentialsType?: MqttClientCredentialsType
+  credentialsValue?: string
 }
 
 export interface MqttSubscription {

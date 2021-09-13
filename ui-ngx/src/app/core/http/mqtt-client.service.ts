@@ -35,7 +35,7 @@ export class MqttClientService {
     return this.http.get<MqttClient>(`/api/mqtt/client/${clientId}`, defaultHttpOptionsFromConfig(config));
   }
 
-  public getMqttClients(clientId: string, pageLink: PageLink, config?: RequestConfig): Observable<PageData<MqttClient>> {
+  public getMqttClients(pageLink: PageLink, config?: RequestConfig): Observable<PageData<MqttClient>> {
     return this.http.get<PageData<MqttClient>>(`/api/mqtt/client${pageLink.toQuery()}`, defaultHttpOptionsFromConfig(config));
   }
 

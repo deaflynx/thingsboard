@@ -25,15 +25,11 @@ import { MqttClient, MqttClientCredentials } from '@shared/models/mqtt.models';
 @Injectable({
   providedIn: 'root'
 })
-export class MqttClientCredentialService {
+export class MqttClientCredentialsService {
 
   constructor(
     private http: HttpClient
   ) { }
-
-  public getMqttClientsCredentials(clientId: string, pageLink: PageLink, config?: RequestConfig): Observable<PageData<MqttClientCredentials>> {
-    return this.http.get<PageData<MqttClientCredentials>>(`/api/mqtt/client/credentials${pageLink.toQuery()}`, defaultHttpOptionsFromConfig(config));
-  }
 
   public saveMqttClientCredentials(mqttClientCredentials: MqttClientCredentials, config?: RequestConfig): Observable<MqttClient> {
     return this.http.post<MqttClient>('/api/mqtt/client/credentials', mqttClientCredentials, defaultHttpOptionsFromConfig(config));
@@ -41,6 +37,10 @@ export class MqttClientCredentialService {
 
   public deleteMqttClientCredentials(credentialsId: string, config?: RequestConfig) {
     return this.http.delete(`/api/mqtt/client/credentials/${credentialsId}`, defaultHttpOptionsFromConfig(config));
+  }
+
+  public getMqttClientsCredentials(pageLink: PageLink, config?: RequestConfig): Observable<PageData<MqttClientCredentials>> {
+    return this.http.get<PageData<MqttClientCredentials>>(`/api/mqtt/client/credentials${pageLink.toQuery()}`, defaultHttpOptionsFromConfig(config));
   }
 
 }

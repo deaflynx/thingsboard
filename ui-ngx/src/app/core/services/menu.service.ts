@@ -77,7 +77,7 @@ export class MenuService {
     sections.push(
       {
         id: guid(),
-        name: 'home.home',
+        name: 'device-profile.transport-type-mqtt',
         type: 'link',
         path: '/home',
         icon: 'home'
