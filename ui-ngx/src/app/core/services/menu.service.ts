@@ -81,6 +81,13 @@ export class MenuService {
         type: 'link',
         path: '/home',
         icon: 'home'
+      },
+      {
+        id: guid(),
+        name: 'mqtt-client.clients',
+        type: 'link',
+        path: '/clients',
+        icon: 'devices'
       }
     );
 /*    sections.push(

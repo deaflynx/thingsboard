@@ -3178,5 +3178,17 @@
             "pt_BR": "Português do Brasil",
             "sl_SI": "Slovenščina"
         }
+    },
+    "mqtt-client": {
+      "add": "Add new client",
+      "active": "Active",
+      "client-id": "Client ID",
+      "clients": "Clients",
+      "create-new-client": "Create new client",
+      "mqtt-client-details": "Client details",
+      "name": "Name",
+      "name-required": "Name is required.",
+      "open-mqtt-client": "Open MQTT client",
+      "type": "Type"
     }
 }

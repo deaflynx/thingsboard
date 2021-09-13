@@ -18,7 +18,7 @@ import { Injectable } from '@angular/core';
 import { defaultHttpOptionsFromConfig, RequestConfig } from './http-utils';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { PageLink, TimePageLink } from '@shared/models/page/page-link';
+import { PageLink } from '@shared/models/page/page-link';
 import { PageData } from '@shared/models/page/page-data';
 import { MqttClient } from '@shared/models/mqtt.models';
 

@@ -1,89 +1,91 @@
-<div>
-  <mat-card-title>MQTT Clients:</mat-card-title>
-    <form [formGroup]="mqttClientForm" style="width: 400px; padding: 10px">
-      <fieldset [disabled]="(isLoading$ | async)">
-        <mat-form-field class="mat-block" appearance="outline">
-          <mat-label translate>mqtt.clientId</mat-label>
-          <input matInput formControlName="clientId" required>
-          <mat-error *ngIf="mqttClientForm.get('clientId').hasError('required')">
-            {{ 'mqtt.clientId-required' | translate }}
-          </mat-error>
-        </mat-form-field>
-        <mat-form-field class="mat-block" appearance="outline">
-          <mat-label translate>mqtt.name</mat-label>
-          <input matInput formControlName="name" required>
-          <mat-error *ngIf="mqttClientForm.get('name').hasError('required')">
-            {{ 'mqtt.name-required' | translate }}
-          </mat-error>
-        </mat-form-field>
-        <mat-form-field class="mat-block" appearance="outline">
-          <mat-label translate>mqtt.type</mat-label>
-          <mat-select formControlName="type">
-            <mat-option value="APPLICATION">APPLICATION</mat-option>
-            <mat-option value="DEVICE">DEVICE</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </fieldset>
-      <div mat-dialog-actions fxLayoutAlign="space-between">
-        <button mat-raised-button color="primary"
-                (click)="addClient()"
-                [disabled]="(isLoading$ | async)">
-          {{ 'action.add' | translate }}
-        </button>
-        <button mat-raised-button color="primary"
-                (click)="getClients()"
-                [disabled]="(isLoading$ | async)">
-          {{ 'action.refresh' | translate }}
-        </button>
-      </div>
-    </form>
-    <div *ngIf="clients" style="width: 600px">
-      <div style="padding: 10px" fxFlex fxLayout="column" *ngFor="let entity of clients">
-        <mat-card-content>cliendId: {{entity.clientId}}</mat-card-content>
-        <mat-card-content>name: {{entity.name}}</mat-card-content>
-        <mat-card-content>type: {{entity.type}}</mat-card-content>
-        <div>clientSessionInfo: {{ clientSessionInfo }}</div>
-        <div mat-dialog-actions fxLayoutAlign="start">
-          <button mat-raised-button color="primary"
-                  (click)="getClientSessionInfo(entity.clientId)"
-                  [disabled]="(isLoading$ | async)">
-            {{ 'getClientSessionInfo' | translate }}
-          </button>
-          <button mat-raised-button color="primary"
-                  (click)="clearClientSession(entity.clientId)"
-                  [disabled]="(isLoading$ | async)">
-            {{ 'clearClientSession' | translate }}
-          </button>
-          <button mat-raised-button color="warn"
-                  (click)="removeClient(entity.clientId)"
-                  [disabled]="(isLoading$ | async)">
-            {{ 'removeClient' | translate }}
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+<h1>mqtt broker home page</h1>
 
-<div>
-  <mat-card-title>MQTT Clients Credentials:</mat-card-title>
-  <div style="width: 400px">
-    <button mat-raised-button color="primary"
-            (click)="getClientCredentials()"
-            [disabled]="(isLoading$ | async)">
-      {{ 'getClientCredentials' | translate }}
-    </button>
-  </div>
-  <div>{{ clientCredentials | json }}</div>
-</div>
+<!--<div>-->
+<!--  <mat-card-title>MQTT Clients:</mat-card-title>-->
+<!--    <form [formGroup]="mqttClientForm" style="width: 400px; padding: 10px">-->
+<!--      <fieldset [disabled]="(isLoading$ | async)">-->
+<!--        <mat-form-field class="mat-block" appearance="outline">-->
+<!--          <mat-label translate>mqtt.clientId</mat-label>-->
+<!--          <input matInput formControlName="clientId" required>-->
+<!--          <mat-error *ngIf="mqttClientForm.get('clientId').hasError('required')">-->
+<!--            {{ 'mqtt.clientId-required' | translate }}-->
+<!--          </mat-error>-->
+<!--        </mat-form-field>-->
+<!--        <mat-form-field class="mat-block" appearance="outline">-->
+<!--          <mat-label translate>mqtt.name</mat-label>-->
+<!--          <input matInput formControlName="name" required>-->
+<!--          <mat-error *ngIf="mqttClientForm.get('name').hasError('required')">-->
+<!--            {{ 'mqtt.name-required' | translate }}-->
+<!--          </mat-error>-->
+<!--        </mat-form-field>-->
+<!--        <mat-form-field class="mat-block" appearance="outline">-->
+<!--          <mat-label translate>mqtt.type</mat-label>-->
+<!--          <mat-select formControlName="type">-->
+<!--            <mat-option value="APPLICATION">APPLICATION</mat-option>-->
+<!--            <mat-option value="DEVICE">DEVICE</mat-option>-->
+<!--          </mat-select>-->
+<!--        </mat-form-field>-->
+<!--      </fieldset>-->
+<!--      <div mat-dialog-actions fxLayoutAlign="space-between">-->
+<!--        <button mat-raised-button color="primary"-->
+<!--                (click)="addClient()"-->
+<!--                [disabled]="(isLoading$ | async)">-->
+<!--          {{ 'action.add' | translate }}-->
+<!--        </button>-->
+<!--        <button mat-raised-button color="primary"-->
+<!--                (click)="getClients()"-->
+<!--                [disabled]="(isLoading$ | async)">-->
+<!--          {{ 'action.refresh' | translate }}-->
+<!--        </button>-->
+<!--      </div>-->
+<!--    </form>-->
+<!--    <div *ngIf="clients" style="width: 600px">-->
+<!--      <div style="padding: 10px" fxFlex fxLayout="column" *ngFor="let entity of clients">-->
+<!--        <mat-card-content>cliendId: {{entity.clientId}}</mat-card-content>-->
+<!--        <mat-card-content>name: {{entity.name}}</mat-card-content>-->
+<!--        <mat-card-content>type: {{entity.type}}</mat-card-content>-->
+<!--        <div>clientSessionInfo: {{ clientSessionInfo }}</div>-->
+<!--        <div mat-dialog-actions fxLayoutAlign="start">-->
+<!--          <button mat-raised-button color="primary"-->
+<!--                  (click)="getClientSessionInfo(entity.clientId)"-->
+<!--                  [disabled]="(isLoading$ | async)">-->
+<!--            {{ 'getClientSessionInfo' | translate }}-->
+<!--          </button>-->
+<!--          <button mat-raised-button color="primary"-->
+<!--                  (click)="clearClientSession(entity.clientId)"-->
+<!--                  [disabled]="(isLoading$ | async)">-->
+<!--            {{ 'clearClientSession' | translate }}-->
+<!--          </button>-->
+<!--          <button mat-raised-button color="warn"-->
+<!--                  (click)="removeClient(entity.clientId)"-->
+<!--                  [disabled]="(isLoading$ | async)">-->
+<!--            {{ 'removeClient' | translate }}-->
+<!--          </button>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
 
-<div>
-  <mat-card-title>Get all actors id:</mat-card-title>
-  <div style="width: 400px">
-    <button mat-raised-button color="primary"
-            (click)="getAllActorsIds()"
-            [disabled]="(isLoading$ | async)">
-      {{ 'getAllActorsIds' | translate }}
-    </button>
-  </div>
-  <div>{{ actorIds }}</div>
-</div>
+<!--<div>-->
+<!--  <mat-card-title>MQTT Clients Credentials:</mat-card-title>-->
+<!--  <div style="width: 400px">-->
+<!--    <button mat-raised-button color="primary"-->
+<!--            (click)="getClientCredentials()"-->
+<!--            [disabled]="(isLoading$ | async)">-->
+<!--      {{ 'getClientCredentials' | translate }}-->
+<!--    </button>-->
+<!--  </div>-->
+<!--  <div>{{ clientCredentials | json }}</div>-->
+<!--</div>-->
+
+<!--<div>-->
+<!--  <mat-card-title>Get all actors id:</mat-card-title>-->
+<!--  <div style="width: 400px">-->
+<!--    <button mat-raised-button color="primary"-->
+<!--            (click)="getAllActorsIds()"-->
+<!--            [disabled]="(isLoading$ | async)">-->
+<!--      {{ 'getAllActorsIds' | translate }}-->
+<!--    </button>-->
+<!--  </div>-->
+<!--  <div>{{ actorIds }}</div>-->
+<!--</div>-->

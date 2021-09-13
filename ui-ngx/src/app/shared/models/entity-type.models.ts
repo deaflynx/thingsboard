@@ -36,7 +36,8 @@ export enum EntityType {
   API_USAGE_STATE = 'API_USAGE_STATE',
   TB_RESOURCE = 'TB_RESOURCE',
   OTA_PACKAGE = 'OTA_PACKAGE',
-  RPC = 'RPC'
+  RPC = 'RPC',
+  MQTT_CLIENT = 'MQTT_CLIENT'
 }
 
 export enum AliasEntityType {
@@ -306,7 +307,21 @@ export const entityTypeTranslations = new Map<EntityType | AliasEntityType, Enti
         search: 'ota-update.search',
         selectedEntities: 'ota-update.selected-package'
       }
-    ]
+    ],
+    [
+      EntityType.MQTT_CLIENT,
+      {
+        type: 'entity.type-mqtt-client',
+        typePlural: 'entity.type-mqtt-clients',
+        list: 'entity.list-of-mqtt-clients',
+        nameStartsWith: 'entity.mqtt-client-name-starts-with',
+        details: 'mqtt-client.mqtt-client-details',
+        add: 'mqtt-client.add',
+        noEntities: 'mqtt-client.no-mqtt-clients-text',
+        search: 'mqtt-client.search',
+        selectedEntities: 'mqtt-client.selected-edges'
+      }
+    ],
   ]
 );
 
@@ -394,6 +409,12 @@ export const entityTypeResources = new Map<EntityType, EntityTypeResource<BaseDa
       EntityType.OTA_PACKAGE,
       {
         helpLinkId: 'otaUpdates'
+      }
+    ],
+    [
+      EntityType.MQTT_CLIENT,
+      {
+        helpLinkId: 'mqttClients'
       }
     ]
   ]
