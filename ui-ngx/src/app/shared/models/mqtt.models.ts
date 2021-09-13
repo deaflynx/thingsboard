@@ -14,39 +14,53 @@
 /// limitations under the License.
 ///
 
+import { BaseData } from '@shared/models/base-data';
+import { EntityId } from '@shared/models/id/entity-id';
+import { EntityType } from '@shared/models/entity-type.models';
+import { TenantId } from '@shared/models/id/tenant-id';
+import { Lwm2mSecurityType } from '@shared/models/lwm2m-security-config.models';
+
 export enum MqttClientType {
   DEVICE = 'DEVICE',
   APPLICATION = 'APPLICATION'
 }
+
+export const mqttClientTypeTranslationMap = new Map<MqttClientType, string>(
+  [
+    [MqttClientType.DEVICE, 'Device'],
+    [MqttClientType.APPLICATION, 'Application']
+  ]
+);
 
 export enum MqttClientCredentialsType {
   MQTT_BASIC = 'MQTT_BASIC',
   SSL = 'SSL'
 }
 
-export interface MqttBaseData {
-  createdTime?: number;
-  id?: string;
-  name?: string;
-}
-
-export interface MqttAdminDto extends MqttBaseData {
+export interface MqttAdminDto extends BaseData<MqttClientId> {
   email?: string;
   firstName?: string;
   lastName?: string;
   password?: string;
 }
 
-export interface MqttClient extends MqttClientInfo, MqttBaseData {
+export class MqttClientId implements EntityId {
+  entityType = EntityType.MQTT_CLIENT;
+  id: string;
+  constructor(id: string) {
+    this.id = id;
+  }
 }
 
-export interface MqttClientInfo {
+export interface MqttClient extends BaseData<MqttClientId> {
   clientId?: string,
-  type?: MqttClientType
+  type?: MqttClientType,
+  tenantId?: TenantId,
+  description?: string;
 }
 
 export interface MqttSessionInfo {
-  clientInfo: MqttClientInfo
+  clientInfo: MqttClient
   persistent: boolean,
   serviceId: string,
   sessionId: string
@@ -58,7 +72,7 @@ export interface MqttClientSession {
   lastUpdateTime: number;
 }
 
-export interface MqttClientCredentials extends MqttClientInfo, MqttBaseData {
+export interface MqttClientCredentials extends MqttClient {
   credentialsId?: string,
   credentialsType?: MqttClientCredentialsType
   credentialsValue?: string
