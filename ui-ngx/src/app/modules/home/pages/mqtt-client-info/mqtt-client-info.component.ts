@@ -4,7 +4,6 @@ import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
 import {
   MqttClient,
-  MqttClientSession,
   MqttClientType,
   mqttClientTypeTranslationMap
 } from '@shared/models/mqtt.models';
@@ -12,7 +11,7 @@ import { EntityComponent } from '@home/components/entity/entity.component';
 import { EntityTableConfig } from '@home/models/entity/entities-table-config.models';
 
 @Component({
-  selector: 'tb-mqtt-client',
+  selector: 'tb-mqtt-client-info',
   templateUrl: './mqtt-client-info.component.html',
   styleUrls: ['./mqtt-client-info.component.scss']
 })

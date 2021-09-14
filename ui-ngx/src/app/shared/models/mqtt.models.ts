@@ -52,7 +52,7 @@ export class MqttClientId implements EntityId {
   }
 }
 
-export interface MqttClient extends BaseData<MqttClientId> {
+export interface MqttClient extends MqttClientSession, BaseData<MqttClientId> {
   clientId?: string,
   type?: MqttClientType,
   tenantId?: TenantId,

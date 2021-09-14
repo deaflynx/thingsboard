@@ -3183,12 +3183,19 @@
       "add": "Add new client",
       "active": "Active",
       "client-id": "Client ID",
+      "client-info": "Client info",
+      "client-credentials": "Client credentials",
+      "client-details": "Client details",
       "clients": "Clients",
       "create-new-client": "Create new client",
-      "mqtt-client-details": "Client details",
+      "delete": "Delete MQTT client",
       "name": "Name",
       "name-required": "Name is required.",
+      "no-clients-matching": "No MQTT clients matching '{{entity}}' were found.",
+      "no-clients-text": "No MQTT clients found",
       "open-mqtt-client": "Open MQTT client",
-      "type": "Type"
+      "type": "Type",
+      "search": "Search MQTT clients",
+      "selected-clients": "{ count, plural, 1 {1 MQTT client} other {# MQTT clients} } selected"
     }
 }

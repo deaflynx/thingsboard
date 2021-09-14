@@ -37,7 +37,9 @@ import { ApiUsageModule } from '@home/pages/api-usage/api-usage.module';
 import { EdgeModule } from '@home/pages/edge/edge.module';
 import { OtaUpdateModule } from '@home/pages/ota-update/ota-update.module';
 import { HomeMqttModule } from '@home/pages/home-mqtt/home-mqtt.module';
-import { MqttClientModule } from '@home/pages/mqtt-client/mqtt-client.module';
+import { MqttClientInfoModule } from '@home/pages/mqtt-client-info/mqtt-client-info.module';
+import { MqttClientsModule } from '@home/pages/mqtt-clients/mqtt-clients.module';
+import { MqttClientCredentialsModule } from '@home/pages/mqtt-client-credentials/mqtt-client-credentials.module';
 
 @NgModule({
   exports: [
@@ -60,7 +62,9 @@ import { MqttClientModule } from '@home/pages/mqtt-client/mqtt-client.module';
     OtaUpdateModule,
     UserModule,
     HomeMqttModule,
-    MqttClientModule
+    MqttClientsModule,
+    MqttClientInfoModule,
+    MqttClientCredentialsModule
   ],
   providers: [
     {

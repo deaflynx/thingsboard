@@ -19,16 +19,16 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { Authority } from '@shared/models/authority.enum';
 import { EntitiesTableComponent } from '@home/components/entity/entities-table.component';
-import { MqttClientInfoTableConfigResolver } from '@home/pages/mqtt-client/mqtt-client-info-table-config.resolver';
+import { MqttClientInfoTableConfigResolver } from '@home/pages/mqtt-client-info/mqtt-client-info-table-config-resolver.service';
 
 const routes: Routes = [
   {
-    path: 'clients',
+    path: 'client-info',
     data: {
-      title: 'mqtt-client.clients',
+      title: 'mqtt-client.client-info',
       breadcrumb: {
-        label: 'mqtt-client.clients',
-        icon: 'supervisor_account'
+        label: 'mqtt-client.client-info',
+        icon: 'assignment_ind'
       }
     },
     children: [
@@ -37,7 +37,7 @@ const routes: Routes = [
         component: EntitiesTableComponent,
         data: {
           auth: [Authority.SYS_ADMIN, Authority.TENANT_ADMIN],
-          title: 'mqtt-client.clients'
+          title: 'mqtt-client.client-info'
         },
         resolve: {
           entitiesTableConfig: MqttClientInfoTableConfigResolver

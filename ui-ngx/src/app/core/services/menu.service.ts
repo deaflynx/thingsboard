@@ -50,20 +50,19 @@ export class MenuService {
         if (authState.authUser) {
           let menuSections: Array<MenuSection>;
           let homeSections: Array<HomeSection>;
-          switch (Authority.SYS_ADMIN) {
-          // switch (authState.authUser.authority) {
+          switch (authState.authUser.authority) {
             case Authority.SYS_ADMIN:
               menuSections = this.buildSysAdminMenu(authState);
               homeSections = this.buildSysAdminHome(authState);
               break;
-/*            case Authority.TENANT_ADMIN:
+            case Authority.TENANT_ADMIN:
               menuSections = this.buildTenantAdminMenu(authState);
               homeSections = this.buildTenantAdminHome(authState);
               break;
             case Authority.CUSTOMER_USER:
               menuSections = this.buildCustomerUserMenu(authState);
               homeSections = this.buildCustomerUserHome(authState);
-              break;*/
+              break;
           }
           this.menuSections$.next(menuSections);
           this.homeSections$.next(homeSections);
@@ -77,17 +76,24 @@ export class MenuService {
     sections.push(
       {
         id: guid(),
-        name: 'device-profile.transport-type-mqtt',
-        type: 'link',
-        path: '/home',
-        icon: 'home'
-      },
-      {
-        id: guid(),
         name: 'mqtt-client.clients',
         type: 'link',
         path: '/clients',
-        icon: 'devices'
+        icon: 'supervisor_account'
+      },
+      {
+        id: guid(),
+        name: 'mqtt-client.client-info',
+        type: 'link',
+        path: '/client-info',
+        icon: 'assignment_ind'
+      },
+      {
+        id: guid(),
+        name: 'mqtt-client.client-credentials',
+        type: 'link',
+        path: '/client-credentials',
+        icon: 'lock'
       }
     );
 /*    sections.push(

@@ -18,7 +18,6 @@ import { Injectable } from '@angular/core';
 
 import { Resolve, Router } from '@angular/router';
 import {
-  checkBoxCell,
   DateEntityTableColumn,
   EntityTableColumn,
   EntityTableConfig
@@ -40,7 +39,7 @@ import { MqttClientInfoComponent } from '@home/pages/mqtt-client-info/mqtt-clien
 import { MqttClientService } from '@core/http/mqtt-client.service';
 
 @Injectable()
-export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityTableConfig<MqttClient>> {
+export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableConfig<MqttClient>> {
 
   private readonly config: EntityTableConfig<MqttClient> = new EntityTableConfig<MqttClient>();
 
