@@ -29,6 +29,7 @@
     {{'mqtt-client.delete' | translate }}
   </button>
 </div>
+<h3>Client session info</h3>
 <div class="mat-padding" fxLayout="column">
   <form [formGroup]="entityForm">
     <fieldset [disabled]="(isLoading$ | async) || !isEdit">
@@ -57,3 +58,4 @@
     </fieldset>
   </form>
 </div>
+<h3>Subscriptions</h3>

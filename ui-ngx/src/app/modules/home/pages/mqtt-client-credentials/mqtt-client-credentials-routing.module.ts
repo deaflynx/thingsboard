@@ -19,16 +19,16 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { Authority } from '@shared/models/authority.enum';
 import { EntitiesTableComponent } from '@home/components/entity/entities-table.component';
-import { MqttClientsTableConfigResolver } from '@home/pages/mqtt-client/mqtt-clients-table-config.resolver';
+import { MqttClientCredentialsTableConfigResolver } from '@home/pages/mqtt-client-credentials/mqtt-client-credentials-table-config-resolver.service';
 
 const routes: Routes = [
   {
-    path: 'clients',
+    path: 'client-credentials',
     data: {
-      title: 'mqtt-client.clients',
+      title: 'mqtt-client.client-credentials',
       breadcrumb: {
-        label: 'mqtt-client.clients',
-        icon: 'devices'
+        label: 'mqtt-client.client-credentials',
+        icon: 'lock'
       }
     },
     children: [
@@ -37,10 +37,10 @@ const routes: Routes = [
         component: EntitiesTableComponent,
         data: {
           auth: [Authority.SYS_ADMIN, Authority.TENANT_ADMIN],
-          title: 'mqtt-client.clients'
+          title: 'mqtt-client.client-credentials'
         },
         resolve: {
-          entitiesTableConfig: MqttClientsTableConfigResolver
+          entitiesTableConfig: MqttClientCredentialsTableConfigResolver
         }
       }
     ]
@@ -51,8 +51,8 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
   providers: [
-    MqttClientsTableConfigResolver
+    MqttClientCredentialsTableConfigResolver
   ]
 })
 
-export class MqttClientRoutingModule { }
+export class MqttClientCredentialsRoutingModule { }

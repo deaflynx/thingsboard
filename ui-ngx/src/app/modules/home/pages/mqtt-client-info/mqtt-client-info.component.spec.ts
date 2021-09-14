@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MqttClientComponent } from './mqtt-client.component';
+import { MqttClientInfoComponent } from './mqtt-client-info.component';
 
 describe('HomeMqttComponent', () => {
-  let component: MqttClientComponent;
-  let fixture: ComponentFixture<MqttClientComponent>;
+  let component: MqttClientInfoComponent;
+  let fixture: ComponentFixture<MqttClientInfoComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MqttClientComponent ]
+      declarations: [ MqttClientInfoComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MqttClientComponent);
+    fixture = TestBed.createComponent(MqttClientInfoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

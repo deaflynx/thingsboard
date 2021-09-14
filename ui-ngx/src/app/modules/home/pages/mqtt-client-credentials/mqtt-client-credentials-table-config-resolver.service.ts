@@ -18,7 +18,6 @@ import { Injectable } from '@angular/core';
 
 import { Resolve, Router } from '@angular/router';
 import {
-  checkBoxCell,
   DateEntityTableColumn,
   EntityTableColumn,
   EntityTableConfig
@@ -36,11 +35,11 @@ import { DialogService } from '@core/services/dialog.service';
 import { ImportExportService } from '@home/components/import-export/import-export.service';
 import { Direction } from '@shared/models/page/sort-order';
 import { MqttClient, mqttClientTypeTranslationMap } from '@shared/models/mqtt.models';
-import { MqttClientComponent } from '@home/pages/mqtt-client/mqtt-client.component';
 import { MqttClientService } from '@core/http/mqtt-client.service';
+import { MqttClientCredentialsComponent } from '@home/pages/mqtt-client-credentials/mqtt-client-credentials.component';
 
 @Injectable()
-export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig<MqttClient>> {
+export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityTableConfig<MqttClient>> {
 
   private readonly config: EntityTableConfig<MqttClient> = new EntityTableConfig<MqttClient>();
 
@@ -53,7 +52,7 @@ export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig
               private router: Router) {
 
     this.config.entityType = EntityType.MQTT_CLIENT;
-    this.config.entityComponent = MqttClientComponent;
+    this.config.entityComponent = MqttClientCredentialsComponent;
     this.config.entityTranslations = entityTypeTranslations.get(EntityType.MQTT_CLIENT);
     this.config.entityResources = entityTypeResources.get(EntityType.MQTT_CLIENT);
     this.config.defaultSortOrder = { property: 'name', direction: Direction.ASC };
