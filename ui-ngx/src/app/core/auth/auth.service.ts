@@ -246,7 +246,7 @@ export class AuthService {
           this.redirectUrl = null;
           result = this.router.parseUrl(redirectUrl);
         } else {
-          result = this.router.parseUrl('home');
+          result = this.router.parseUrl('clients');
         }
         if (authState.authUser.authority === Authority.TENANT_ADMIN || authState.authUser.authority === Authority.CUSTOMER_USER) {
           if (this.userHasDefaultDashboard(authState)) {
@@ -260,15 +260,16 @@ export class AuthService {
             result = this.router.parseUrl(`dashboard/${authState.lastPublicDashboardId}`);
           }
         } else if (authState.authUser.authority === Authority.SYS_ADMIN) {
-          this.adminService.checkUpdates().subscribe((updateMessage) => {
-            if (updateMessage && updateMessage.updateAvailable) {
-              this.store.dispatch(new ActionNotificationShow(
-                {message: updateMessage.message,
-                           type: 'info',
-                           verticalPosition: 'bottom',
-                           horizontalPosition: 'right'}));
-            }
-          });
+          // TODO deaflynx: does MQTT broker needs checkUpdates for admin?
+          // this.adminService.checkUpdates().subscribe((updateMessage) => {
+          //   if (updateMessage && updateMessage.updateAvailable) {
+          //     this.store.dispatch(new ActionNotificationShow(
+          //       {message: updateMessage.message,
+          //                  type: 'info',
+          //                  verticalPosition: 'bottom',
+          //                  horizontalPosition: 'right'}));
+          //   }
+          // });
         }
       }
     } else {
