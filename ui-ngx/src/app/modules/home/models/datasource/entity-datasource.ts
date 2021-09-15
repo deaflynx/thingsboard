@@ -114,7 +114,8 @@ export class EntitiesDataSource<T extends BaseData<HasId>, P extends PageLink = 
 
   isCurrentEntity(entity: T): boolean {
     return (this.currentEntity && entity && this.currentEntity.id && entity.id) &&
-      (this.currentEntity.id.id === entity.id.id);
+      // (this.currentEntity.id.id === entity.id.id);
+      (this.currentEntity.id === entity.id);
   }
 
   masterToggle() {
