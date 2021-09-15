@@ -38,10 +38,10 @@ export enum MqttClientCredentialsType {
 }
 
 export interface MqttAdminDto extends BaseData<MqttClientId> {
-  email?: string;
+  email: string;
+  password: string;
   firstName?: string;
   lastName?: string;
-  password?: string;
 }
 
 export class MqttClientId implements EntityId {
@@ -52,33 +52,41 @@ export class MqttClientId implements EntityId {
   }
 }
 
-export interface MqttClient extends MqttClientSession, BaseData<MqttClientId> {
-  clientId?: string,
-  type?: MqttClientType,
-  tenantId?: TenantId,
+export interface MqttClient extends BaseData<MqttClientId> {
+  clientId: string,
+  type: MqttClientType;
   description?: string;
-}
-
-export interface MqttSessionInfo {
-  clientInfo: MqttClient
-  persistent: boolean,
-  serviceId: string,
-  sessionId: string
+  tenantId?: TenantId;
+  session: MqttClientSession;
 }
 
 export interface MqttClientSession {
-  connected: boolean,
-  sessionInfo: MqttSessionInfo,
+  sessionInfo: MqttSessionInfo;
+  connected: boolean;
   lastUpdateTime: number;
+  keepAliveSeconds?: number;
+  cleanSession: boolean;
+  subscriptionsCount: number;
+  note: string;
+  nodeId: string;
+  nodeName: string;
+  username: string;
+}
+
+export interface MqttSessionInfo {
+  clientInfo: MqttClient;
+  persistent: boolean;
+  serviceId: string;
+  sessionId: string;
 }
 
 export interface MqttClientCredentials extends MqttClient {
-  credentialsId?: string,
-  credentialsType?: MqttClientCredentialsType
-  credentialsValue?: string
+  credentialsId: string;
+  credentialsValue: string;
+  credentialsType: MqttClientCredentialsType;
 }
 
 export interface MqttSubscription {
-  qos: number,
-  topic: string
+  qos: number;
+  topic: string;
 }
