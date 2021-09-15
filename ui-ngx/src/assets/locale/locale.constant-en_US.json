@@ -3190,6 +3190,7 @@
       "client-details": "Client details",
       "client-type": "Client type",
       "clients": "Clients",
+      "connect": "Connect",
       "create-new-client": "Create new client",
       "client-type-change-warning": "By changing the profile type, you will lose the messages saved for this client",
       "delete": "Delete MQTT client",
@@ -3205,6 +3206,7 @@
       "name-required": "Name is required.",
       "no-clients-matching": "No MQTT clients matching '{{entity}}' were found.",
       "no-clients-text": "No MQTT clients found",
+      "node-id": "Node ID",
       "open-mqtt-client": "Open MQTT client",
       "search": "Search MQTT clients",
       "selected-clients": "{ count, plural, 1 {1 MQTT client} other {# MQTT clients} } selected"
