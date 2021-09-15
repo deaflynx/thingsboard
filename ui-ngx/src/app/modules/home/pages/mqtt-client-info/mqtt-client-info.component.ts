@@ -2,11 +2,7 @@ import { ChangeDetectorRef, Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
-import {
-  MqttClient,
-  MqttClientType,
-  mqttClientTypeTranslationMap
-} from '@shared/models/mqtt.models';
+import { MqttClient, MqttClientType, mqttClientTypeTranslationMap } from '@shared/models/mqtt.models';
 import { EntityComponent } from '@home/components/entity/entity.component';
 import { EntityTableConfig } from '@home/models/entity/entities-table-config.models';
 
@@ -18,6 +14,8 @@ import { EntityTableConfig } from '@home/models/entity/entities-table-config.mod
 export class MqttClientInfoComponent extends EntityComponent<MqttClient> {
 
   mqttClientTypes = Object.values(MqttClientType);
+
+  defaultMqttClientType = MqttClientType.DEVICE;
 
   mqttClientTypeTranslationMap = mqttClientTypeTranslationMap;
 
@@ -38,13 +36,15 @@ export class MqttClientInfoComponent extends EntityComponent<MqttClient> {
   }
 
   buildForm(entity: MqttClient): FormGroup {
-    return this.fb.group(
+    const form = this.fb.group(
       {
         clientId: [entity ? entity.clientId : '', [Validators.required]],
-        name: [entity ? entity.name : '', [Validators.required]],
-        type: [entity ? entity.type : MqttClientType.DEVICE, [Validators.required]],
+        type: [entity ? entity.type : '', [Validators.required]],
+        name: [entity ? entity.name : '']
       }
     );
+    this.setDefaultMqttClientType(form);
+    return form;
   }
 
   updateForm(entity: MqttClient) {
@@ -52,6 +52,12 @@ export class MqttClientInfoComponent extends EntityComponent<MqttClient> {
       clientId: entity.clientId,
       name: entity.name,
       type: entity.type
+    });
+  }
+
+  private setDefaultMqttClientType(form: FormGroup) {
+    form.patchValue({
+      type: MqttClientType.DEVICE
     });
   }
 

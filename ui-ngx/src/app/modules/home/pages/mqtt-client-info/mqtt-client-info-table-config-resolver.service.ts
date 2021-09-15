@@ -37,6 +37,11 @@ import { Direction } from '@shared/models/page/sort-order';
 import { MqttClient, mqttClientTypeTranslationMap } from '@shared/models/mqtt.models';
 import { MqttClientInfoComponent } from '@home/pages/mqtt-client-info/mqtt-client-info.component';
 import { MqttClientService } from '@core/http/mqtt-client.service';
+import { MatDialog } from '@angular/material/dialog';
+import {
+  EditMqttClientDialogData,
+  EditMqttClientProfileDialogComponent
+} from '@home/dialogs/edit-mqtt-client-profile-dialog.component';
 
 @Injectable()
 export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableConfig<MqttClient>> {
@@ -49,13 +54,14 @@ export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableCon
               private translate: TranslateService,
               private importExport: ImportExportService,
               private datePipe: DatePipe,
-              private router: Router) {
+              private router: Router,
+              private dialog: MatDialog) {
 
     this.config.entityType = EntityType.MQTT_CLIENT;
     this.config.entityComponent = MqttClientInfoComponent;
     this.config.entityTranslations = entityTypeTranslations.get(EntityType.MQTT_CLIENT);
     this.config.entityResources = entityTypeResources.get(EntityType.MQTT_CLIENT);
-    this.config.defaultSortOrder = { property: 'name', direction: Direction.ASC };
+    this.config.defaultSortOrder = { property: 'clientId', direction: Direction.ASC };
 
     this.config.addEnabled = true;
     this.config.entitiesDeleteEnabled = true;
@@ -66,14 +72,9 @@ export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableCon
 
     this.config.columns.push(
       new DateEntityTableColumn<MqttClient>('createdTime', 'common.created-time', this.datePipe, '150px'),
-      new EntityTableColumn<MqttClient>('name', 'mqtt-client.name', '30%'),
-      new EntityTableColumn<MqttClient>('clientId', 'mqtt-client.client-id', '30%'),
-      new EntityTableColumn<MqttClient>('type', 'mqtt-client.type', '30%',
-        (entity) => this.translate.instant(mqttClientTypeTranslationMap.get(entity.type))),
-      // new EntityTableColumn<MqttClient>('status', 'mqtt-client.active', '60px',
-      //   entity => {
-      //     return checkBoxCell(entity.tenantId?.id === NULL_UUID);
-      //   }),
+      new EntityTableColumn<MqttClient>('clientId', 'mqtt-client.client-id', '50%'),
+      new EntityTableColumn<MqttClient>('type', 'mqtt-client.client-type', '50%',
+        (entity) => mqttClientTypeTranslationMap.get(entity.type))
     );
 
     this.config.addActionDescriptors.push(
@@ -87,16 +88,16 @@ export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableCon
 
     this.config.cellActionDescriptors.push(
       {
-        name: this.translate.instant('mqtt-client.open-mqtt-client'),
-        icon: 'devices',
+        name: this.translate.instant('mqtt-client.edit-client-type'),
+        icon: 'settings',
         isEnabled: () => true,
-        onAction: ($event, entity) => this.openMqttClient($event, entity)
+        onAction: ($event, entity) => this.openEditClientProfile($event, entity)
       }
     );
 
-    this.config.deleteEntityTitle = mqttClient => this.translate.instant('mqtt-client.delete-mqtt-client-title',
-      { mqttClientTitle: mqttClient.name });
-    this.config.deleteEntityContent = () => this.translate.instant('mqtt-client.delete-mqtt-client-text');
+    this.config.deleteEntityTitle = mqttClient => this.translate.instant('mqtt-client.delete-client-title',
+      { mqttClientId: mqttClient.clientId });
+    this.config.deleteEntityContent = () => this.translate.instant('mqtt-client.delete-client-text');
     this.config.deleteEntitiesTitle = count => this.translate.instant('mqtt-client.delete-mqtt-clients-title', {count});
     this.config.deleteEntitiesContent = () => this.translate.instant('mqtt-client.delete-mqtt-clients-text');
 
@@ -129,17 +130,48 @@ export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableCon
     }
   }
 
-  openMqttClient($event: Event, mqttClient: MqttClient) {
+  openEditClientProfile($event: Event, mqttClient: MqttClient) {
     if ($event) {
       $event.stopPropagation();
     }
-    this.router.navigateByUrl(`clients/${mqttClient.id.id}`);
+    this.dialog.open<EditMqttClientProfileDialogComponent, EditMqttClientDialogData>(EditMqttClientProfileDialogComponent, {
+      disableClose: true,
+      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
+      data: {
+        mqttClient
+      }
+    }).afterClosed()
+      .subscribe((res) => {
+        if (res) {
+          this.config.table.updateData();
+        }
+      })
   }
+
+  //assignToCustomer($event: Event, assetIds: Array<AssetId>) {
+  //     if ($event) {
+  //       $event.stopPropagation();
+  //     }
+  //     this.dialog.open<AssignToCustomerDialogComponent, AssignToCustomerDialogData,
+  //       boolean>(AssignToCustomerDialogComponent, {
+  //       disableClose: true,
+  //       panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
+  //       data: {
+  //         entityIds: assetIds,
+  //         entityType: EntityType.ASSET
+  //       }
+  //     }).afterClosed()
+  //       .subscribe((res) => {
+  //         if (res) {
+  //           this.config.table.updateData();
+  //         }
+  //       });
+  //   }
 
   onMqttClientAction(action: EntityAction<MqttClient>): boolean {
     switch (action.action) {
       case 'open':
-        this.openMqttClient(action.event, action.entity);
+        this.openEditClientProfile(action.event, action.entity);
         return true;
     }
     return false;
