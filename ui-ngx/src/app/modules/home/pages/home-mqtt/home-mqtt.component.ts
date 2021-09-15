@@ -81,15 +81,9 @@ export class HomeMqttComponent extends PageComponent implements OnInit {
   }
 
   getClientSessionInfo(clientId: string) {
-    this.mqttClientSessionService.getClientSessionInfo(clientId).subscribe(
-      (data) => this.clientSessionInfo = data
-    );
   }
 
   clearClientSession(clientId: string) {
-    this.mqttClientService.deleteMqttClient(clientId).subscribe(
-      () => this.getClientSessionInfo(clientId)
-    );
   }
 
 
