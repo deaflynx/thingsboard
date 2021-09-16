@@ -3226,6 +3226,7 @@
       "topic": "Topic",
       "remove-session": "Remove session",
       "disconnect-client": "Disconnect client",
-      "refresh-page": "Refresh page"
+      "refresh-page": "Refresh page",
+      "qos": "QoS"
     }
 }
