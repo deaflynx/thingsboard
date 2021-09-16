@@ -1,0 +1,62 @@
+<!--<p>subscription-list works!</p>-->
+<!--<div fxLayout="column" class="tb-subscription-list" [formGroup]="subscriptionListFormGroup">-->
+<!--  <div class="header" fxFlex fxLayout="row">-->
+<!--    <span class="cell" fxFlex="30" translate>mqtt-client.topic</span>-->
+<!--    <span class="cell" fxFlex="70" translate>mqtt-client.qos</span>-->
+<!--    <span [fxShow]="!disabled" style="width: 40px; min-width: 40px;">&nbsp;</span>-->
+<!--  </div>-->
+<!--  <div class="body">-->
+<!--    <div class="row" fxFlex fxLayout="row"-->
+<!--         fxLayoutAlign="start center" formArrayName="subscriptions"-->
+<!--         *ngFor="let subscriptionControl of subscriptionsFormArray().controls; let $index = index">-->
+
+
+
+<!--&lt;!&ndash;      <mat-form-field class="mat-block">&ndash;&gt;-->
+<!--&lt;!&ndash;        <mat-label translate>mqtt-client.topic</mat-label>&ndash;&gt;-->
+<!--&lt;!&ndash;        <input matInput [formControl]="subscriptionControl.get('topic').value">&ndash;&gt;-->
+<!--&lt;!&ndash;      </mat-form-field>&ndash;&gt;-->
+<!--&lt;!&ndash;      <mat-form-field class="mat-block">&ndash;&gt;-->
+<!--&lt;!&ndash;        <mat-label translate>mqtt-client.qos</mat-label>&ndash;&gt;-->
+<!--&lt;!&ndash;        <input matInput [formControl]="subscriptionControl.get('qos').value">&ndash;&gt;-->
+<!--&lt;!&ndash;      </mat-form-field>&ndash;&gt;-->
+
+<!--&lt;!&ndash;      <tb-resource-type-autocomplete&ndash;&gt;-->
+<!--&lt;!&ndash;        class="cell mat-block" fxFlex="30"&ndash;&gt;-->
+<!--&lt;!&ndash;        required&ndash;&gt;-->
+<!--&lt;!&ndash;        >&ndash;&gt;-->
+<!--&lt;!&ndash;      </tb-resource-type-autocomplete>&ndash;&gt;-->
+<!--&lt;!&ndash;      <tb-operation-type-list&ndash;&gt;-->
+<!--&lt;!&ndash;        class="cell mat-block" fxFlex="70"&ndash;&gt;-->
+<!--&lt;!&ndash;        required&ndash;&gt;-->
+<!--&lt;!&ndash;        [resource]="subscriptionControl.get('resource').value"&ndash;&gt;-->
+<!--&lt;!&ndash;        [formControl]="subscriptionControl.get('operations')">&ndash;&gt;-->
+<!--&lt;!&ndash;      </tb-operation-type-list>&ndash;&gt;-->
+<!--      <button mat-button mat-icon-button color="primary"-->
+<!--              [fxShow]="!disabled"-->
+<!--              type="button"-->
+<!--              style="width: 40px; min-width: 40px;"-->
+<!--              (click)="removeSubscription($index)"-->
+<!--              [disabled]="isLoading$ | async"-->
+<!--              matTooltip="{{ 'mqtt-client.remove-permission' | translate }}"-->
+<!--              matTooltipPosition="above">-->
+<!--        <mat-icon>close</mat-icon>-->
+<!--      </button>-->
+<!--    </div>-->
+
+<!--    <div>-->
+<!--      <button mat-button mat-raised-button color="primary"-->
+<!--              [fxShow]="!disabled"-->
+<!--              [disabled]="isLoading$ | async"-->
+<!--              (click)="addSubscription()"-->
+<!--              type="button"-->
+<!--              matTooltip="{{ 'mqtt-client.add-subscription' | translate }}"-->
+<!--              matTooltipPosition="above">-->
+<!--        <mat-icon>add</mat-icon>-->
+<!--        {{ 'action.add' | translate }}-->
+<!--      </button>-->
+<!--    </div>-->
+
+<!--  </div>-->
+
+<!--</div>-->
