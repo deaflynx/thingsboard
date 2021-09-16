@@ -20,7 +20,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { PageLink } from '@shared/models/page/page-link';
 import { PageData } from '@shared/models/page/page-data';
-import { MqttClientId, MqttClientSession } from '@shared/models/mqtt.models';
+import { DetailedClientSessionInfoDto } from '@shared/models/mqtt.models';
 
 @Injectable({
   providedIn: 'root'
@@ -31,12 +31,12 @@ export class MqttClientSessionService {
     private http: HttpClient
   ) { }
 
-  public getClientSessionInfo(clientId: string, config?: RequestConfig): Observable<MqttClientSession> {
-    return this.http.get<MqttClientSession>(`/api/client-session/${clientId}`, defaultHttpOptionsFromConfig(config));
+  public getClientSessionInfo(clientId: string, config?: RequestConfig): Observable<DetailedClientSessionInfoDto> {
+    return this.http.get<DetailedClientSessionInfoDto>(`/api/client-session/${clientId}`, defaultHttpOptionsFromConfig(config));
   }
 
-  public getClientSessionInfos(clientId: string, pageLink: PageLink, config?: RequestConfig): Observable<PageData<MqttClientSession>> {
-    return this.http.get<PageData<MqttClientSession>>(`/api/client-session${pageLink.toQuery()}`, defaultHttpOptionsFromConfig(config));
+  public getClientSessionInfos(clientId: string, pageLink: PageLink, config?: RequestConfig): Observable<PageData<DetailedClientSessionInfoDto>> {
+    return this.http.get<PageData<DetailedClientSessionInfoDto>>(`/api/client-session${pageLink.toQuery()}`, defaultHttpOptionsFromConfig(config));
   }
 
   public clearClientSession(clientId: string, config?: RequestConfig) {

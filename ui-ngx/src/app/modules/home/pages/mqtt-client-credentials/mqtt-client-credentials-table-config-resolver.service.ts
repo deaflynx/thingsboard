@@ -34,14 +34,14 @@ import { Authority } from '@shared/models/authority.enum';
 import { DialogService } from '@core/services/dialog.service';
 import { ImportExportService } from '@home/components/import-export/import-export.service';
 import { Direction } from '@shared/models/page/sort-order';
-import { MqttClient, mqttClientTypeTranslationMap } from '@shared/models/mqtt.models';
+import { Client, clientTypeTranslationMap } from '@shared/models/mqtt.models';
 import { MqttClientService } from '@core/http/mqtt-client.service';
 import { MqttClientCredentialsComponent } from '@home/pages/mqtt-client-credentials/mqtt-client-credentials.component';
 
 @Injectable()
-export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityTableConfig<MqttClient>> {
+export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityTableConfig<Client>> {
 
-  private readonly config: EntityTableConfig<MqttClient> = new EntityTableConfig<MqttClient>();
+  private readonly config: EntityTableConfig<Client> = new EntityTableConfig<Client>();
 
   constructor(private store: Store<AppState>,
               private dialogService: DialogService,
@@ -65,11 +65,11 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
       mqttClient.clientId : '';
 
     this.config.columns.push(
-      new DateEntityTableColumn<MqttClient>('createdTime', 'common.created-time', this.datePipe, '150px'),
-      new EntityTableColumn<MqttClient>('name', 'mqtt-client.name', '30%'),
-      new EntityTableColumn<MqttClient>('clientId', 'mqtt-client.client-id', '30%'),
-      new EntityTableColumn<MqttClient>('type', 'mqtt-client.client-type', '30%',
-        (entity) => this.translate.instant(mqttClientTypeTranslationMap.get(entity.type))),
+      new DateEntityTableColumn<Client>('createdTime', 'common.created-time', this.datePipe, '150px'),
+      new EntityTableColumn<Client>('name', 'mqtt-client.name', '30%'),
+      new EntityTableColumn<Client>('clientId', 'mqtt-client.client-id', '30%'),
+      new EntityTableColumn<Client>('type', 'mqtt-client.client-type', '30%',
+        (entity) => this.translate.instant(clientTypeTranslationMap.get(entity.type))),
       // new EntityTableColumn<MqttClient>('status', 'mqtt-client.active', '60px',
       //   entity => {
       //     return checkBoxCell(entity.tenantId?.id === NULL_UUID);
@@ -107,7 +107,7 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
     this.config.onEntityAction = action => this.onMqttClientAction(action);
   }
 
-  resolve(): EntityTableConfig<MqttClient> {
+  resolve(): EntityTableConfig<Client> {
     this.config.tableTitle = this.translate.instant('mqtt-client.clients');
     const authUser = getCurrentAuthUser(this.store);
     this.config.deleteEnabled = (widgetsBundle) => this.isMqttClientEditable(widgetsBundle, authUser.authority);
@@ -121,7 +121,7 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
     return this.mqttClientService.getMqttClient(id);
   }
 
-  isMqttClientEditable(mqttClient: MqttClient, authority: Authority): boolean {
+  isMqttClientEditable(mqttClient: Client, authority: Authority): boolean {
     if (authority === Authority.TENANT_ADMIN) {
       return mqttClient && mqttClient.tenantId && mqttClient.tenantId.id !== NULL_UUID;
     } else {
@@ -129,14 +129,14 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
     }
   }
 
-  openMqttClient($event: Event, mqttClient: MqttClient) {
+  openMqttClient($event: Event, mqttClient: Client) {
     if ($event) {
       $event.stopPropagation();
     }
     this.router.navigateByUrl(`clients/${mqttClient.id.id}`);
   }
 
-  onMqttClientAction(action: EntityAction<MqttClient>): boolean {
+  onMqttClientAction(action: EntityAction<Client>): boolean {
     switch (action.action) {
       case 'open':
         this.openMqttClient(action.event, action.entity);

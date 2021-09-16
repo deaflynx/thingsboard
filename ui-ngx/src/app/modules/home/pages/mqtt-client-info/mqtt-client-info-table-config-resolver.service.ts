@@ -34,7 +34,7 @@ import { Authority } from '@shared/models/authority.enum';
 import { DialogService } from '@core/services/dialog.service';
 import { ImportExportService } from '@home/components/import-export/import-export.service';
 import { Direction } from '@shared/models/page/sort-order';
-import { MqttClient, mqttClientTypeTranslationMap } from '@shared/models/mqtt.models';
+import { Client, clientTypeTranslationMap } from '@shared/models/mqtt.models';
 import { MqttClientInfoComponent } from '@home/pages/mqtt-client-info/mqtt-client-info.component';
 import { MqttClientService } from '@core/http/mqtt-client.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -44,9 +44,9 @@ import {
 } from '@home/dialogs/edit-mqtt-client-profile-dialog.component';
 
 @Injectable()
-export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableConfig<MqttClient>> {
+export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableConfig<Client>> {
 
-  private readonly config: EntityTableConfig<MqttClient> = new EntityTableConfig<MqttClient>();
+  private readonly config: EntityTableConfig<Client> = new EntityTableConfig<Client>();
 
   constructor(private store: Store<AppState>,
               private dialogService: DialogService,
@@ -71,10 +71,10 @@ export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableCon
       mqttClient.clientId : '';
 
     this.config.columns.push(
-      new DateEntityTableColumn<MqttClient>('createdTime', 'common.created-time', this.datePipe, '150px'),
-      new EntityTableColumn<MqttClient>('clientId', 'mqtt-client.client-id', '50%'),
-      new EntityTableColumn<MqttClient>('type', 'mqtt-client.client-type', '50%',
-        (entity) => mqttClientTypeTranslationMap.get(entity.type))
+      new DateEntityTableColumn<Client>('createdTime', 'common.created-time', this.datePipe, '150px'),
+      new EntityTableColumn<Client>('clientId', 'mqtt-client.client-id', '50%'),
+      new EntityTableColumn<Client>('type', 'mqtt-client.client-type', '50%',
+        (entity) => clientTypeTranslationMap.get(entity.type))
     );
 
     this.config.addActionDescriptors.push(
@@ -108,7 +108,7 @@ export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableCon
     this.config.onEntityAction = action => this.onMqttClientAction(action);
   }
 
-  resolve(): EntityTableConfig<MqttClient> {
+  resolve(): EntityTableConfig<Client> {
     this.config.tableTitle = this.translate.instant('mqtt-client.clients');
     const authUser = getCurrentAuthUser(this.store);
     this.config.deleteEnabled = (widgetsBundle) => this.isMqttClientEditable(widgetsBundle, authUser.authority);
@@ -122,7 +122,7 @@ export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableCon
     return this.mqttClientService.getMqttClient(id);
   }
 
-  isMqttClientEditable(mqttClient: MqttClient, authority: Authority): boolean {
+  isMqttClientEditable(mqttClient: Client, authority: Authority): boolean {
     if (authority === Authority.TENANT_ADMIN) {
       return mqttClient && mqttClient.tenantId && mqttClient.tenantId.id !== NULL_UUID;
     } else {
@@ -130,7 +130,7 @@ export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableCon
     }
   }
 
-  openEditClientProfile($event: Event, mqttClient: MqttClient) {
+  openEditClientProfile($event: Event, mqttClient: Client) {
     if ($event) {
       $event.stopPropagation();
     }
@@ -168,7 +168,7 @@ export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableCon
   //       });
   //   }
 
-  onMqttClientAction(action: EntityAction<MqttClient>): boolean {
+  onMqttClientAction(action: EntityAction<Client>): boolean {
     switch (action.action) {
       case 'open':
         this.openEditClientProfile(action.event, action.entity);

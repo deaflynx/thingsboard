@@ -18,33 +18,44 @@ import { BaseData } from '@shared/models/base-data';
 import { EntityId } from '@shared/models/id/entity-id';
 import { EntityType } from '@shared/models/entity-type.models';
 import { TenantId } from '@shared/models/id/tenant-id';
-import { Lwm2mSecurityType } from '@shared/models/lwm2m-security-config.models';
 
-export enum MqttClientType {
+export enum ClientType {
   DEVICE = 'DEVICE',
   APPLICATION = 'APPLICATION'
 }
 
-export const mqttClientTypeTranslationMap = new Map<MqttClientType, string>(
-  [
-    [MqttClientType.DEVICE, 'Device'],
-    [MqttClientType.APPLICATION, 'Application']
-  ]
-);
+export enum ConnectionState {
+  CONNECTED = 'CONNECTED',
+  DISCONNECTED = 'DISCONNECTED'
+}
 
-export enum MqttClientCredentialsType {
+export enum MqttQoS {
+  AT_MOST_ONCE = 'AT_MOST_ONCE',
+  AT_LEAST_ONCE = 'AT_LEAST_ONCE',
+  EXACTLY_ONCE = 'EXACTLY_ONCE'
+}
+
+export enum ClientCredentialsType {
   MQTT_BASIC = 'MQTT_BASIC',
   SSL = 'SSL'
 }
 
-export interface MqttAdminDto extends BaseData<MqttClientId> {
-  email: string;
-  password: string;
-  firstName?: string;
-  lastName?: string;
+export const clientTypeTranslationMap = new Map<ClientType, string>(
+  [
+    [ClientType.DEVICE, 'Device'],
+    [ClientType.APPLICATION, 'Application']
+  ]
+);
+
+export interface Client extends BaseData<ClientId> {
+  clientId: string,
+  type: ClientType;
+  description?: string;
+  tenantId?: TenantId;
+  session: DetailedClientSessionInfoDto;
 }
 
-export class MqttClientId implements EntityId {
+export class ClientId implements EntityId {
   entityType = EntityType.MQTT_CLIENT;
   id: string;
   constructor(id: string) {
@@ -52,41 +63,56 @@ export class MqttClientId implements EntityId {
   }
 }
 
-export interface MqttClient extends BaseData<MqttClientId> {
-  clientId: string,
-  type: MqttClientType;
-  description?: string;
-  tenantId?: TenantId;
-  session: MqttClientSession;
-}
-
-export interface MqttClientSession {
-  sessionInfo: MqttSessionInfo;
+export interface ClientSession {
   connected: boolean;
-  lastUpdateTime: number;
-  keepAliveSeconds?: number;
-  cleanSession: boolean;
-  subscriptionsCount: number;
-  note: string;
-  nodeId: string;
-  nodeName: string;
-  username: string;
+  sessionInfo: SessionInfo;
 }
 
-export interface MqttSessionInfo {
-  clientInfo: MqttClient;
-  persistent: boolean;
+export interface ClientInfo {
+  clientId: string;
+  type: ClientType;
+}
+
+export interface ClientSessionInfo {
+  clientSession: ClientSession;
+  lastUpdateTime: number;
+}
+
+export interface SessionInfo {
   serviceId: string;
   sessionId: string;
+  persistent: boolean;
+  clientInfo: ClientInfo;
 }
 
-export interface MqttClientCredentials extends MqttClient {
+export interface MqttClientCredentials {
+  clientId: string;
   credentialsId: string;
   credentialsValue: string;
-  credentialsType: MqttClientCredentialsType;
+  credentialsType: ClientCredentialsType;
 }
 
-export interface MqttSubscription {
-  qos: number;
+export interface MqttAdminDto extends BaseData<ClientId> {
+  email: string;
+  password: string;
+  firstName?: string;
+  lastName?: string;
+}
+
+export interface DetailedClientSessionInfoDto {
+  clientId: string;
+  connectionState: ConnectionState;
+  clientType: ClientType;
+  nodeId: string;
+  persistent: boolean;
+  username: string;
+  subscriptions: TopicSubscription;
+  keepAliveSeconds: number;
+  connectedAt: number;
+  disconnectedAt: number;
+}
+
+export interface TopicSubscription {
   topic: string;
+  qos: MqttQoS;
 }

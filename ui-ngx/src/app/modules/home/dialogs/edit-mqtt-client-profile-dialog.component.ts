@@ -24,15 +24,15 @@ import { EntityType } from '@shared/models/entity-type.models';
 import { DialogComponent } from '@shared/components/dialog.component';
 import { Router } from '@angular/router';
 import {
-  MqttClient,
-  MqttClientType,
-  mqttClientTypeTranslationMap
+  Client,
+  ClientType,
+  clientTypeTranslationMap
 } from '@shared/models/mqtt.models';
 import { MqttClientService } from '@core/http/mqtt-client.service';
 import { TranslateService } from '@ngx-translate/core';
 
 export interface EditMqttClientDialogData {
-  mqttClient: MqttClient
+  mqttClient: Client
 }
 
 @Component({
@@ -50,9 +50,9 @@ export class EditMqttClientProfileDialogComponent extends
 
   editMqttClientProfileFormGroup: FormGroup;
 
-  mqttClient: MqttClient;
-  mqttClientTypes = Object.values(MqttClientType);
-  mqttClientTypeTranslationMap = mqttClientTypeTranslationMap;
+  mqttClient: Client;
+  mqttClientTypes = Object.values(ClientType);
+  mqttClientTypeTranslationMap = clientTypeTranslationMap;
 
   constructor(protected store: Store<AppState>,
               protected router: Router,
@@ -86,7 +86,7 @@ export class EditMqttClientProfileDialogComponent extends
 
   save(): void {
     this.submitted = true;
-    const clientType: MqttClientType = this.editMqttClientProfileFormGroup.get('clientType').value;
+    const clientType: ClientType = this.editMqttClientProfileFormGroup.get('clientType').value;
     this.mqttClientService.saveMqttClient({...this.data.mqttClient, type: clientType })
       .subscribe(
         () => {

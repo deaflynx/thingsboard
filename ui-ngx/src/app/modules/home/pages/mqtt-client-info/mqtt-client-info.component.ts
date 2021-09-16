@@ -1,8 +1,24 @@
+///
+/// Copyright © 2016-2021 The Thingsboard Authors
+///
+/// Licensed under the Apache License, Version 2.0 (the "License");
+/// you may not use this file except in compliance with the License.
+/// You may obtain a copy of the License at
+///
+///     http://www.apache.org/licenses/LICENSE-2.0
+///
+/// Unless required by applicable law or agreed to in writing, software
+/// distributed under the License is distributed on an "AS IS" BASIS,
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/// See the License for the specific language governing permissions and
+/// limitations under the License.
+///
+
 import { ChangeDetectorRef, Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
-import { MqttClient, MqttClientType, mqttClientTypeTranslationMap } from '@shared/models/mqtt.models';
+import { Client, ClientType, clientTypeTranslationMap } from '@shared/models/mqtt.models';
 import { EntityComponent } from '@home/components/entity/entity.component';
 import { EntityTableConfig } from '@home/models/entity/entities-table-config.models';
 
@@ -11,17 +27,17 @@ import { EntityTableConfig } from '@home/models/entity/entities-table-config.mod
   templateUrl: './mqtt-client-info.component.html',
   styleUrls: ['./mqtt-client-info.component.scss']
 })
-export class MqttClientInfoComponent extends EntityComponent<MqttClient> {
+export class MqttClientInfoComponent extends EntityComponent<Client> {
 
-  mqttClientTypes = Object.values(MqttClientType);
+  mqttClientTypes = Object.values(ClientType);
 
-  defaultMqttClientType = MqttClientType.DEVICE;
+  defaultMqttClientType = ClientType.DEVICE;
 
-  mqttClientTypeTranslationMap = mqttClientTypeTranslationMap;
+  mqttClientTypeTranslationMap = clientTypeTranslationMap;
 
   constructor(protected store: Store<AppState>,
-              @Inject('entity') protected entityValue: MqttClient,
-              @Inject('entitiesTableConfig') protected entitiesTableConfigValue: EntityTableConfig<MqttClient>,
+              @Inject('entity') protected entityValue: Client,
+              @Inject('entitiesTableConfig') protected entitiesTableConfigValue: EntityTableConfig<Client>,
               public fb: FormBuilder,
               protected cd: ChangeDetectorRef) {
     super(store, fb, entityValue, entitiesTableConfigValue, cd);
@@ -35,7 +51,7 @@ export class MqttClientInfoComponent extends EntityComponent<MqttClient> {
     }
   }
 
-  buildForm(entity: MqttClient): FormGroup {
+  buildForm(entity: Client): FormGroup {
     const form = this.fb.group(
       {
         clientId: [entity ? entity.clientId : '', [Validators.required]],
@@ -47,7 +63,7 @@ export class MqttClientInfoComponent extends EntityComponent<MqttClient> {
     return form;
   }
 
-  updateForm(entity: MqttClient) {
+  updateForm(entity: Client) {
     this.entityForm.patchValue({
       clientId: entity.clientId,
       name: entity.name,
@@ -57,7 +73,7 @@ export class MqttClientInfoComponent extends EntityComponent<MqttClient> {
 
   private setDefaultMqttClientType(form: FormGroup) {
     form.patchValue({
-      type: MqttClientType.DEVICE
+      type: ClientType.DEVICE
     });
   }
 

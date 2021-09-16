@@ -29,24 +29,21 @@ import { EntityAction } from '@home/models/entity/entity-component.models';
 import { NULL_UUID } from '@shared/models/id/has-uuid';
 import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
-import { getCurrentAuthUser } from '@app/core/auth/auth.selectors';
 import { Authority } from '@shared/models/authority.enum';
 import { DialogService } from '@core/services/dialog.service';
 import { ImportExportService } from '@home/components/import-export/import-export.service';
 import {
-  MqttClient,
-  MqttClientSession,
-  mqttClientTypeTranslationMap
+  Client,
+  clientTypeTranslationMap
 } from '@shared/models/mqtt.models';
 import { MqttClientService } from '@core/http/mqtt-client.service';
 import { MqttClientsComponent } from '@home/pages/mqtt-clients/mqtt-clients.component';
 import { MqttClientSessionService } from '@core/http/mqtt-client-session.service';
-import { concatMap, map, mergeMap } from 'rxjs/operators';
 
 @Injectable()
-export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig<MqttClient>> {
+export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig<Client>> {
 
-  private readonly config: EntityTableConfig<MqttClient> = new EntityTableConfig<MqttClient>();
+  private readonly config: EntityTableConfig<Client> = new EntityTableConfig<Client>();
 
   constructor(private store: Store<AppState>,
               private dialogService: DialogService,
@@ -70,19 +67,19 @@ export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig
       mqttClient.clientId : '';
 
     this.config.columns.push(
-      new DateEntityTableColumn<MqttClient>('createdTime', 'common.created-time', this.datePipe, '150px'),
-      new EntityTableColumn<MqttClient>('clientId', 'mqtt-client.client-id', '25%'),
-      new EntityTableColumn<MqttClient>('session.connected', 'mqtt-client.connect', '25%'),
-      new EntityTableColumn<MqttClient>('session.nodeId', 'mqtt-client.node-id', '25%'),
-      new EntityTableColumn<MqttClient>('type', 'mqtt-client.client-type', '25%',
-        (entity) => mqttClientTypeTranslationMap.get(entity.type))
+      new DateEntityTableColumn<Client>('createdTime', 'common.created-time', this.datePipe, '150px'),
+      new EntityTableColumn<Client>('clientId', 'mqtt-client.client-id', '25%'),
+      new EntityTableColumn<Client>('session.connected', 'mqtt-client.connect', '25%'),
+      new EntityTableColumn<Client>('session.nodeId', 'mqtt-client.node-id', '25%'),
+      new EntityTableColumn<Client>('type', 'mqtt-client.client-type', '25%',
+        (entity) => clientTypeTranslationMap.get(entity.type))
     );
 
     this.config.loadEntity = id => this.loadEntity(id);
     // this.config.onEntityAction = action => this.onMqttClientAction(action);
   }
 
-  resolve(): EntityTableConfig<MqttClient> {
+  resolve(): EntityTableConfig<Client> {
     this.config.entitiesFetchFunction = pageLink => this.mqttClientService.getMqttClients(pageLink);
     return this.config;
   }
@@ -91,7 +88,7 @@ export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig
     return this.mqttClientService.getMqttClient(id);
   }
 
-  isMqttClientEditable(mqttClient: MqttClient, authority: Authority): boolean {
+  isMqttClientEditable(mqttClient: Client, authority: Authority): boolean {
     if (authority === Authority.TENANT_ADMIN) {
       return mqttClient && mqttClient.tenantId && mqttClient.tenantId.id !== NULL_UUID;
     } else {
@@ -99,14 +96,14 @@ export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig
     }
   }
 
-  openMqttClient($event: Event, mqttClient: MqttClient) {
+  openMqttClient($event: Event, mqttClient: Client) {
     if ($event) {
       $event.stopPropagation();
     }
     this.router.navigateByUrl(`clients/${mqttClient.id.id}`);
   }
 
-  onMqttClientAction(action: EntityAction<MqttClient>): boolean {
+  onMqttClientAction(action: EntityAction<Client>): boolean {
     switch (action.action) {
       case 'open':
         this.openMqttClient(action.event, action.entity);

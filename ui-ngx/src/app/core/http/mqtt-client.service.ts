@@ -20,7 +20,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { PageLink } from '@shared/models/page/page-link';
 import { PageData } from '@shared/models/page/page-data';
-import { MqttClient } from '@shared/models/mqtt.models';
+import { Client } from '@shared/models/mqtt.models';
 
 @Injectable({
   providedIn: 'root'
@@ -31,16 +31,16 @@ export class MqttClientService {
     private http: HttpClient
   ) { }
 
-  public getMqttClient(clientId: string, config?: RequestConfig): Observable<MqttClient> {
-    return this.http.get<MqttClient>(`/api/mqtt/client/${clientId}`, defaultHttpOptionsFromConfig(config));
+  public getMqttClient(clientId: string, config?: RequestConfig): Observable<Client> {
+    return this.http.get<Client>(`/api/mqtt/client/${clientId}`, defaultHttpOptionsFromConfig(config));
   }
 
-  public getMqttClients(pageLink: PageLink, config?: RequestConfig): Observable<PageData<MqttClient>> {
-    return this.http.get<PageData<MqttClient>>(`/api/mqtt/client${pageLink.toQuery()}`, defaultHttpOptionsFromConfig(config));
+  public getMqttClients(pageLink: PageLink, config?: RequestConfig): Observable<PageData<Client>> {
+    return this.http.get<PageData<Client>>(`/api/mqtt/client${pageLink.toQuery()}`, defaultHttpOptionsFromConfig(config));
   }
 
-  public saveMqttClient(mqttClient: MqttClient, config?: RequestConfig): Observable<MqttClient> {
-    return this.http.post<MqttClient>('/api/mqtt/client', mqttClient, defaultHttpOptionsFromConfig(config));
+  public saveMqttClient(mqttClient: Client, config?: RequestConfig): Observable<Client> {
+    return this.http.post<Client>('/api/mqtt/client', mqttClient, defaultHttpOptionsFromConfig(config));
   }
 
   public deleteMqttClient(clientId: string, config?: RequestConfig) {
