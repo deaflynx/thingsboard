@@ -45,10 +45,12 @@ export class MqttClientSessionService {
       nodeId: '1',
       persistent: true,
       username: 'username 1',
-      subscriptions: {
-        topic: 'topic1',
-        qos: MqttQoS.AT_LEAST_ONCE
-      },
+      subscriptions: [
+        {
+          topic: 'topic1',
+          qos: MqttQoS.AT_LEAST_ONCE
+        }
+      ],
       keepAliveSeconds: 60,
       connectedAt: 123456789,
       disconnectedAt: 987654321
@@ -70,10 +72,12 @@ export class MqttClientSessionService {
           nodeId: '1',
           persistent: true,
           username: 'username 1',
-          subscriptions: {
-            topic: 'topic1',
-            qos: MqttQoS.AT_LEAST_ONCE
-          },
+          subscriptions: [
+            {
+              topic: 'topic1',
+              qos: MqttQoS.AT_LEAST_ONCE
+            }
+          ],
           keepAliveSeconds: 60,
           connectedAt: 123456789,
           disconnectedAt: 987654321
@@ -89,10 +93,12 @@ export class MqttClientSessionService {
           nodeId: '2',
           persistent: false,
           username: 'username 2',
-          subscriptions: {
-            topic: 'topic1',
-            qos: MqttQoS.EXACTLY_ONCE
-          },
+          subscriptions: [
+            {
+              topic: 'topic1',
+              qos: MqttQoS.AT_LEAST_ONCE
+            }
+          ],
           keepAliveSeconds: 60,
           connectedAt: 123456789,
           disconnectedAt: 987654321
