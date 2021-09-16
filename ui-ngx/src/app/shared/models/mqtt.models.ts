@@ -99,7 +99,11 @@ export interface MqttAdminDto extends BaseData<ClientId> {
   lastName?: string;
 }
 
-export interface DetailedClientSessionInfoDto {
+export interface DetailedClientSessionInfoDto extends BaseData<ClientId>{
+  id: {
+    id: string,
+    entityType: EntityType.MQTT_CLIENT
+  },
   clientId: string;
   connectionState: ConnectionState;
   clientType: ClientType;

@@ -33,7 +33,7 @@ import { MqttClientSessionService } from '@core/http/mqtt-client-session.service
   templateUrl: './mqtt-clients.component.html',
   styleUrls: ['./mqtt-clients.component.scss']
 })
-export class MqttClientsComponent extends EntityComponent<Client> {
+export class MqttClientsComponent extends EntityComponent<DetailedClientSessionInfoDto> {
 
   mqttClientTypes = Object.values(ClientType);
 
@@ -42,8 +42,8 @@ export class MqttClientsComponent extends EntityComponent<Client> {
   clientSession: DetailedClientSessionInfoDto;
 
   constructor(protected store: Store<AppState>,
-              @Inject('entity') protected entityValue: Client,
-              @Inject('entitiesTableConfig') protected entitiesTableConfigValue: EntityTableConfig<Client>,
+              @Inject('entity') protected entityValue: DetailedClientSessionInfoDto,
+              @Inject('entitiesTableConfig') protected entitiesTableConfigValue: EntityTableConfig<DetailedClientSessionInfoDto>,
               private mqttClientSessionService: MqttClientSessionService,
               public fb: FormBuilder,
               protected cd: ChangeDetectorRef) {
@@ -58,16 +58,16 @@ export class MqttClientsComponent extends EntityComponent<Client> {
     }
   }
 
-  buildForm(entity: Client): FormGroup {
+  buildForm(entity: DetailedClientSessionInfoDto): FormGroup {
     return this.fb.group(
       {
         clientId: [entity ? entity.clientId : '', [Validators.required]],
-        type: [entity ? entity.type : ClientType.DEVICE, [Validators.required]],
+        type: [entity ? entity.clientType : ClientType.DEVICE, [Validators.required]],
       }
     );
   }
 
-  updateForm(entity: Client) {
+  updateForm(entity: DetailedClientSessionInfoDto) {
     if (entity) {
       this.mqttClientSessionService.getClientSessionInfo(entity.clientId).subscribe(
         (data) => this.clientSession = data
@@ -75,7 +75,7 @@ export class MqttClientsComponent extends EntityComponent<Client> {
     }
     this.entityForm.patchValue({
       clientId: entity.clientId,
-      type: entity.type
+      type: entity.clientType
     });
   }
 
