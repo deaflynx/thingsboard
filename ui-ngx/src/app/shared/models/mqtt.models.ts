@@ -47,6 +47,13 @@ export const clientTypeTranslationMap = new Map<ClientType, string>(
   ]
 );
 
+export const connectionStateTranslationMap = new Map<ConnectionState, string>(
+  [
+    [ConnectionState.CONNECTED, 'Connected'],
+    [ConnectionState.DISCONNECTED, 'Disconnected']
+  ]
+);
+
 export interface Client extends BaseData<ClientId> {
   clientId: string,
   type: ClientType;
@@ -114,6 +121,7 @@ export interface DetailedClientSessionInfoDto extends BaseData<ClientId>{
   keepAliveSeconds: number;
   connectedAt: number;
   disconnectedAt: number;
+  note?: string;
 }
 
 export interface TopicSubscription {
