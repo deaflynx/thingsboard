@@ -117,7 +117,7 @@ export interface DetailedClientSessionInfoDto extends BaseData<ClientId>{
   nodeId: string;
   persistent: boolean;
   username: string;
-  subscriptions: TopicSubscription;
+  subscriptions: TopicSubscription[];
   keepAliveSeconds: number;
   connectedAt: number;
   disconnectedAt: number;
