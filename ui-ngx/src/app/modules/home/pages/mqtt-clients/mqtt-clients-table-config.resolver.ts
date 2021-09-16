@@ -34,7 +34,9 @@ import { DialogService } from '@core/services/dialog.service';
 import { ImportExportService } from '@home/components/import-export/import-export.service';
 import {
   Client,
-  clientTypeTranslationMap, DetailedClientSessionInfoDto
+  DetailedClientSessionInfoDto,
+  clientTypeTranslationMap,
+  connectionStateTranslationMap
 } from '@shared/models/mqtt.models';
 import { MqttClientService } from '@core/http/mqtt-client.service';
 import { MqttClientsComponent } from '@home/pages/mqtt-clients/mqtt-clients.component';
@@ -69,7 +71,8 @@ export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig
     this.config.columns.push(
       // new DateEntityTableColumn<DetailedClientSessionInfoDto>('createdTime', 'common.created-time', this.datePipe, '150px'),
       new EntityTableColumn<DetailedClientSessionInfoDto>('clientId', 'mqtt-client.client-id', '25%'),
-      new EntityTableColumn<DetailedClientSessionInfoDto>('connectionState', 'mqtt-client.connect', '25%'),
+      new EntityTableColumn<DetailedClientSessionInfoDto>('connectionState', 'mqtt-client.connect', '25%',
+        (entity) => connectionStateTranslationMap.get(entity.connectionState)),
       new EntityTableColumn<DetailedClientSessionInfoDto>('nodeId', 'mqtt-client.node-id', '25%'),
       new EntityTableColumn<DetailedClientSessionInfoDto>('clientType', 'mqtt-client.client-type', '25%',
         (entity) => clientTypeTranslationMap.get(entity.clientType))

@@ -21,12 +21,13 @@ import { AppState } from '@core/core.state';
 import {
   Client,
   ClientType,
-  clientTypeTranslationMap,
-  DetailedClientSessionInfoDto
+  clientTypeTranslationMap, ConnectionState,
+  DetailedClientSessionInfoDto, MqttQoS
 } from '@shared/models/mqtt.models';
 import { EntityComponent } from '@home/components/entity/entity.component';
 import { EntityTableConfig } from '@home/models/entity/entities-table-config.models';
 import { MqttClientSessionService } from '@core/http/mqtt-client-session.service';
+import { EntityType } from '@shared/models/entity-type.models';
 
 @Component({
   selector: 'tb-mqtt-clients',
@@ -41,6 +42,8 @@ export class MqttClientsComponent extends EntityComponent<DetailedClientSessionI
 
   clientSession: DetailedClientSessionInfoDto;
 
+  sessionForm: FormGroup;
+
   constructor(protected store: Store<AppState>,
               @Inject('entity') protected entityValue: DetailedClientSessionInfoDto,
               @Inject('entitiesTableConfig') protected entitiesTableConfigValue: EntityTableConfig<DetailedClientSessionInfoDto>,
@@ -48,6 +51,10 @@ export class MqttClientsComponent extends EntityComponent<DetailedClientSessionI
               public fb: FormBuilder,
               protected cd: ChangeDetectorRef) {
     super(store, fb, entityValue, entitiesTableConfigValue, cd);
+    this.buildSessionForm({
+      cleanSession: false,
+      subscriptionsCount: 2
+    });
   }
 
   hideDelete() {
@@ -59,10 +66,55 @@ export class MqttClientsComponent extends EntityComponent<DetailedClientSessionI
   }
 
   buildForm(entity: DetailedClientSessionInfoDto): FormGroup {
+    const mockEntity = {
+      id: {
+        id: '123124151251251651612',
+        entityType: EntityType.MQTT_CLIENT
+      },
+      clientId: '8888',
+      connectionState: ConnectionState.CONNECTED,
+      clientType: ClientType.DEVICE,
+      nodeId: '1',
+      persistent: true,
+      username: 'username 1',
+      subscriptions: {
+        topic: 'topic1',
+        qos: MqttQoS.AT_LEAST_ONCE
+      },
+      keepAliveSeconds: 60,
+      connectedAt: 123456789,
+      disconnectedAt: 987654321,
+      note: 'note'
+    }
     return this.fb.group(
       {
-        clientId: [entity ? entity.clientId : '', [Validators.required]],
-        type: [entity ? entity.clientType : ClientType.DEVICE, [Validators.required]],
+        nodeId: [mockEntity ? mockEntity.nodeId : ''],
+        clientId2: [mockEntity ? mockEntity.clientId : ''],
+        username: [mockEntity ? mockEntity.username : ''],
+        note: [mockEntity ? mockEntity.note : ''],
+        keepAliveSeconds: [mockEntity ? mockEntity.keepAliveSeconds : ''],
+        connectedAt: [mockEntity ? mockEntity.connectedAt : ''],
+        connectionState: [mockEntity ? mockEntity.connectionState : '']
+      }
+    );
+    // return this.fb.group(
+    //   {
+    //     nodeId: [entity ? entity.nodeId : ''],
+    //     clientId: [entity ? entity.clientId : ''],
+    //     username: [entity ? entity.username : ''],
+    //     note: [entity ? entity.note : ''],
+    //     keepAliveSeconds: [entity ? entity.keepAliveSeconds : ''],
+    //     connectedAt: [entity ? entity.connectedAt : ''],
+    //     connectionState: [entity ? entity.connectionState : '']
+    //   }
+    // );
+  }
+
+  buildSessionForm(entity: any) {
+    this.sessionForm = this.fb.group(
+      {
+        cleanSession: [entity.cleanSession],
+        subscriptionsCount: [entity.subscriptionsCount]
       }
     );
   }
