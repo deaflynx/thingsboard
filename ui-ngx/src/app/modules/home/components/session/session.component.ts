@@ -10,35 +10,35 @@ import {
 } from '@angular/forms';
 
 @Component({
-  selector: 'tb-subscriptions',
-  templateUrl: './subscriptions.component.html',
-  styleUrls: ['./subscriptions.component.scss'],
+  selector: 'tb-session',
+  templateUrl: './session.component.html',
+  styleUrls: ['./session.component.scss'],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => SubscriptionsComponent),
+      useExisting: forwardRef(() => SessionComponent),
       multi: true
     },
     {
       provide: NG_VALIDATORS,
-      useExisting: forwardRef(() => SubscriptionsComponent),
+      useExisting: forwardRef(() => SessionComponent),
       multi: true
     }
   ]
 })
-export class SubscriptionsComponent implements OnInit, ControlValueAccessor, Validator {
+export class SessionComponent implements OnInit, ControlValueAccessor, Validator {
 
   @Input()
   parentFormGroup: FormGroup;
 
-  subscriptionsForm: FormGroup;
+  sessionForm: FormGroup;
 
   constructor(private fb: FormBuilder) { }
 
   ngOnInit(): void {
-    this.subscriptionsForm = this.fb.group({
-      cleanSession: [this.parentFormGroup ? this.parentFormGroup.value.subscription.cleanSession : '', []],
-      subscriptionsCount: [this.parentFormGroup ? this.parentFormGroup.value.subscription.subscriptionsCount : '', []],
+    this.sessionForm = this.fb.group({
+      cleanSession: [this.parentFormGroup ? this.parentFormGroup.value.session.cleanSession : '', []],
+      subscriptionsCount: [this.parentFormGroup ? this.parentFormGroup.value.session.subscriptionsCount : '', []],
     });
   }
 
@@ -46,7 +46,7 @@ export class SubscriptionsComponent implements OnInit, ControlValueAccessor, Val
 
   registerOnChange(fn: any): void {
     console.log("on change");
-    this.subscriptionsForm.valueChanges.subscribe(fn);
+    this.sessionForm.valueChanges.subscribe(fn);
   }
 
   registerOnTouched(fn: any): void {
@@ -58,12 +58,12 @@ export class SubscriptionsComponent implements OnInit, ControlValueAccessor, Val
   }
 
   setDisabledState?(isDisabled: boolean): void {
-    isDisabled ? this.subscriptionsForm.disable() : this.subscriptionsForm.enable();
+    isDisabled ? this.sessionForm.disable() : this.sessionForm.enable();
   }
 
   validate(control: AbstractControl): ValidationErrors | null {
     console.log("sessionInfoForm validation", control);
-    return this.subscriptionsForm.valid ? null : { invalidForm: { valid: false, message: "subscriptionsForm fields are invalid" } };
+    return this.sessionForm.valid ? null : { invalidForm: { valid: false, message: "sessionForm fields are invalid" } };
   }
 
 }

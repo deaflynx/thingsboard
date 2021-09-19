@@ -20,21 +20,21 @@
   <form [formGroup]="entityForm">
     <div class="mat-padding" fxLayout="column">
       <div>
-        <mat-label style="line-height: 24px; font-size: 18px; font-weight: 400;" translate>mqtt-client.session-info</mat-label>
-        <div fxFlex class="mat-elevation-z1" fxLayout="row" fxLayoutAlign="start">
+        <mat-label style="font-size: 20px; font-weight: 500;" translate>mqtt-client.session-info</mat-label>
+        <div fxFlex fxLayout="row" fxLayoutAlign="start">
           <div fxFlex="50" style="margin: 10px">
             <mat-label translate>mqtt-client.connection</mat-label>
-            <tb-session-info [parentFormGroup]="entityForm" formControlName="connectionInfo"></tb-session-info>
+            <tb-connection [parentFormGroup]="entityForm" formControlName="connection"></tb-connection>
           </div>
           <div fxFlex="50" style="margin: 10px">
             <mat-label translate>mqtt-client.session</mat-label>
-            <tb-subscriptions [parentFormGroup]="entityForm" formControlName="subscription"></tb-subscriptions>
+            <tb-session [parentFormGroup]="entityForm" formControlName="session"></tb-session>
           </div>
         </div>
       </div>
-      <mat-divider></mat-divider>
-      <div class="mat-elevation-z1">
-        <mat-label translate>mqtt-client.subscriptions</mat-label>
+      <div style="padding-top: 10px">
+        <mat-label style="font-size: 20px; font-weight: 500;" translate>mqtt-client.subscriptions</mat-label>
+        <tb-subscriptions></tb-subscriptions>
       </div>
     </div>
   </form>

@@ -142,8 +142,9 @@ import { WidgetContainerComponent } from '@home/components/widget/widget-contain
 import { SnmpDeviceProfileTransportModule } from '@home/components/profile/device/snpm/snmp-device-profile-transport.module';
 import { DeviceCredentialsModule } from '@home/components/device/device-credentials.module';
 import { DeviceProfileCommonModule } from '@home/components/profile/device/common/device-profile-common.module';
-import { SessionInfoComponent } from '@home/components/session-info/session-info.component';
-import { SubscriptionsComponent } from '@home/components/subscriptions/subscriptions.component';
+import { ConnectionComponent } from '@home/components/connection/connection.component';
+import { SessionComponent } from '@home/components/session/session.component';
+import { SubscriptionsComponent } from '@home/components/subscription/subscriptions.component';
 
 @NgModule({
   declarations:
@@ -263,7 +264,8 @@ import { SubscriptionsComponent } from '@home/components/subscriptions/subscript
       DashboardImageDialogComponent,
       EmbedDashboardDialogComponent,
       DisplayWidgetTypesPanelComponent,
-      SessionInfoComponent,
+      ConnectionComponent,
+      SessionComponent,
       SubscriptionsComponent
     ],
   imports: [
@@ -376,7 +378,8 @@ import { SubscriptionsComponent } from '@home/components/subscriptions/subscript
     DashboardImageDialogComponent,
     EmbedDashboardDialogComponent,
     DisplayWidgetTypesPanelComponent,
-    SessionInfoComponent,
+    ConnectionComponent,
+    SessionComponent,
     SubscriptionsComponent
   ],
   providers: [

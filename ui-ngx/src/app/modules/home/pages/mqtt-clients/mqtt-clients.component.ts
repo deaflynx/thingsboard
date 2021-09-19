@@ -86,8 +86,8 @@ export class MqttClientsComponent extends EntityComponent<DetailedClientSessionI
     // );
 
     return this.fb.group({
-      connectionInfo: [mockEntity, []],
-      subscription: [mockEntity, []]
+      connection: [mockEntity, []],
+      session: [mockEntity, []]
     });
   }
 
@@ -95,8 +95,6 @@ export class MqttClientsComponent extends EntityComponent<DetailedClientSessionI
     if (entity) {
     }
     this.entityForm.patchValue({
-      clientId: entity.clientId,
-      type: entity.clientType
     });
   }
 

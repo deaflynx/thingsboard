@@ -3,11 +3,11 @@ import { EntityComponent } from '@home/components/entity/entity.component';
 import { FormGroup } from '@angular/forms';
 
 @Component({
-  selector: 'tb-subscription',
-  templateUrl: './subscription.component.html',
-  styleUrls: ['./subscription.component.scss']
+  selector: 'tb-subscriptions',
+  templateUrl: './subscriptions.component.html',
+  styleUrls: ['./subscriptions.component.scss']
 })
-export class SubscriptionComponent implements OnInit {
+export class SubscriptionsComponent implements OnInit {
 
   entityForm: FormGroup;
 
