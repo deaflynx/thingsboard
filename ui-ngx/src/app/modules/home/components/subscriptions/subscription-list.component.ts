@@ -22,22 +22,24 @@ export class SubscriptionListComponent extends PageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.subscriptionListFormGroup = this.fb.group({});
+    this.subscriptionListFormGroup = this.fb.group({
+      topic: [null, [Validators.required]],
+      qos: [null, [Validators.required]]
+    });
   }
 
   subscriptionsFormArray(): FormArray {
-    return this.subscriptionListFormGroup.get('subscriptions') as FormArray;
+    return this.subscriptionListFormGroup.value;
   }
 
-  public addSubscription() {
-    const subscriptionsFormArray = this.subscriptionListFormGroup.get('subscriptions') as FormArray;
-    subscriptionsFormArray.push(this.fb.group({
+  addSubscription() {
+    this.subscriptionsFormArray().push(this.fb.group({
       topic: [null, [Validators.required]],
       qos: [null, [Validators.required]]
     }));
   }
 
-  public removeSubscription(index: number) {
+  removeSubscription(index: number) {
     (this.subscriptionListFormGroup.get('subscriptions') as FormArray).removeAt(index);
   }
 

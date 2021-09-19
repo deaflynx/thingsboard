@@ -144,7 +144,7 @@ import { DeviceCredentialsModule } from '@home/components/device/device-credenti
 import { DeviceProfileCommonModule } from '@home/components/profile/device/common/device-profile-common.module';
 import { ConnectionComponent } from '@home/components/connection/connection.component';
 import { SessionComponent } from '@home/components/session/session.component';
-import { SubscriptionsComponent } from '@home/components/subscription/subscriptions.component';
+import { SubscriptionsComponent } from '@home/components/subscriptions/subscriptions.component';
 
 @NgModule({
   declarations:
