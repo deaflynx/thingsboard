@@ -37,8 +37,8 @@ export class SessionComponent implements OnInit, ControlValueAccessor, Validator
 
   ngOnInit(): void {
     this.sessionForm = this.fb.group({
-      cleanSession: [this.parentFormGroup ? this.parentFormGroup.value.session.cleanSession : '', []],
-      subscriptionsCount: [this.parentFormGroup ? this.parentFormGroup.value.session.subscriptionsCount : '', []],
+      cleanSession: [this.parentFormGroup ? this.parentFormGroup.value.session?.cleanSession : '', []],
+      subscriptionsCount: [this.parentFormGroup ? this.parentFormGroup.value.session?.subscriptionsCount : '', []],
     });
   }
 

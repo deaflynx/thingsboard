@@ -52,15 +52,13 @@ export class MqttClientInfoComponent extends EntityComponent<Client> {
   }
 
   buildForm(entity: Client): FormGroup {
-    const form = this.fb.group(
+    return this.fb.group(
       {
         clientId: [entity ? entity.clientId : '', [Validators.required]],
         type: [entity ? entity.type : '', [Validators.required]],
         name: [entity ? entity.name : '']
       }
     );
-    this.setDefaultMqttClientType(form);
-    return form;
   }
 
   updateForm(entity: Client) {
@@ -68,12 +66,6 @@ export class MqttClientInfoComponent extends EntityComponent<Client> {
       clientId: entity.clientId,
       name: entity.name,
       type: entity.type
-    });
-  }
-
-  private setDefaultMqttClientType(form: FormGroup) {
-    form.patchValue({
-      type: ClientType.DEVICE
     });
   }
 

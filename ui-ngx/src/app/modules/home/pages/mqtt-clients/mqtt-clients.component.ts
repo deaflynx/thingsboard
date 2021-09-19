@@ -32,14 +32,14 @@ import { EntityTableConfig } from '@home/models/entity/entities-table-config.mod
   templateUrl: './mqtt-clients.component.html',
   styleUrls: ['./mqtt-clients.component.scss']
 })
-export class MqttClientsComponent extends EntityComponent<DetailedClientSessionInfoDto> {
+export class MqttClientsComponent extends EntityComponent<Client> {
 
   mqttClientTypes = Object.values(ClientType);
   mqttClientTypeTranslationMap = clientTypeTranslationMap;
 
   constructor(protected store: Store<AppState>,
-              @Inject('entity') protected entityValue: DetailedClientSessionInfoDto,
-              @Inject('entitiesTableConfig') protected entitiesTableConfigValue: EntityTableConfig<DetailedClientSessionInfoDto>,
+              @Inject('entity') protected entityValue: Client,
+              @Inject('entitiesTableConfig') protected entitiesTableConfigValue: EntityTableConfig<Client>,
               public fb: FormBuilder,
               protected cd: ChangeDetectorRef) {
     super(store, fb, entityValue, entitiesTableConfigValue, cd);
@@ -53,41 +53,47 @@ export class MqttClientsComponent extends EntityComponent<DetailedClientSessionI
     }
   }
 
-  buildForm(entity: DetailedClientSessionInfoDto): FormGroup {
-    const mockEntity = {
-      id: '123124151251251651612',
-      clientId: '8888',
-      connectionState: ConnectionState.CONNECTED,
-      clientType: ClientType.DEVICE,
-      nodeId: '1',
-      persistent: true,
-      username: 'username 1',
-      subscriptions: {
-        topic: 'topic1',
-        qos: MqttQoS.AT_LEAST_ONCE
-      },
-      keepAliveSeconds: 60,
-      connectedAt: 123456789,
-      disconnectedAt: 987654321,
-      note: 'note',
-      cleanSession: true,
-      subscriptionsCount: 2
-    }
+  buildForm(entity: Client): FormGroup {
+    // const entity = {
+    //   id: '123124151251251651612',
+    //   clientId: '8888',
+    //   connectionState: ConnectionState.CONNECTED,
+    //   clientType: ClientType.DEVICE,
+    //   nodeId: '1',
+    //   persistent: true,
+    //   username: 'username 1',
+    //   subscriptions: {
+    //     topic: 'topic1',
+    //     qos: MqttQoS.AT_LEAST_ONCE
+    //   },
+    //   keepAliveSeconds: 60,
+    //   connectedAt: 123456789,
+    //   disconnectedAt: 987654321,
+    //   note: 'note',
+    //   cleanSession: true,
+    //   subscriptionsCount: 2
+    // }
     // return this.fb.group(
     //   {
-    //     nodeId: [mockEntity ? mockEntity.nodeId : ''],
-    //     clientId2: [mockEntity ? mockEntity.clientId : ''],
-    //     username: [mockEntity ? mockEntity.username : ''],
-    //     note: [mockEntity ? mockEntity.note : ''],
-    //     keepAliveSeconds: [mockEntity ? mockEntity.keepAliveSeconds : ''],
-    //     connectedAt: [mockEntity ? mockEntity.connectedAt : ''],
-    //     connectionState: [mockEntity ? mockEntity.connectionState : '']
+    //     clientId: [entity ? entity.clientId : ''],
+    //     nodeId: [entity ? entity.nodeId : ''],
+    //     username: [entity ? entity.username : ''],
+    //     note: [entity ? entity.note : ''],
+    //     keepAliveSeconds: [entity ? entity.keepAliveSeconds : ''],
+    //     connectedAt: [entity ? entity.connectedAt : ''],
+    //     connectionState: [entity ? entity.connectionState : ''],
+    //     clientType: [entity ? entity.clientType : ''],
+    //     persistent: [entity ? entity.persistent : ''],
+    //     subscriptions: [entity ? entity.subscriptions : ''],
+    //     disconnectedAt: [entity ? entity.disconnectedAt : ''],
+    //     cleanSession: [entity ? entity.cleanSession : ''],
+    //     subscriptionsCount: [entity ? entity.subscriptionsCount : '']
     //   }
     // );
 
     return this.fb.group({
-      connection: [mockEntity, []],
-      session: [mockEntity, []]
+      connection: [entity, []],
+      session: [entity, []]
     });
   }
 

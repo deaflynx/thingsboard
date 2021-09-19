@@ -21,7 +21,6 @@ import { HttpClient } from '@angular/common/http';
 import { PageLink } from '@shared/models/page/page-link';
 import { PageData } from '@shared/models/page/page-data';
 import { ClientType, ConnectionState, DetailedClientSessionInfoDto, MqttQoS } from '@shared/models/mqtt.models';
-import { EntityType } from '@shared/models/entity-type.models';
 
 @Injectable({
   providedIn: 'root'
@@ -33,8 +32,8 @@ export class MqttClientSessionService {
   ) { }
 
   public getClientSessionInfo(clientId: string, config?: RequestConfig): Observable<DetailedClientSessionInfoDto> {
-    // return this.http.get<DetailedClientSessionInfoDto>(`/api/client-session/${clientId}`, defaultHttpOptionsFromConfig(config));
-    return of({
+    return this.http.get<DetailedClientSessionInfoDto>(`/api/client-session/${clientId}`, defaultHttpOptionsFromConfig(config));
+/*    return of({
       id: {
         id: '123124151251251651612',
         entityType: EntityType.MQTT_CLIENT
@@ -54,12 +53,12 @@ export class MqttClientSessionService {
       keepAliveSeconds: 60,
       connectedAt: 123456789,
       disconnectedAt: 987654321
-    })
+    })*/
   }
 
   public getClientSessionInfos(pageLink: PageLink, config?: RequestConfig): Observable<PageData<DetailedClientSessionInfoDto>> {
-    // return this.http.get<PageData<DetailedClientSessionInfoDto>>(`/api/client-session${pageLink.toQuery()}`, defaultHttpOptionsFromConfig(config));
-    return of({
+    return this.http.get<PageData<DetailedClientSessionInfoDto>>(`/api/client-session${pageLink.toQuery()}`, defaultHttpOptionsFromConfig(config));
+    /*return of({
       data: [
         {
           id: {
@@ -107,7 +106,7 @@ export class MqttClientSessionService {
       totalElements: 2,
       totalPages: 1,
       hasNext: false
-    })
+    })*/
   }
 
   public clearClientSession(clientId: string, config?: RequestConfig) {

@@ -54,7 +54,7 @@ export const connectionStateTranslationMap = new Map<ConnectionState, string>(
   ]
 );
 
-export interface Client extends BaseData<ClientId> {
+export interface Client extends DetailedClientSessionInfoDto, BaseData<ClientId> {
   clientId: string,
   type: ClientType;
   description?: string;
@@ -107,10 +107,6 @@ export interface MqttAdminDto extends BaseData<ClientId> {
 }
 
 export interface DetailedClientSessionInfoDto extends BaseData<ClientId>{
-  id: {
-    id: string,
-    entityType: EntityType.MQTT_CLIENT
-  },
   clientId: string;
   connectionState: ConnectionState;
   clientType: ClientType;
@@ -121,7 +117,9 @@ export interface DetailedClientSessionInfoDto extends BaseData<ClientId>{
   keepAliveSeconds: number;
   connectedAt: number;
   disconnectedAt: number;
-  note?: string;
+  note: string;
+  cleanSession: boolean;
+  subscriptionsCount: string;
 }
 
 export interface TopicSubscription {

@@ -36,13 +36,13 @@ export class ConnectionComponent implements OnInit, ControlValueAccessor, Valida
 
   ngOnInit(): void {
     this.connectionForm = this.fb.group({
-      nodeId: [this.parentFormGroup ? this.parentFormGroup.value.connection.nodeId : '', []],
-      clientId: [this.parentFormGroup ? this.parentFormGroup.value.connection.clientId : '', []],
-      username: [this.parentFormGroup ? this.parentFormGroup.value.connection.username : '', []],
-      note: [this.parentFormGroup ? this.parentFormGroup.value.connection.note : '', []],
-      keepAliveSeconds: [this.parentFormGroup ? this.parentFormGroup.value.connection.keepAliveSeconds : '', []],
-      connectedAt: [this.parentFormGroup ? this.parentFormGroup.value.connection.connectedAt : '', []],
-      connectionState: [this.parentFormGroup ? this.parentFormGroup.value.connection.connectionState : '', []]
+      nodeId: [this.parentFormGroup ? this.parentFormGroup.value.connection?.nodeId : '', []],
+      clientId: [this.parentFormGroup ? this.parentFormGroup.value.connection?.clientId : '', []],
+      username: [this.parentFormGroup ? this.parentFormGroup.value.connection?.username : '', []],
+      note: [this.parentFormGroup ? this.parentFormGroup.value.connection?.note : '', []],
+      keepAliveSeconds: [this.parentFormGroup ? this.parentFormGroup.value.connection?.keepAliveSeconds : '', []],
+      connectedAt: [this.parentFormGroup ? this.parentFormGroup.value.connection?.connectedAt : '', []],
+      connectionState: [this.parentFormGroup ? this.parentFormGroup.value.connection?.connectionState : '', []]
     });
   }
 
