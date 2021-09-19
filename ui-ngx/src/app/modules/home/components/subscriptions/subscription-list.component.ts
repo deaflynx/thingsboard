@@ -15,6 +15,8 @@ export class SubscriptionListComponent extends PageComponent implements OnInit {
 
   subscriptionListFormGroup: FormGroup;
 
+  subscriptions: FormArray;
+
   constructor(protected store: Store<AppState>,
               private injector: Injector,
               private fb: FormBuilder) {
@@ -23,8 +25,14 @@ export class SubscriptionListComponent extends PageComponent implements OnInit {
 
   ngOnInit(): void {
     this.subscriptionListFormGroup = this.fb.group({
-      topic: [null, [Validators.required]],
-      qos: [null, [Validators.required]]
+      subscriptions: this.fb.array([this.createSubscription()])
+    });
+  }
+
+  createSubscription(): FormGroup {
+    return this.fb.group({
+      topic: ['', [Validators.required]],
+      qos: ['', [Validators.required]]
     });
   }
 
@@ -32,11 +40,9 @@ export class SubscriptionListComponent extends PageComponent implements OnInit {
     return this.subscriptionListFormGroup.value;
   }
 
-  addSubscription() {
-    this.subscriptionsFormArray().push(this.fb.group({
-      topic: [null, [Validators.required]],
-      qos: [null, [Validators.required]]
-    }));
+  addSubscription(): void {
+    this.subscriptions = this.subscriptionListFormGroup.get('subscriptions') as FormArray;
+    this.subscriptions.push(this.createSubscription());
   }
 
   removeSubscription(index: number) {

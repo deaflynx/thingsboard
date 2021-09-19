@@ -6,62 +6,38 @@
   </div>
   <div class="body">
     <div class="row" fxFlex fxLayout="row"
-         fxLayoutAlign="start center" formArrayName="subscriptionsFormArray()"
-         *ngFor="let subscriptionControl of subscriptionsFormArray().controls; let $index = index">
-
-      <mat-form-field class="mat-block">
-        <mat-label translate>mqtt-client.topic</mat-label>
-        <input matInput [formControlName]="$index">
-      </mat-form-field>
-      <mat-form-field class="mat-block">
-        <mat-label translate>mqtt-client.qos</mat-label>
-        <input matInput [formControlName]="$index">
-      </mat-form-field>
-
-
-<!--      <mat-form-field class="mat-block">-->
-<!--        <mat-label translate>mqtt-client.topic</mat-label>-->
-<!--        <input matInput [formControl]="subscriptionControl.get('topic').value">-->
-<!--      </mat-form-field>-->
-<!--      <mat-form-field class="mat-block">-->
-<!--        <mat-label translate>mqtt-client.qos</mat-label>-->
-<!--        <input matInput [formControl]="subscriptionControl.get('qos').value">-->
-<!--      </mat-form-field>-->
-
-<!--      <tb-resource-type-autocomplete-->
-<!--        class="cell mat-block" fxFlex="30"-->
-<!--        required-->
-<!--        >-->
-<!--      </tb-resource-type-autocomplete>-->
-<!--      <tb-operation-type-list-->
-<!--        class="cell mat-block" fxFlex="70"-->
-<!--        required-->
-<!--        [resource]="subscriptionControl.get('resource').value"-->
-<!--        [formControl]="subscriptionControl.get('operations')">-->
-<!--      </tb-operation-type-list>-->
-
-      <button mat-button mat-icon-button color="primary"
-              [fxShow]="!disabled"
-              type="button"
-              style="width: 40px; min-width: 40px;"
-              (click)="removeSubscription($index)"
-              [disabled]="isLoading$ | async"
-              matTooltip="{{ 'mqtt-client.remove-permission' | translate }}"
-              matTooltipPosition="above">
-        <mat-icon>close</mat-icon>
-      </button>
+         fxLayoutAlign="start center" formArrayName="subscriptions"
+         *ngFor="let subscriptionControl of subscriptionListFormGroup.get('subscriptions')['controls']; let $index = index">
+      <ng-container [formGroupName]="$index">
+        <mat-form-field class="cell mat-block" fxFlex="70">
+          <mat-label translate>mqtt-client.topic</mat-label>
+          <input matInput formControlName="topic">
+        </mat-form-field>
+        <mat-form-field class="cell mat-block" fxFlex="30">
+          <mat-label translate>mqtt-client.qos</mat-label>
+          <input matInput formControlName="qos">
+        </mat-form-field>
+        <button mat-button mat-icon-button color="primary"
+                [fxShow]="!disabled"
+                type="button"
+                style="width: 40px; min-width: 40px;"
+                (click)="removeSubscription($index)"
+                [disabled]="isLoading$ | async"
+                matTooltip="{{ 'mqtt-client.remove-permission' | translate }}"
+                matTooltipPosition="above">
+          <mat-icon>close</mat-icon>
+        </button>
+      </ng-container>
     </div>
-    <div>
-      <button mat-button mat-raised-button color="primary"
-              [fxShow]="!disabled"
-              [disabled]="isLoading$ | async"
-              (click)="addSubscription()"
-              type="button"
-              matTooltip="{{ 'mqtt-client.add-subscription' | translate }}"
-              matTooltipPosition="above">
-        <mat-icon>add</mat-icon>
-        {{ 'action.add' | translate }}
-      </button>
-    </div>
+    <button mat-button mat-raised-button color="primary"
+            [fxShow]="!disabled"
+            [disabled]="isLoading$ | async"
+            (click)="addSubscription()"
+            type="button"
+            matTooltip="{{ 'mqtt-client.add-subscription' | translate }}"
+            matTooltipPosition="above">
+      <mat-icon>add</mat-icon>
+      {{ 'action.add' | translate }}
+    </button>
   </div>
 </div>

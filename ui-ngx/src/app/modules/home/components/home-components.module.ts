@@ -145,6 +145,7 @@ import { DeviceProfileCommonModule } from '@home/components/profile/device/commo
 import { ConnectionComponent } from '@home/components/connection/connection.component';
 import { SessionComponent } from '@home/components/session/session.component';
 import { SubscriptionsComponent } from '@home/components/subscriptions/subscriptions.component';
+import { SubscriptionListComponent } from '@home/components/subscriptions/subscription-list.component';
 
 @NgModule({
   declarations:
@@ -266,7 +267,8 @@ import { SubscriptionsComponent } from '@home/components/subscriptions/subscript
       DisplayWidgetTypesPanelComponent,
       ConnectionComponent,
       SessionComponent,
-      SubscriptionsComponent
+      SubscriptionsComponent,
+      SubscriptionListComponent
     ],
   imports: [
     CommonModule,
@@ -380,7 +382,8 @@ import { SubscriptionsComponent } from '@home/components/subscriptions/subscript
     DisplayWidgetTypesPanelComponent,
     ConnectionComponent,
     SessionComponent,
-    SubscriptionsComponent
+    SubscriptionsComponent,
+    SubscriptionListComponent
   ],
   providers: [
     WidgetComponentService,
