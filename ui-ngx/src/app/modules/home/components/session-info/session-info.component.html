@@ -1,0 +1,30 @@
+<form [formGroup]="sessionInfoForm">
+    <mat-form-field class="mat-block">
+      <mat-label translate>mqtt-client.node</mat-label>
+      <input matInput formControlName="nodeId">
+    </mat-form-field>
+    <mat-form-field class="mat-block">
+      <mat-label translate>mqtt-client.client-id</mat-label>
+      <input matInput formControlName="clientId">
+    </mat-form-field>
+    <mat-form-field class="mat-block">
+      <mat-label translate>mqtt-client.username</mat-label>
+      <input matInput formControlName="username">
+    </mat-form-field>
+    <mat-form-field class="mat-block">
+      <mat-label translate>mqtt-client.note</mat-label>
+      <input matInput formControlName="note">
+    </mat-form-field>
+    <mat-form-field class="mat-block">
+      <mat-label translate>mqtt-client.keep-alive</mat-label>
+      <input matInput formControlName="keepAliveSeconds">
+    </mat-form-field>
+    <mat-form-field class="mat-block">
+      <mat-label translate>mqtt-client.connected-at</mat-label>
+      <input matInput formControlName="connectedAt">
+    </mat-form-field>
+    <mat-form-field class="mat-block">
+      <mat-label translate>mqtt-client.connected-status</mat-label>
+      <input matInput formControlName="connectionState">
+    </mat-form-field>
+</form>

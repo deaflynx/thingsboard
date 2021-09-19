@@ -1,0 +1,10 @@
+<form [formGroup]="subscriptionsForm">
+  <mat-form-field class="mat-block">
+    <mat-label translate>mqtt-client.clean-session</mat-label>
+    <input matInput formControlName="cleanSession">
+  </mat-form-field>
+  <mat-form-field class="mat-block">
+    <mat-label translate>mqtt-client.subscriptions-count</mat-label>
+    <input matInput formControlName="subscriptionsCount">
+  </mat-form-field>
+</form>
