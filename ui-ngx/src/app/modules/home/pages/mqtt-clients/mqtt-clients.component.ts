@@ -26,8 +26,6 @@ import {
 } from '@shared/models/mqtt.models';
 import { EntityComponent } from '@home/components/entity/entity.component';
 import { EntityTableConfig } from '@home/models/entity/entities-table-config.models';
-import { MqttClientSessionService } from '@core/http/mqtt-client-session.service';
-import { EntityType } from '@shared/models/entity-type.models';
 
 @Component({
   selector: 'tb-mqtt-clients',
@@ -37,24 +35,14 @@ import { EntityType } from '@shared/models/entity-type.models';
 export class MqttClientsComponent extends EntityComponent<DetailedClientSessionInfoDto> {
 
   mqttClientTypes = Object.values(ClientType);
-
   mqttClientTypeTranslationMap = clientTypeTranslationMap;
-
-  clientSession: DetailedClientSessionInfoDto;
-
-  sessionForm: FormGroup;
 
   constructor(protected store: Store<AppState>,
               @Inject('entity') protected entityValue: DetailedClientSessionInfoDto,
               @Inject('entitiesTableConfig') protected entitiesTableConfigValue: EntityTableConfig<DetailedClientSessionInfoDto>,
-              private mqttClientSessionService: MqttClientSessionService,
               public fb: FormBuilder,
               protected cd: ChangeDetectorRef) {
     super(store, fb, entityValue, entitiesTableConfigValue, cd);
-    this.buildSessionForm({
-      cleanSession: false,
-      subscriptionsCount: 2
-    });
   }
 
   hideDelete() {
@@ -67,10 +55,7 @@ export class MqttClientsComponent extends EntityComponent<DetailedClientSessionI
 
   buildForm(entity: DetailedClientSessionInfoDto): FormGroup {
     const mockEntity = {
-      id: {
-        id: '123124151251251651612',
-        entityType: EntityType.MQTT_CLIENT
-      },
+      id: '123124151251251651612',
       clientId: '8888',
       connectionState: ConnectionState.CONNECTED,
       clientType: ClientType.DEVICE,
@@ -84,46 +69,30 @@ export class MqttClientsComponent extends EntityComponent<DetailedClientSessionI
       keepAliveSeconds: 60,
       connectedAt: 123456789,
       disconnectedAt: 987654321,
-      note: 'note'
+      note: 'note',
+      cleanSession: true,
+      subscriptionsCount: 2
     }
-    return this.fb.group(
-      {
-        nodeId: [mockEntity ? mockEntity.nodeId : ''],
-        clientId2: [mockEntity ? mockEntity.clientId : ''],
-        username: [mockEntity ? mockEntity.username : ''],
-        note: [mockEntity ? mockEntity.note : ''],
-        keepAliveSeconds: [mockEntity ? mockEntity.keepAliveSeconds : ''],
-        connectedAt: [mockEntity ? mockEntity.connectedAt : ''],
-        connectionState: [mockEntity ? mockEntity.connectionState : '']
-      }
-    );
     // return this.fb.group(
     //   {
-    //     nodeId: [entity ? entity.nodeId : ''],
-    //     clientId: [entity ? entity.clientId : ''],
-    //     username: [entity ? entity.username : ''],
-    //     note: [entity ? entity.note : ''],
-    //     keepAliveSeconds: [entity ? entity.keepAliveSeconds : ''],
-    //     connectedAt: [entity ? entity.connectedAt : ''],
-    //     connectionState: [entity ? entity.connectionState : '']
+    //     nodeId: [mockEntity ? mockEntity.nodeId : ''],
+    //     clientId2: [mockEntity ? mockEntity.clientId : ''],
+    //     username: [mockEntity ? mockEntity.username : ''],
+    //     note: [mockEntity ? mockEntity.note : ''],
+    //     keepAliveSeconds: [mockEntity ? mockEntity.keepAliveSeconds : ''],
+    //     connectedAt: [mockEntity ? mockEntity.connectedAt : ''],
+    //     connectionState: [mockEntity ? mockEntity.connectionState : '']
     //   }
     // );
-  }
 
-  buildSessionForm(entity: any) {
-    this.sessionForm = this.fb.group(
-      {
-        cleanSession: [entity.cleanSession],
-        subscriptionsCount: [entity.subscriptionsCount]
-      }
-    );
+    return this.fb.group({
+      connectionInfo: [mockEntity, []],
+      subscription: [mockEntity, []]
+    });
   }
 
   updateForm(entity: DetailedClientSessionInfoDto) {
     if (entity) {
-      this.mqttClientSessionService.getClientSessionInfo(entity.clientId).subscribe(
-        (data) => this.clientSession = data
-      );
     }
     this.entityForm.patchValue({
       clientId: entity.clientId,
