@@ -634,7 +634,7 @@ mat-label {
 
   .mat-row:not(.mat-row-select), .mat-header-row:not(.mat-row-select) {
     mat-cell:first-child, mat-footer-cell:first-child, mat-header-cell:first-child {
-      padding: 0 12px;
+      padding: 0 24px;
     }
     mat-cell:nth-child(n+2):nth-last-child(n+2), mat-footer-cell:nth-child(n+2):nth-last-child(n+2), mat-header-cell:nth-child(n+2):nth-last-child(n+2) {
       padding: 0 28px 0 0;
@@ -644,7 +644,7 @@ mat-label {
   .mat-row.mat-row-select, .mat-header-row.mat-row-select {
     mat-cell:first-child, mat-footer-cell:first-child, mat-header-cell:first-child {
       width: 30px;
-      padding: 0 0 0 12px;
+      padding: 0 0 0 24px;
     }
     mat-cell:nth-child(2), mat-footer-cell:nth-child(2), mat-header-cell:nth-child(2) {
       padding: 0 12px;
