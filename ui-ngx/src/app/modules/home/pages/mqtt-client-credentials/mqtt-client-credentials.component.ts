@@ -19,7 +19,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
 import {
-  Client,
+  Client, ClientCredentials,
   ClientType,
   clientTypeTranslationMap
 } from '@shared/models/mqtt.models';
@@ -31,15 +31,15 @@ import { EntityTableConfig } from '@home/models/entity/entities-table-config.mod
   templateUrl: './mqtt-client-credentials.component.html',
   styleUrls: ['./mqtt-client-credentials.component.scss']
 })
-export class MqttClientCredentialsComponent extends EntityComponent<Client> {
+export class MqttClientCredentialsComponent extends EntityComponent<ClientCredentials> {
 
   mqttClientTypes = Object.values(ClientType);
 
   mqttClientTypeTranslationMap = clientTypeTranslationMap;
 
   constructor(protected store: Store<AppState>,
-              @Inject('entity') protected entityValue: Client,
-              @Inject('entitiesTableConfig') protected entitiesTableConfigValue: EntityTableConfig<Client>,
+              @Inject('entity') protected entityValue: ClientCredentials,
+              @Inject('entitiesTableConfig') protected entitiesTableConfigValue: EntityTableConfig<ClientCredentials>,
               public fb: FormBuilder,
               protected cd: ChangeDetectorRef) {
     super(store, fb, entityValue, entitiesTableConfigValue, cd);
@@ -53,7 +53,7 @@ export class MqttClientCredentialsComponent extends EntityComponent<Client> {
     }
   }
 
-  buildForm(entity: Client): FormGroup {
+  buildForm(entity: ClientCredentials): FormGroup {
     return this.fb.group(
       {
         clientId: [entity ? entity.clientId : '', [Validators.required]],
@@ -63,7 +63,7 @@ export class MqttClientCredentialsComponent extends EntityComponent<Client> {
     );
   }
 
-  updateForm(entity: Client) {
+  updateForm(entity: ClientCredentials) {
     this.entityForm.patchValue({
       clientId: entity.clientId,
       name: entity.name,

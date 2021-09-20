@@ -34,21 +34,36 @@ import { Authority } from '@shared/models/authority.enum';
 import { DialogService } from '@core/services/dialog.service';
 import { ImportExportService } from '@home/components/import-export/import-export.service';
 import { Direction } from '@shared/models/page/sort-order';
-import { Client, clientTypeTranslationMap } from '@shared/models/mqtt.models';
-import { MqttClientService } from '@core/http/mqtt-client.service';
+import {
+  Client,
+  ClientCredentials,
+  clientCredentialsTypeTranslationMap,
+  clientTypeTranslationMap
+} from '@shared/models/mqtt.models';
+import { MqttClientCredentialsService } from '@core/http/mqtt-client-credentials.service';
 import { MqttClientCredentialsComponent } from '@home/pages/mqtt-client-credentials/mqtt-client-credentials.component';
+import {
+  EditMqttClientDialogData,
+  EditMqttClientProfileDialogComponent
+} from '@home/dialogs/edit-mqtt-client-profile-dialog.component';
+import {
+  EditMqttClientCredentialsDialogData,
+  EditMqttClientCredentialsProfileDialogComponent
+} from '@home/dialogs/edit-mqtt-client-credentials-profile-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Injectable()
-export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityTableConfig<Client>> {
+export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityTableConfig<ClientCredentials>> {
 
-  private readonly config: EntityTableConfig<Client> = new EntityTableConfig<Client>();
+  private readonly config: EntityTableConfig<ClientCredentials> = new EntityTableConfig<ClientCredentials>();
 
   constructor(private store: Store<AppState>,
               private dialogService: DialogService,
-              private mqttClientService: MqttClientService,
+              private mqttClientCredentialsService: MqttClientCredentialsService,
               private translate: TranslateService,
               private importExport: ImportExportService,
               private datePipe: DatePipe,
+              private dialog: MatDialog,
               private router: Router) {
 
     this.config.entityType = EntityType.MQTT_CLIENT;
@@ -65,20 +80,14 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
       mqttClient.clientId : '';
 
     this.config.columns.push(
-      new DateEntityTableColumn<Client>('createdTime', 'common.created-time', this.datePipe, '150px'),
-      new EntityTableColumn<Client>('name', 'mqtt-client.name', '30%'),
-      new EntityTableColumn<Client>('clientId', 'mqtt-client.client-id', '30%'),
-      new EntityTableColumn<Client>('type', 'mqtt-client.client-type', '30%',
-        (entity) => this.translate.instant(clientTypeTranslationMap.get(entity.type))),
-      // new EntityTableColumn<MqttClient>('status', 'mqtt-client.active', '60px',
-      //   entity => {
-      //     return checkBoxCell(entity.tenantId?.id === NULL_UUID);
-      //   }),
+      new EntityTableColumn<ClientCredentials>('clientId', 'mqtt-client-credentials.client-id', '50%'),
+      new EntityTableColumn<ClientCredentials>('type', 'mqtt-client-credentials.type', '50%',
+        (entity) => this.translate.instant(clientCredentialsTypeTranslationMap.get(entity.type)))
     );
 
     this.config.addActionDescriptors.push(
       {
-        name: this.translate.instant('mqtt-client.create-new-client'),
+        name: this.translate.instant('mqtt-client-credentials.add'),
         icon: 'add',
         isEnabled: () => true,
         onAction: ($event) => this.config.table.addEntity($event)
@@ -87,55 +96,66 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
 
     this.config.cellActionDescriptors.push(
       {
-        name: this.translate.instant('mqtt-client.open-mqtt-client'),
+        name: this.translate.instant('mqtt-client-credentials.edit-credentials'),
         icon: 'devices',
         isEnabled: () => true,
-        onAction: ($event, entity) => this.openMqttClient($event, entity)
+        onAction: ($event, entity) => this.openEditClientCredentialsProfile($event, entity)
       }
     );
 
-    this.config.deleteEntityTitle = mqttClient => this.translate.instant('mqtt-client.delete-client-title',
+    this.config.deleteEntityTitle = mqttClient => this.translate.instant('mqtt-client-credentials.delete-client-title',
       { mqttClientTitle: mqttClient.name });
-    this.config.deleteEntityContent = () => this.translate.instant('mqtt-client.delete-client-text');
-    this.config.deleteEntitiesTitle = count => this.translate.instant('mqtt-client.delete-mqtt-clients-title', {count});
-    this.config.deleteEntitiesContent = () => this.translate.instant('mqtt-client.delete-mqtt-clients-text');
+    this.config.deleteEntityContent = () => this.translate.instant('mqtt-client-credentials.delete-client-text');
+    this.config.deleteEntitiesTitle = count => this.translate.instant('mqtt-client-credentials.delete-mqtt-clients-title', {count});
+    this.config.deleteEntitiesContent = () => this.translate.instant('mqtt-client-credentials.delete-mqtt-clients-text');
 
 
     this.config.loadEntity = id => this.loadEntity(id);
-    this.config.saveEntity = mqttClient => this.mqttClientService.saveMqttClient(mqttClient);
-    this.config.deleteEntity = id => this.mqttClientService.deleteMqttClient(id.id);
-    this.config.onEntityAction = action => this.onMqttClientAction(action);
+    this.config.saveEntity = mqttClient => this.mqttClientCredentialsService.saveMqttClientCredentials(mqttClient);
+    this.config.deleteEntity = id => this.mqttClientCredentialsService.deleteMqttClientCredentials(id.id);
+    // this.config.onEntityAction = action => this.onMqttClientAction(action);
   }
 
-  resolve(): EntityTableConfig<Client> {
-    this.config.tableTitle = this.translate.instant('mqtt-client.clients');
+  resolve(): EntityTableConfig<ClientCredentials> {
+    this.config.tableTitle = this.translate.instant('mqtt-client-credentials.clients');
     const authUser = getCurrentAuthUser(this.store);
-    this.config.deleteEnabled = (mqttClient) => this.isMqttClientEditable(mqttClient, authUser.authority);
-    this.config.entitySelectionEnabled = (mqttClient) => this.isMqttClientEditable(mqttClient, authUser.authority);
-    this.config.detailsReadonly = (mqttClient) => !this.isMqttClientEditable(mqttClient, authUser.authority);
-    this.config.entitiesFetchFunction = pageLink => this.mqttClientService.getMqttClients(pageLink);
+    // this.config.deleteEnabled = (mqttClient) => this.isMqttClientEditable(mqttClient, authUser.authority);
+    // this.config.entitySelectionEnabled = (mqttClient) => this.isMqttClientEditable(mqttClient, authUser.authority);
+    // this.config.detailsReadonly = (mqttClient) => !this.isMqttClientEditable(mqttClient, authUser.authority);
+    this.config.entitiesFetchFunction = pageLink => this.mqttClientCredentialsService.getMqttClientsCredentials(pageLink);
     return this.config;
   }
 
   loadEntity(id) {
-    return this.mqttClientService.getMqttClient(id);
+    return this.mqttClientCredentialsService.getMqttClientCredentials(id);
   }
 
-  isMqttClientEditable(mqttClient: Client, authority: Authority): boolean {
-    return authority === Authority.SYS_ADMIN;
-  }
+  // isMqttClientEditable(mqttClient: Client, authority: Authority): boolean {
+  //   return authority === Authority.SYS_ADMIN;
+  // }
 
-  openMqttClient($event: Event, mqttClient: Client) {
+  openEditClientCredentialsProfile($event: Event, mqttClientCredentials: ClientCredentials) {
     if ($event) {
       $event.stopPropagation();
     }
-    this.router.navigateByUrl(`clients/${mqttClient.id.id}`);
+    this.dialog.open<EditMqttClientCredentialsProfileDialogComponent, EditMqttClientCredentialsDialogData>(EditMqttClientCredentialsProfileDialogComponent, {
+      disableClose: true,
+      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
+      data: {
+        mqttClientCredentials
+      }
+    }).afterClosed()
+      .subscribe((res) => {
+        if (res) {
+          this.config.table.updateData();
+        }
+      })
   }
 
-  onMqttClientAction(action: EntityAction<Client>): boolean {
+  onMqttClientCredentialsAction(action: EntityAction<ClientCredentials>): boolean {
     switch (action.action) {
       case 'open':
-        this.openMqttClient(action.event, action.entity);
+        this.openEditClientCredentialsProfile(action.event, action.entity);
         return true;
     }
     return false;

@@ -16,11 +16,12 @@
 
 import { Injectable } from '@angular/core';
 import { defaultHttpOptionsFromConfig, RequestConfig } from './http-utils';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { PageLink } from '@shared/models/page/page-link';
 import { PageData } from '@shared/models/page/page-data';
-import { Client, MqttClientCredentials } from '@shared/models/mqtt.models';
+import { Client, ClientCredentials, ClientCredentialsType } from '@shared/models/mqtt.models';
+import { EntityType } from '@shared/models/entity-type.models';
 
 @Injectable({
   providedIn: 'root'
@@ -31,16 +32,66 @@ export class MqttClientCredentialsService {
     private http: HttpClient
   ) { }
 
-  public saveMqttClientCredentials(mqttClientCredentials: MqttClientCredentials, config?: RequestConfig): Observable<Client> {
-    return this.http.post<Client>('/api/mqtt/client/credentials', mqttClientCredentials, defaultHttpOptionsFromConfig(config));
+  public saveMqttClientCredentials(mqttClientCredentials: ClientCredentials, config?: RequestConfig): Observable<ClientCredentials> {
+    return this.http.post<ClientCredentials>('/api/mqtt/client/credentials', mqttClientCredentials, defaultHttpOptionsFromConfig(config));
   }
 
   public deleteMqttClientCredentials(credentialsId: string, config?: RequestConfig) {
     return this.http.delete(`/api/mqtt/client/credentials/${credentialsId}`, defaultHttpOptionsFromConfig(config));
   }
 
-  public getMqttClientsCredentials(pageLink: PageLink, config?: RequestConfig): Observable<PageData<MqttClientCredentials>> {
-    return this.http.get<PageData<MqttClientCredentials>>(`/api/mqtt/client/credentials${pageLink.toQuery()}`, defaultHttpOptionsFromConfig(config));
+  public getMqttClientsCredentials(pageLink: PageLink, config?: RequestConfig): Observable<PageData<ClientCredentials>> {
+    // return this.http.get<PageData<ClientCredentials>>(`/api/mqtt/client/credentials${pageLink.toQuery()}`, defaultHttpOptionsFromConfig(config));
+    return of({
+      data: [
+          {
+            id: {
+              id: '34926-03928634-4363463463',
+              entityType: EntityType.MQTT_CLIENT
+            },
+            clientId: '676',
+            type: ClientCredentialsType.SSL,
+            credentialsId: 'credentialsId',
+            credentialsValue: 'credentialsValue',
+            username: 'usernmae 2',
+            password: 'pass_2',
+            authorizationRulePattern: 76
+          },
+          {
+            id: {
+                id: '34926-03928634-4363463463',
+                entityType: EntityType.MQTT_CLIENT
+            },
+            clientId: '1243',
+            type: ClientCredentialsType.MQTT_BASIC,
+            credentialsId: '125325123',
+            credentialsValue: 'credentials124',
+            username: 'usernmae',
+            password: 'pass',
+            authorizationRulePattern: 2
+          }
+        ],
+        hasNext: true,
+        totalPages: 1,
+        totalElements: 2,
+    });
+  }
+
+  public getMqttClientCredentials(clientId: string, config?: RequestConfig): Observable<ClientCredentials> {
+    // return this.http.get<ClientCredentials>(`/api/mqtt/client/credentials/${clientId}`, defaultHttpOptionsFromConfig(config));
+    return of({
+      id: {
+        id: '34926-03928634-4363463463',
+        entityType: EntityType.MQTT_CLIENT
+      },
+      clientId: '1243',
+      type: ClientCredentialsType.MQTT_BASIC,
+      credentialsId: '125325123',
+      credentialsValue: 'credentials124',
+      username: 'usernmae',
+      password: 'pass',
+      authorizationRulePattern: 2
+    });
   }
 
 }

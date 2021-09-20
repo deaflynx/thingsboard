@@ -3228,5 +3228,12 @@
       "disconnect-client": "Disconnect client",
       "refresh-page": "Refresh page",
       "qos": "QoS"
+    },
+    "mqtt-client-credentials": {
+      "add": "Add client credentials profile",
+      "client-id": "Client ID",
+      "clients": "Clients",
+      "edit-credentials": "Edit credentials",
+      "type": "Credentials type"
     }
 }

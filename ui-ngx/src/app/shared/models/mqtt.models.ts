@@ -55,6 +55,13 @@ export const clientTypeTranslationMap = new Map<ClientType, string>(
   ]
 );
 
+export const clientCredentialsTypeTranslationMap = new Map<ClientCredentialsType, string>(
+  [
+    [ClientCredentialsType.MQTT_BASIC, 'MQTT Basic'],
+    [ClientCredentialsType.SSL, 'SSL']
+  ]
+);
+
 export const connectionStateTranslationMap = new Map<ConnectionState, string>(
   [
     [ConnectionState.CONNECTED, 'Connected'],
@@ -95,11 +102,14 @@ export interface SessionInfo {
   clientInfo: ClientInfo;
 }
 
-export interface MqttClientCredentials {
+export interface ClientCredentials extends BaseData<ClientId> {
   clientId: string;
+  type: ClientCredentialsType;
   credentialsId: string;
   credentialsValue: string;
-  credentialsType: ClientCredentialsType;
+  username: string;
+  password: string;
+  authorizationRulePattern: number;
 }
 
 export interface MqttAdminDto extends BaseData<ClientId> {
