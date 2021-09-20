@@ -62,11 +62,7 @@ export const connectionStateTranslationMap = new Map<ConnectionState, string>(
   ]
 );
 
-export interface Client extends DetailedClientSessionInfoDto, BaseData<ClientId> {
-  clientId: string,
-  type: ClientType;
-  description?: string;
-  session: DetailedClientSessionInfoDto;
+export interface Client extends ClientInfo, DetailedClientSessionInfoDto, BaseData<ClientId> {
 }
 
 export class ClientId implements EntityId {

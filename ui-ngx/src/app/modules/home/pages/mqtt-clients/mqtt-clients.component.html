@@ -21,25 +21,55 @@
     <div class="mat-padding" fxLayout="column">
       <div>
         <mat-label style="font-size: 20px; font-weight: 500;" translate>mqtt-client.session-info</mat-label>
-        <div fxFlex fxLayout="row" fxLayoutAlign="start">
-<!--          <div fxFlex="50" style="margin: 10px">
+        <div fxFlex fxLayout="row">
+          <div fxFlex="50" style="margin: 10px">
             <mat-label translate>mqtt-client.connection</mat-label>
-            <tb-connection [parentFormGroup]="entityForm" formControlName="connection"></tb-connection>
+            <mat-form-field class="mat-block">
+              <mat-label translate>mqtt-client.node</mat-label>
+              <input matInput formControlName="nodeId">
+            </mat-form-field>
+            <mat-form-field class="mat-block">
+              <mat-label translate>mqtt-client.client-id</mat-label>
+              <input matInput formControlName="clientId">
+            </mat-form-field>
+            <mat-form-field class="mat-block">
+              <mat-label translate>mqtt-client.username</mat-label>
+              <input matInput formControlName="username">
+            </mat-form-field>
+            <mat-form-field class="mat-block">
+              <mat-label translate>mqtt-client.note</mat-label>
+              <input matInput formControlName="note">
+            </mat-form-field>
+            <mat-form-field class="mat-block">
+              <mat-label translate>mqtt-client.keep-alive</mat-label>
+              <input matInput formControlName="keepAliveSeconds">
+            </mat-form-field>
+            <mat-form-field class="mat-block">
+              <mat-label translate>mqtt-client.connected-at</mat-label>
+              <input matInput formControlName="connectedAt">
+            </mat-form-field>
+            <mat-form-field class="mat-block">
+              <mat-label translate>mqtt-client.connected-status</mat-label>
+              <input matInput formControlName="connectionState">
+            </mat-form-field>
           </div>
           <div fxFlex="50" style="margin: 10px">
             <mat-label translate>mqtt-client.session</mat-label>
-            <tb-session [parentFormGroup]="entityForm" formControlName="session"></tb-session>
-          </div>-->
-          <div fxFlex="50" style="margin: 10px">
-            <mat-label translate>mqtt-client.session</mat-label>
-            <tb-session formControlName="session"></tb-session>
+            <mat-form-field class="mat-block">
+              <mat-label translate>mqtt-client.clean-session</mat-label>
+              <input matInput formControlName="cleanSession">
+            </mat-form-field>
+            <mat-form-field class="mat-block">
+              <mat-label translate>mqtt-client.subscriptions-count</mat-label>
+              <input matInput formControlName="subscriptionsCount">
+            </mat-form-field>
           </div>
         </div>
       </div>
-<!--      <div style="padding-top: 10px">
+      <div style="padding-top: 10px">
         <mat-label style="font-size: 20px; font-weight: 500;" translate>mqtt-client.subscriptions</mat-label>
-        <tb-subscriptions></tb-subscriptions>
-      </div>-->
+        <tb-subscriptions [subscriptions]="this.entityForm.get('subscriptions')"></tb-subscriptions>
+      </div>
     </div>
     <button mat-raised-button (click)="sessionClick()">Click</button>
   </form>

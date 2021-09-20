@@ -15,14 +15,13 @@
 ///
 
 import { ChangeDetectorRef, Component, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
 import {
   Client,
   ClientType,
-  clientTypeTranslationMap, ConnectionState,
-  DetailedClientSessionInfoDto, MqttQoS
+  clientTypeTranslationMap,
 } from '@shared/models/mqtt.models';
 import { EntityComponent } from '@home/components/entity/entity.component';
 import { EntityTableConfig } from '@home/models/entity/entities-table-config.models';
@@ -54,53 +53,38 @@ export class MqttClientsComponent extends EntityComponent<Client> {
   }
 
   buildForm(entity: Client): FormGroup {
-    // const entity = {
-    //   id: '123124151251251651612',
-    //   clientId: '8888',
-    //   connectionState: ConnectionState.CONNECTED,
-    //   clientType: ClientType.DEVICE,
-    //   nodeId: '1',
-    //   persistent: true,
-    //   username: 'username 1',
-    //   subscriptions: {
-    //     topic: 'topic1',
-    //     qos: MqttQoS.AT_LEAST_ONCE
-    //   },
-    //   keepAliveSeconds: 60,
-    //   connectedAt: 123456789,
-    //   disconnectedAt: 987654321,
-    //   note: 'note',
-    //   cleanSession: true,
-    //   subscriptionsCount: 2
-    // }
-    // return this.fb.group(
-    //   {
-    //     clientId: [entity ? entity.clientId : ''],
-    //     nodeId: [entity ? entity.nodeId : ''],
-    //     username: [entity ? entity.username : ''],
-    //     note: [entity ? entity.note : ''],
-    //     keepAliveSeconds: [entity ? entity.keepAliveSeconds : ''],
-    //     connectedAt: [entity ? entity.connectedAt : ''],
-    //     connectionState: [entity ? entity.connectionState : ''],
-    //     clientType: [entity ? entity.clientType : ''],
-    //     persistent: [entity ? entity.persistent : ''],
-    //     subscriptions: [entity ? entity.subscriptions : ''],
-    //     disconnectedAt: [entity ? entity.disconnectedAt : ''],
-    //     cleanSession: [entity ? entity.cleanSession : ''],
-    //     subscriptionsCount: [entity ? entity.subscriptionsCount : '']
-    //   }
-    // );
-
     return this.fb.group({
-      connection: [entity, []],
-      session: ['', []]
+      clientId: [entity ? entity.clientId : ''],
+      nodeId: [entity ? entity.nodeId : ''],
+      username: [entity ? entity.username : ''],
+      note: [entity ? entity.note : ''],
+      keepAliveSeconds: [entity ? entity.keepAliveSeconds : ''],
+      connectedAt: [entity ? entity.connectedAt : ''],
+      connectionState: [entity ? entity.connectionState : ''],
+      clientType: [entity ? entity.clientType : ''],
+      persistent: [entity ? entity.persistent : ''],
+      disconnectedAt: [entity ? entity.disconnectedAt : ''],
+      cleanSession: [entity ? entity.cleanSession : ''],
+      subscriptionsCount: [entity ? entity.subscriptionsCount : ''],
+      subscriptions: [entity ? entity.subscriptions : '']
     });
   }
 
-  updateForm(entity: DetailedClientSessionInfoDto) {
-    if (entity) {
-    }
+  updateForm(entity: Client) {
     this.entityForm.patchValue({
+      clientId: entity.clientId,
+      nodeId: entity.nodeId,
+      username: entity.username,
+      note: entity.note,
+      keepAliveSeconds: entity.keepAliveSeconds,
+      connectedAt: entity.connectedAt,
+      connectionState: entity.connectionState,
+      clientType: entity.clientType,
+      persistent: entity.persistent,
+      disconnectedAt: entity.disconnectedAt,
+      cleanSession: entity.cleanSession,
+      subscriptionsCount: entity.subscriptionsCount,
+      subscriptions: entity.subscriptions
     });
   }
 

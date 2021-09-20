@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { TopicSubscription } from '@shared/models/mqtt.models';
 
 @Component({
   selector: 'tb-subscriptions',
@@ -8,7 +9,8 @@ import { FormGroup } from '@angular/forms';
 })
 export class SubscriptionsComponent implements OnInit {
 
-
+  @Input()
+  subscriptions: TopicSubscription[];
 
   entityForm: FormGroup;
 
