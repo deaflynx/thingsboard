@@ -22,6 +22,7 @@ import { AddEntitiesToCustomerDialogComponent } from '@modules/home/dialogs/add-
 import { HomeDialogsService } from './home-dialogs.service';
 import { AddEntitiesToEdgeDialogComponent } from '@home/dialogs/add-entities-to-edge-dialog.component';
 import { EditMqttClientProfileDialogComponent } from '@home/dialogs/edit-mqtt-client-profile-dialog.component';
+import { EditMqttClientCredentialsProfileDialogComponent } from '@home/dialogs/edit-mqtt-client-credentials-profile-dialog.component';
 
 @NgModule({
   declarations:
@@ -29,7 +30,8 @@ import { EditMqttClientProfileDialogComponent } from '@home/dialogs/edit-mqtt-cl
     AssignToCustomerDialogComponent,
     AddEntitiesToCustomerDialogComponent,
     AddEntitiesToEdgeDialogComponent,
-    EditMqttClientProfileDialogComponent
+    EditMqttClientProfileDialogComponent,
+    EditMqttClientCredentialsProfileDialogComponent
   ],
   imports: [
     CommonModule,
@@ -39,7 +41,8 @@ import { EditMqttClientProfileDialogComponent } from '@home/dialogs/edit-mqtt-cl
     AssignToCustomerDialogComponent,
     AddEntitiesToCustomerDialogComponent,
     AddEntitiesToEdgeDialogComponent,
-    EditMqttClientProfileDialogComponent
+    EditMqttClientProfileDialogComponent,
+    EditMqttClientCredentialsProfileDialogComponent
   ],
   providers: [
     HomeDialogsService
