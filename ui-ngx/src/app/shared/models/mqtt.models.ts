@@ -18,6 +18,7 @@ import { BaseData } from '@shared/models/base-data';
 import { EntityId } from '@shared/models/id/entity-id';
 import { EntityType } from '@shared/models/entity-type.models';
 import { TenantId } from '@shared/models/id/tenant-id';
+import { EdgeEventStatus } from '@shared/models/edge.models';
 
 export enum ClientType {
   DEVICE = 'DEVICE',
@@ -28,6 +29,13 @@ export enum ConnectionState {
   CONNECTED = 'CONNECTED',
   DISCONNECTED = 'DISCONNECTED'
 }
+
+export const connectionStateColor = new Map<ConnectionState, string>(
+  [
+    [ConnectionState.CONNECTED, '#008A00'],
+    [ConnectionState.DISCONNECTED, '#757575']
+  ]
+);
 
 export enum MqttQoS {
   AT_MOST_ONCE = 'AT_MOST_ONCE',
@@ -58,7 +66,6 @@ export interface Client extends DetailedClientSessionInfoDto, BaseData<ClientId>
   clientId: string,
   type: ClientType;
   description?: string;
-  tenantId?: TenantId;
   session: DetailedClientSessionInfoDto;
 }
 
