@@ -43,25 +43,7 @@ import { MqttClientCredentialsModule } from '@home/pages/mqtt-client-credentials
 
 @NgModule({
   exports: [
-    // AdminModule,
-    // HomeLinksModule,
     ProfileModule,
-    TenantProfileModule,
-    TenantModule,
-    // DeviceProfileModule,
-    // DeviceModule,
-    // AssetModule,
-    // EdgeModule,
-    // EntityViewModule,
-    // CustomerModule,
-    // RuleChainModule,
-    // WidgetLibraryModule,
-    // DashboardModule,
-    // AuditLogModule,
-    // ApiUsageModule,
-    // OtaUpdateModule,
-    // UserModule,
-    HomeMqttModule,
     MqttClientsModule,
     MqttClientInfoModule,
     MqttClientCredentialsModule
