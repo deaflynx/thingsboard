@@ -123,11 +123,7 @@ export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableCon
   }
 
   isMqttClientEditable(mqttClient: Client, authority: Authority): boolean {
-    if (authority === Authority.TENANT_ADMIN) {
-      return mqttClient && mqttClient.tenantId && mqttClient.tenantId.id !== NULL_UUID;
-    } else {
-      return authority === Authority.SYS_ADMIN;
-    }
+    return authority === Authority.SYS_ADMIN;
   }
 
   openEditClientProfile($event: Event, mqttClient: Client) {

@@ -110,9 +110,9 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
   resolve(): EntityTableConfig<Client> {
     this.config.tableTitle = this.translate.instant('mqtt-client.clients');
     const authUser = getCurrentAuthUser(this.store);
-    this.config.deleteEnabled = (widgetsBundle) => this.isMqttClientEditable(widgetsBundle, authUser.authority);
-    this.config.entitySelectionEnabled = (widgetsBundle) => this.isMqttClientEditable(widgetsBundle, authUser.authority);
-    this.config.detailsReadonly = (widgetsBundle) => !this.isMqttClientEditable(widgetsBundle, authUser.authority);
+    this.config.deleteEnabled = (mqttClient) => this.isMqttClientEditable(mqttClient, authUser.authority);
+    this.config.entitySelectionEnabled = (mqttClient) => this.isMqttClientEditable(mqttClient, authUser.authority);
+    this.config.detailsReadonly = (mqttClient) => !this.isMqttClientEditable(mqttClient, authUser.authority);
     this.config.entitiesFetchFunction = pageLink => this.mqttClientService.getMqttClients(pageLink);
     return this.config;
   }
@@ -122,11 +122,7 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
   }
 
   isMqttClientEditable(mqttClient: Client, authority: Authority): boolean {
-    if (authority === Authority.TENANT_ADMIN) {
-      return mqttClient && mqttClient.tenantId && mqttClient.tenantId.id !== NULL_UUID;
-    } else {
-      return authority === Authority.SYS_ADMIN;
-    }
+    return authority === Authority.SYS_ADMIN;
   }
 
   openMqttClient($event: Event, mqttClient: Client) {

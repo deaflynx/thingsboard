@@ -93,7 +93,7 @@ export class MqttClientsComponent extends EntityComponent<Client> {
 
     return this.fb.group({
       connection: [entity, []],
-      session: [entity, []]
+      session: ['', []]
     });
   }
 
@@ -102,6 +102,10 @@ export class MqttClientsComponent extends EntityComponent<Client> {
     }
     this.entityForm.patchValue({
     });
+  }
+
+  sessionClick() {
+    console.warn("entityForm: ", this.entityForm.get('session').value);
   }
 
 }

@@ -22,20 +22,25 @@
       <div>
         <mat-label style="font-size: 20px; font-weight: 500;" translate>mqtt-client.session-info</mat-label>
         <div fxFlex fxLayout="row" fxLayoutAlign="start">
-          <div fxFlex="50" style="margin: 10px">
+<!--          <div fxFlex="50" style="margin: 10px">
             <mat-label translate>mqtt-client.connection</mat-label>
             <tb-connection [parentFormGroup]="entityForm" formControlName="connection"></tb-connection>
           </div>
           <div fxFlex="50" style="margin: 10px">
             <mat-label translate>mqtt-client.session</mat-label>
             <tb-session [parentFormGroup]="entityForm" formControlName="session"></tb-session>
+          </div>-->
+          <div fxFlex="50" style="margin: 10px">
+            <mat-label translate>mqtt-client.session</mat-label>
+            <tb-session formControlName="session"></tb-session>
           </div>
         </div>
       </div>
-      <div style="padding-top: 10px">
+<!--      <div style="padding-top: 10px">
         <mat-label style="font-size: 20px; font-weight: 500;" translate>mqtt-client.subscriptions</mat-label>
         <tb-subscriptions></tb-subscriptions>
-      </div>
+      </div>-->
     </div>
+    <button mat-raised-button (click)="sessionClick()">Click</button>
   </form>
 </div>

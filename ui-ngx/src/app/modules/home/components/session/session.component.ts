@@ -8,6 +8,7 @@ import {
   ValidationErrors,
   Validator
 } from '@angular/forms';
+import { Client } from '@shared/models/mqtt.models';
 
 @Component({
   selector: 'tb-session',
@@ -28,8 +29,7 @@ import {
 })
 export class SessionComponent implements OnInit, ControlValueAccessor, Validator {
 
-  @Input()
-  parentFormGroup: FormGroup;
+  onChange: (value: any) => void;
 
   sessionForm: FormGroup;
 
@@ -37,16 +37,19 @@ export class SessionComponent implements OnInit, ControlValueAccessor, Validator
 
   ngOnInit(): void {
     this.sessionForm = this.fb.group({
-      cleanSession: [this.parentFormGroup ? this.parentFormGroup.value.session?.cleanSession : '', []],
-      subscriptionsCount: [this.parentFormGroup ? this.parentFormGroup.value.session?.subscriptionsCount : '', []],
+      cleanSession: ['', []],
+      subscriptionsCount: ['', []]
     });
   }
 
   onTouched: () => void = () => {};
+  onChange2: () => void = () => {};
 
   registerOnChange(fn: any): void {
     console.log("on change");
-    this.sessionForm.valueChanges.subscribe(fn);
+    // this.sessionForm.valueChanges.subscribe(fn);
+    this.onChange = fn;
+    // this.onChange2 = fn;
   }
 
   registerOnTouched(fn: any): void {
@@ -55,6 +58,8 @@ export class SessionComponent implements OnInit, ControlValueAccessor, Validator
   }
 
   writeValue(obj: any): void {
+    // this.sessionForm.setValue(obj);
+    console.warn("sessionForm: ", this.sessionForm);
   }
 
   setDisabledState?(isDisabled: boolean): void {
