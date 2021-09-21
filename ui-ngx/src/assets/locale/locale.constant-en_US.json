@@ -3233,7 +3233,10 @@
       "add": "Add client credentials profile",
       "client-id": "Client ID",
       "clients": "Clients",
+      "client-credentials": "Client credentials",
       "edit-credentials": "Edit credentials",
+      "edit-profile-title": "Client credentials",
+      "edit-profile-text": "Edit client credentials of profile with ID {}",
       "type": "Credentials type"
     }
 }

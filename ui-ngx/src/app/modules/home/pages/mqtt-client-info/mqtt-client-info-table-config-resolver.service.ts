@@ -100,7 +100,7 @@ export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableCon
     this.config.deleteEntityContent = () => this.translate.instant('mqtt-client.delete-client-text');
     this.config.deleteEntitiesTitle = count => this.translate.instant('mqtt-client.delete-mqtt-clients-title', {count});
     this.config.deleteEntitiesContent = () => this.translate.instant('mqtt-client.delete-mqtt-clients-text');
-
+    this.config.tableTitle = this.translate.instant('mqtt-client.client-info');
 
     this.config.loadEntity = id => this.loadEntity(id);
     this.config.saveEntity = mqttClient => this.mqttClientService.saveMqttClient(mqttClient);
@@ -109,7 +109,6 @@ export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableCon
   }
 
   resolve(): EntityTableConfig<Client> {
-    this.config.tableTitle = this.translate.instant('mqtt-client.clients');
     const authUser = getCurrentAuthUser(this.store);
     this.config.deleteEnabled = (widgetsBundle) => this.isMqttClientEditable(widgetsBundle, authUser.authority);
     this.config.entitySelectionEnabled = (widgetsBundle) => this.isMqttClientEditable(widgetsBundle, authUser.authority);
@@ -143,26 +142,6 @@ export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableCon
         }
       })
   }
-
-  //assignToCustomer($event: Event, assetIds: Array<AssetId>) {
-  //     if ($event) {
-  //       $event.stopPropagation();
-  //     }
-  //     this.dialog.open<AssignToCustomerDialogComponent, AssignToCustomerDialogData,
-  //       boolean>(AssignToCustomerDialogComponent, {
-  //       disableClose: true,
-  //       panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
-  //       data: {
-  //         entityIds: assetIds,
-  //         entityType: EntityType.ASSET
-  //       }
-  //     }).afterClosed()
-  //       .subscribe((res) => {
-  //         if (res) {
-  //           this.config.table.updateData();
-  //         }
-  //       });
-  //   }
 
   onMqttClientAction(action: EntityAction<Client>): boolean {
     switch (action.action) {

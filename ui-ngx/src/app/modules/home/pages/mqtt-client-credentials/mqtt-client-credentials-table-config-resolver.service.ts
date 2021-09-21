@@ -18,7 +18,6 @@ import { Injectable } from '@angular/core';
 
 import { Resolve, Router } from '@angular/router';
 import {
-  DateEntityTableColumn,
   EntityTableColumn,
   EntityTableConfig
 } from '@home/models/entity/entities-table-config.models';
@@ -26,26 +25,18 @@ import { TranslateService } from '@ngx-translate/core';
 import { DatePipe } from '@angular/common';
 import { EntityType, entityTypeResources, entityTypeTranslations } from '@shared/models/entity-type.models';
 import { EntityAction } from '@home/models/entity/entity-component.models';
-import { NULL_UUID } from '@shared/models/id/has-uuid';
 import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
 import { getCurrentAuthUser } from '@app/core/auth/auth.selectors';
-import { Authority } from '@shared/models/authority.enum';
 import { DialogService } from '@core/services/dialog.service';
 import { ImportExportService } from '@home/components/import-export/import-export.service';
 import { Direction } from '@shared/models/page/sort-order';
 import {
-  Client,
   ClientCredentials,
   clientCredentialsTypeTranslationMap,
-  clientTypeTranslationMap
 } from '@shared/models/mqtt.models';
 import { MqttClientCredentialsService } from '@core/http/mqtt-client-credentials.service';
 import { MqttClientCredentialsComponent } from '@home/pages/mqtt-client-credentials/mqtt-client-credentials.component';
-import {
-  EditMqttClientDialogData,
-  EditMqttClientProfileDialogComponent
-} from '@home/dialogs/edit-mqtt-client-profile-dialog.component';
 import {
   EditMqttClientCredentialsDialogData,
   EditMqttClientCredentialsProfileDialogComponent
@@ -63,8 +54,7 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
               private translate: TranslateService,
               private importExport: ImportExportService,
               private datePipe: DatePipe,
-              private dialog: MatDialog,
-              private router: Router) {
+              private dialog: MatDialog) {
 
     this.config.entityType = EntityType.MQTT_CLIENT;
     this.config.entityComponent = MqttClientCredentialsComponent;
@@ -81,7 +71,7 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
 
     this.config.columns.push(
       new EntityTableColumn<ClientCredentials>('clientId', 'mqtt-client-credentials.client-id', '50%'),
-      new EntityTableColumn<ClientCredentials>('type', 'mqtt-client-credentials.type', '50%',
+      new EntityTableColumn<ClientCredentials>('credentialsType', 'mqtt-client-credentials.type', '50%',
         (entity) => this.translate.instant(clientCredentialsTypeTranslationMap.get(entity.type)))
     );
 
@@ -113,11 +103,12 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
     this.config.loadEntity = id => this.loadEntity(id);
     this.config.saveEntity = mqttClient => this.mqttClientCredentialsService.saveMqttClientCredentials(mqttClient);
     this.config.deleteEntity = id => this.mqttClientCredentialsService.deleteMqttClientCredentials(id.id);
-    // this.config.onEntityAction = action => this.onMqttClientAction(action);
+    this.config.onEntityAction = action => this.onMqttClientAction(action);
+    this.config.onEntityAction = action => this.onMqttClientAction(action);
   }
 
   resolve(): EntityTableConfig<ClientCredentials> {
-    this.config.tableTitle = this.translate.instant('mqtt-client-credentials.clients');
+    this.config.tableTitle = this.translate.instant('mqtt-client-credentials.client-credentials');
     const authUser = getCurrentAuthUser(this.store);
     // this.config.deleteEnabled = (mqttClient) => this.isMqttClientEditable(mqttClient, authUser.authority);
     // this.config.entitySelectionEnabled = (mqttClient) => this.isMqttClientEditable(mqttClient, authUser.authority);
@@ -134,6 +125,10 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
   //   return authority === Authority.SYS_ADMIN;
   // }
 
+  onMqttClientAction(action: EntityAction<ClientCredentials>): boolean {
+    return false;
+  }
+
   openEditClientCredentialsProfile($event: Event, mqttClientCredentials: ClientCredentials) {
     if ($event) {
       $event.stopPropagation();
@@ -149,7 +144,7 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
         if (res) {
           this.config.table.updateData();
         }
-      })
+      });
   }
 
   onMqttClientCredentialsAction(action: EntityAction<ClientCredentials>): boolean {

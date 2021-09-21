@@ -20,15 +20,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
 import { FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm, Validators } from '@angular/forms';
-import { EntityType } from '@shared/models/entity-type.models';
 import { DialogComponent } from '@shared/components/dialog.component';
 import { Router } from '@angular/router';
 import {
-  Client, ClientCredentials, ClientCredentialsType, clientCredentialsTypeTranslationMap,
+  ClientCredentials,
+  ClientCredentialsType,
   ClientType,
-  clientTypeTranslationMap
+  clientCredentialsTypeTranslationMap
 } from '@shared/models/mqtt.models';
-import { MqttClientService } from '@core/http/mqtt-client.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MqttClientCredentialsService } from '@core/http/mqtt-client-credentials.service';
 
@@ -69,10 +68,10 @@ export class EditMqttClientCredentialsProfileDialogComponent extends
 
   ngOnInit(): void {
     this.editMqttClientCredentialsProfileFormGroup = this.fb.group({
-      clientType: [this.mqttClientCredentials.type, [Validators.required]]
+      type: [this.mqttClientCredentials.type, [Validators.required]]
     });
-    this.editMqttClientCredentialsProfileTitle = 'mqtt-client.edit-client-profile-title';
-    this.editMqttClientCredentialsProfileText = this.translate.instant('mqtt-client.edit-client-profile-text', { mqttClientId: this.mqttClientCredentials.clientId });
+    this.editMqttClientCredentialsProfileTitle = 'mqtt-client-credentials.edit-profile-title';
+    this.editMqttClientCredentialsProfileText = this.translate.instant('mqtt-client-credentials.edit-profile-text', { mqttClientId: this.mqttClientCredentials.clientId });
   }
 
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
