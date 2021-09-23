@@ -142,10 +142,14 @@ import { WidgetContainerComponent } from '@home/components/widget/widget-contain
 import { SnmpDeviceProfileTransportModule } from '@home/components/profile/device/snpm/snmp-device-profile-transport.module';
 import { DeviceCredentialsModule } from '@home/components/device/device-credentials.module';
 import { DeviceProfileCommonModule } from '@home/components/profile/device/common/device-profile-common.module';
-import { ConnectionComponent } from '@home/components/connection/connection.component';
-import { SessionComponent } from '@home/components/session/session.component';
+import { ConnectionComponent } from '@home/components/mqtt-connection/connection.component';
+import { SessionComponent } from '@home/components/mqtt-session/session.component';
 import { SubscriptionsComponent } from '@home/components/subscriptions/subscriptions.component';
 import { SubscriptionListComponent } from '@home/components/subscriptions/subscription-list.component';
+import { MqttCredentialsMqttBasicComponent } from '@home/components/mqtt-credentials-mqtt-basic/mqtt-credentials-mqtt-basic.component';
+import { MqttCredentialsMqttSslComponent } from '@home/components/mqtt-credentials-mqtt-ssl/mqtt-credentials-mqtt-ssl.component';
+import { AuthorizationRulesMappingComponent } from '@home/components/mqtt-credentials-mqtt-ssl/authorization-rules-mapping/authorization-rules-mapping.component';
+import { AuthorizationRulesMappingListComponent } from '@home/components/mqtt-credentials-mqtt-ssl/authorization-rules-mapping/authorization-rules-mapping-list.component';
 
 @NgModule({
   declarations:
@@ -268,7 +272,11 @@ import { SubscriptionListComponent } from '@home/components/subscriptions/subscr
       ConnectionComponent,
       SessionComponent,
       SubscriptionsComponent,
-      SubscriptionListComponent
+      SubscriptionListComponent,
+      MqttCredentialsMqttBasicComponent,
+      MqttCredentialsMqttSslComponent,
+      AuthorizationRulesMappingComponent,
+      AuthorizationRulesMappingListComponent
     ],
   imports: [
     CommonModule,
@@ -383,7 +391,11 @@ import { SubscriptionListComponent } from '@home/components/subscriptions/subscr
     ConnectionComponent,
     SessionComponent,
     SubscriptionsComponent,
-    SubscriptionListComponent
+    SubscriptionListComponent,
+    MqttCredentialsMqttBasicComponent,
+    MqttCredentialsMqttSslComponent,
+    AuthorizationRulesMappingComponent,
+    AuthorizationRulesMappingListComponent
   ],
   providers: [
     WidgetComponentService,

@@ -24,7 +24,7 @@ import {
 import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
 import { MqttClientService } from '@core/http/mqtt-client.service';
-import { Client, ClientCredentials } from '@shared/models/mqtt.models';
+import { Client, MqttClientCredentials } from '@shared/models/mqtt.models';
 import { PageLink } from '@shared/models/page/page-link';
 import { concatMap, map } from 'rxjs/operators';
 import { MqttClientCredentialsService } from '@core/http/mqtt-client-credentials.service';
@@ -41,7 +41,7 @@ export class HomeMqttComponent extends PageComponent implements OnInit {
   mqttClientForm: FormGroup;
 
   clients: Client[];
-  clientCredentials: ClientCredentials[];
+  clientCredentials: MqttClientCredentials[];
   clientSessionInfo: any;
   actorIds: any[];
 

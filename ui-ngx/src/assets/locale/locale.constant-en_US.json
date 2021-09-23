@@ -3231,12 +3231,19 @@
     },
     "mqtt-client-credentials": {
       "add": "Add client credentials profile",
+      "add-rule": "Add authorization rule mapping",
+      "authorization-rules-mapping": "Authorization rules mapping",
+      "certificate-matcher-regex": "Certificate matcher regex",
       "client-id": "Client ID",
       "clients": "Clients",
       "client-credentials": "Client credentials",
       "edit-credentials": "Edit credentials",
       "edit-profile-title": "Client credentials",
       "edit-profile-text": "Edit client credentials of profile with ID {}",
-      "type": "Credentials type"
+      "name": "Name",
+      "type": "Credentials type",
+      "topic-rule": "Topic rule",
+      "parent-certificate-common-name": "Parent certificate common name",
+      "parent-certificate-common-name-required": "Parent certificate common name required"
     }
 }

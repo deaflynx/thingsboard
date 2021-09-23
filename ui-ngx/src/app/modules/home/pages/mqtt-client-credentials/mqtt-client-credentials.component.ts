@@ -19,9 +19,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
 import {
-  Client, ClientCredentials, ClientCredentialsType, clientCredentialsTypeTranslationMap,
-  ClientType,
-  clientTypeTranslationMap
+  ClientCredentialsType,
+  clientCredentialsTypeTranslationMap,
+  MqttClientCredentials
 } from '@shared/models/mqtt.models';
 import { EntityComponent } from '@home/components/entity/entity.component';
 import { EntityTableConfig } from '@home/models/entity/entities-table-config.models';
@@ -31,15 +31,15 @@ import { EntityTableConfig } from '@home/models/entity/entities-table-config.mod
   templateUrl: './mqtt-client-credentials.component.html',
   styleUrls: ['./mqtt-client-credentials.component.scss']
 })
-export class MqttClientCredentialsComponent extends EntityComponent<ClientCredentials> {
+export class MqttClientCredentialsComponent extends EntityComponent<MqttClientCredentials> {
 
   credentialsType = ClientCredentialsType;
   credentialsTypes = Object.values(ClientCredentialsType);
   credentialsTypeTranslationMap = clientCredentialsTypeTranslationMap;
 
   constructor(protected store: Store<AppState>,
-              @Inject('entity') protected entityValue: ClientCredentials,
-              @Inject('entitiesTableConfig') protected entitiesTableConfigValue: EntityTableConfig<ClientCredentials>,
+              @Inject('entity') protected entityValue: MqttClientCredentials,
+              @Inject('entitiesTableConfig') protected entitiesTableConfigValue: EntityTableConfig<MqttClientCredentials>,
               public fb: FormBuilder,
               protected cd: ChangeDetectorRef) {
     super(store, fb, entityValue, entitiesTableConfigValue, cd);
@@ -53,22 +53,26 @@ export class MqttClientCredentialsComponent extends EntityComponent<ClientCreden
     }
   }
 
-  buildForm(entity: ClientCredentials): FormGroup {
-    return this.fb.group(
+  buildForm(entity: MqttClientCredentials): FormGroup {
+    const form = this.fb.group(
       {
-        clientId: [entity ? entity.clientId : '', [Validators.required]],
-        type: [entity ? entity.type : '', [Validators.required]],
-        authorizationRulePattern: [entity ? entity.authorizationRulePattern : '', [Validators.required]],
+        name: [entity ? entity.name : '', [Validators.required]],
+        credentialsType: [entity ? entity.credentialsType : '', [Validators.required]],
+        credentialsValue: [ entity ? entity.credentialsValue : '', [Validators.required]]
       }
     );
+    form.get('credentialsType').valueChanges.subscribe((value => {
+      form.patchValue({ credentialsValue: null });
+      form.get('credentialsValue').setValidators([Validators.required]);
+    }));
+    return form;
   }
 
-  updateForm(entity: ClientCredentials) {
-    this.entityForm.patchValue({
-      clientId: entity.clientId,
-      type: entity.type,
-      authorizationRulePattern: entity.authorizationRulePattern,
-    });
+  updateForm(entity: MqttClientCredentials) {
+    console.warn("updateForm MqttClientCredentials");
+    this.entityForm.patchValue({ name: entity.name} );
+    this.entityForm.patchValue({ credentialsType: entity.credentialsType} );
+    this.entityForm.patchValue({ credentialsValue: entity.credentialsValue} );
   }
 
 }

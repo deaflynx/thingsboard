@@ -40,10 +40,12 @@ export class SessionComponent implements OnInit, ControlValueAccessor, Validator
       cleanSession: ['', []],
       subscriptionsCount: ['', []]
     });
+    this.sessionForm.valueChanges.subscribe((data) => {
+      this.writeValue(data);
+    })
   }
 
   onTouched: () => void = () => {};
-  onChange2: () => void = () => {};
 
   registerOnChange(fn: any): void {
     console.log("on change");

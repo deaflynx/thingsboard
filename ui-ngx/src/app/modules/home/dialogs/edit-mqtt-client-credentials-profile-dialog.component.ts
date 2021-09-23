@@ -23,7 +23,7 @@ import { FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm, Valida
 import { DialogComponent } from '@shared/components/dialog.component';
 import { Router } from '@angular/router';
 import {
-  ClientCredentials,
+  MqttClientCredentials,
   ClientCredentialsType,
   ClientType,
   clientCredentialsTypeTranslationMap
@@ -32,7 +32,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { MqttClientCredentialsService } from '@core/http/mqtt-client-credentials.service';
 
 export interface EditMqttClientCredentialsDialogData {
-  mqttClientCredentials: ClientCredentials
+  mqttClientCredentials: MqttClientCredentials
 }
 
 @Component({
@@ -50,7 +50,7 @@ export class EditMqttClientCredentialsProfileDialogComponent extends
 
   editMqttClientCredentialsProfileFormGroup: FormGroup;
 
-  mqttClientCredentials: ClientCredentials;
+  mqttClientCredentials: MqttClientCredentials;
   mqttClientCredentialsTypes = Object.values(ClientType);
   mqttClientCredentialsTypeTranslationMap = clientCredentialsTypeTranslationMap;
 
@@ -68,10 +68,10 @@ export class EditMqttClientCredentialsProfileDialogComponent extends
 
   ngOnInit(): void {
     this.editMqttClientCredentialsProfileFormGroup = this.fb.group({
-      type: [this.mqttClientCredentials.type, [Validators.required]]
+      credentialsType: [this.mqttClientCredentials.credentialsType, [Validators.required]]
     });
     this.editMqttClientCredentialsProfileTitle = 'mqtt-client-credentials.edit-profile-title';
-    this.editMqttClientCredentialsProfileText = this.translate.instant('mqtt-client-credentials.edit-profile-text', { mqttClientId: this.mqttClientCredentials.clientId });
+    this.editMqttClientCredentialsProfileText = this.translate.instant('mqtt-client-credentials.edit-profile-text', { mqttClientId: this.mqttClientCredentials.name });
   }
 
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -86,8 +86,8 @@ export class EditMqttClientCredentialsProfileDialogComponent extends
 
   save(): void {
     this.submitted = true;
-    const clientCredentialsType: ClientCredentialsType = this.editMqttClientCredentialsProfileFormGroup.get('clientType').value;
-    this.mqttClientCredentialsService.saveMqttClientCredentials({...this.data.mqttClientCredentials, type: clientCredentialsType })
+    const clientCredentialsType: ClientCredentialsType = this.editMqttClientCredentialsProfileFormGroup.get('credentialsType').value;
+    this.mqttClientCredentialsService.saveMqttClientCredentials({...this.data.mqttClientCredentials, credentialsType: clientCredentialsType })
       .subscribe(
         () => {
           this.dialogRef.close(true);

@@ -102,14 +102,11 @@ export interface SessionInfo {
   clientInfo: ClientInfo;
 }
 
-export interface ClientCredentials extends BaseData<ClientId> {
-  clientId: string;
-  type: ClientCredentialsType;
+export interface MqttClientCredentials extends BaseData<ClientId> {
+  name: string;
   credentialsId: string;
+  credentialsType: ClientCredentialsType;
   credentialsValue: string;
-  username: string;
-  password: string;
-  authorizationRulePattern: number;
 }
 
 export interface MqttAdminDto extends BaseData<ClientId> {
@@ -138,4 +135,16 @@ export interface DetailedClientSessionInfoDto extends BaseData<ClientId>{
 export interface TopicSubscription {
   topic: string;
   qos: MqttQoS;
+}
+
+export interface SslMqttCredentials {
+  parentCertCommonName: string;
+  authorizationRulesMapping: string[];
+}
+
+export interface BasicMqttCredentials {
+  clientId: string;
+  userName: string;
+  password: string;
+  authorizationRulePattern: string;
 }
