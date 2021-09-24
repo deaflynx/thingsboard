@@ -71,7 +71,7 @@ export class EditMqttClientCredentialsProfileDialogComponent extends
       credentialsType: [this.mqttClientCredentials.credentialsType, [Validators.required]]
     });
     this.editMqttClientCredentialsProfileTitle = 'mqtt-client-credentials.edit-profile-title';
-    this.editMqttClientCredentialsProfileText = this.translate.instant('mqtt-client-credentials.edit-profile-text', { mqttClientId: this.mqttClientCredentials.name });
+    this.editMqttClientCredentialsProfileText = this.translate.instant('mqtt-client-credentials.edit-profile-text', { mqttClientName: this.mqttClientCredentials.name });
   }
 
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {

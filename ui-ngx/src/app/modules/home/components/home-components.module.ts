@@ -149,7 +149,6 @@ import { SubscriptionListComponent } from '@home/components/subscriptions/subscr
 import { MqttCredentialsMqttBasicComponent } from '@home/components/mqtt-credentials-mqtt-basic/mqtt-credentials-mqtt-basic.component';
 import { MqttCredentialsMqttSslComponent } from '@home/components/mqtt-credentials-mqtt-ssl/mqtt-credentials-mqtt-ssl.component';
 import { AuthorizationRulesMappingComponent } from '@home/components/mqtt-credentials-mqtt-ssl/authorization-rules-mapping/authorization-rules-mapping.component';
-import { AuthorizationRulesMappingListComponent } from '@home/components/mqtt-credentials-mqtt-ssl/authorization-rules-mapping/authorization-rules-mapping-list.component';
 
 @NgModule({
   declarations:
@@ -275,8 +274,7 @@ import { AuthorizationRulesMappingListComponent } from '@home/components/mqtt-cr
       SubscriptionListComponent,
       MqttCredentialsMqttBasicComponent,
       MqttCredentialsMqttSslComponent,
-      AuthorizationRulesMappingComponent,
-      AuthorizationRulesMappingListComponent
+      AuthorizationRulesMappingComponent
     ],
   imports: [
     CommonModule,
@@ -394,8 +392,7 @@ import { AuthorizationRulesMappingListComponent } from '@home/components/mqtt-cr
     SubscriptionListComponent,
     MqttCredentialsMqttBasicComponent,
     MqttCredentialsMqttSslComponent,
-    AuthorizationRulesMappingComponent,
-    AuthorizationRulesMappingListComponent
+    AuthorizationRulesMappingComponent
   ],
   providers: [
     WidgetComponentService,

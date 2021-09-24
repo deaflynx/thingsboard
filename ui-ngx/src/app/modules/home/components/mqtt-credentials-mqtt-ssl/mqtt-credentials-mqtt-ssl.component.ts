@@ -33,6 +33,8 @@ export class MqttCredentialsMqttSslComponent implements OnInit, ControlValueAcce
 
   private propagateChange = (v: any) => {};
 
+  authorizationRulesMapping;
+
   constructor(public fb: FormBuilder) { }
 
   ngOnInit(): void {
@@ -49,6 +51,7 @@ export class MqttCredentialsMqttSslComponent implements OnInit, ControlValueAcce
     console.warn("SSL writeValue", mqttSsl);
     if (isDefinedAndNotNull(mqttSsl) && !isEmptyStr(mqttSsl)) {
       const value = JSON.parse(mqttSsl);
+      this.authorizationRulesMapping = value.authorizationRulesMapping;
       this.credentialsMqttSslFormGroup.patchValue(value, { emitEvent: false });
     }
   }

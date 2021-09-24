@@ -18,6 +18,7 @@ import { Injectable } from '@angular/core';
 
 import { Resolve, Router } from '@angular/router';
 import {
+  DateEntityTableColumn,
   EntityTableColumn,
   EntityTableConfig
 } from '@home/models/entity/entities-table-config.models';
@@ -68,9 +69,10 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
     this.config.entityTitle = (mqttClient) => mqttClient ? mqttClient.credentialsId : '';
 
     this.config.columns.push(
+      // new DateEntityTableColumn<MqttClientCredentials>('createdTime', 'common.created-time', this.datePipe, '150px'),
       new EntityTableColumn<MqttClientCredentials>('name', 'mqtt-client-credentials.name', '50%'),
       new EntityTableColumn<MqttClientCredentials>('credentialsType', 'mqtt-client-credentials.type', '50%',
-        (entity) => this.translate.instant(clientCredentialsTypeTranslationMap.get(entity.credentialsType)))
+        (entity) => clientCredentialsTypeTranslationMap.get(entity.credentialsType))
     );
 
     this.config.addActionDescriptors.push(
