@@ -62,6 +62,7 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
     this.config.entityTranslations = entityTypeTranslations.get(EntityType.MQTT_CLIENT);
     this.config.entityResources = entityTypeResources.get(EntityType.MQTT_CLIENT);
     this.config.defaultSortOrder = { property: 'name', direction: Direction.ASC };
+    this.config.tableTitle = this.translate.instant('mqtt-client-credentials.client-credentials');
 
     this.config.addEnabled = true;
     this.config.entitiesDeleteEnabled = true;
@@ -69,7 +70,7 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
     this.config.entityTitle = (mqttClient) => mqttClient ? mqttClient.credentialsId : '';
 
     this.config.columns.push(
-      // new DateEntityTableColumn<MqttClientCredentials>('createdTime', 'common.created-time', this.datePipe, '150px'),
+      new DateEntityTableColumn<MqttClientCredentials>('createdTime', 'common.created-time', this.datePipe, '150px'),
       new EntityTableColumn<MqttClientCredentials>('name', 'mqtt-client-credentials.name', '50%'),
       new EntityTableColumn<MqttClientCredentials>('credentialsType', 'mqtt-client-credentials.type', '50%',
         (entity) => clientCredentialsTypeTranslationMap.get(entity.credentialsType))
@@ -102,13 +103,12 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
 
     this.config.loadEntity = id => this.loadEntity(id);
     this.config.saveEntity = mqttClient => this.mqttClientCredentialsService.saveMqttClientCredentials(mqttClient);
-    this.config.deleteEntity = id => this.mqttClientCredentialsService.deleteMqttClientCredentials(id.id);
+    this.config.deleteEntity = id => this.deleteEntity(id);
     this.config.onEntityAction = action => this.onMqttClientAction(action);
     this.config.onEntityAction = action => this.onMqttClientAction(action);
   }
 
   resolve(): EntityTableConfig<MqttClientCredentials> {
-    this.config.tableTitle = this.translate.instant('mqtt-client-credentials.client-credentials');
     const authUser = getCurrentAuthUser(this.store);
     // this.config.deleteEnabled = (mqttClient) => this.isMqttClientEditable(mqttClient, authUser.authority);
     // this.config.entitySelectionEnabled = (mqttClient) => this.isMqttClientEditable(mqttClient, authUser.authority);
@@ -119,6 +119,10 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
 
   loadEntity(id) {
     return this.mqttClientCredentialsService.getMqttClientCredentials(id);
+  }
+
+  deleteEntity(id) {
+    return this.mqttClientCredentialsService.deleteMqttClientCredentials(id);
   }
 
   // isMqttClientEditable(mqttClient: Client, authority: Authority): boolean {

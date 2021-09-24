@@ -88,7 +88,7 @@ export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableCon
 
     this.config.cellActionDescriptors.push(
       {
-        name: this.translate.instant('mqtt-client.edit-client-type'),
+        name: this.translate.instant('mqtt-client.open-mqtt-client'),
         icon: 'settings',
         isEnabled: () => true,
         onAction: ($event, entity) => this.openEditClientProfile($event, entity)
@@ -104,7 +104,7 @@ export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableCon
 
     this.config.loadEntity = id => this.loadEntity(id);
     this.config.saveEntity = mqttClient => this.mqttClientService.saveMqttClient(mqttClient);
-    this.config.deleteEntity = id => this.mqttClientService.deleteMqttClient(id.id);
+    this.config.deleteEntity = id => this.deleteEntity(id);
     this.config.onEntityAction = action => this.onMqttClientAction(action);
   }
 
@@ -119,6 +119,10 @@ export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableCon
 
   loadEntity(id) {
     return this.mqttClientService.getMqttClient(id);
+  }
+
+  deleteEntity(id) {
+    return this.mqttClientService.deleteMqttClient(id);
   }
 
   isMqttClientEditable(mqttClient: Client, authority: Authority): boolean {
