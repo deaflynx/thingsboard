@@ -19,6 +19,7 @@ import { EntityId } from '@shared/models/id/entity-id';
 import { EntityType } from '@shared/models/entity-type.models';
 import { TenantId } from '@shared/models/id/tenant-id';
 import { EdgeEventStatus } from '@shared/models/edge.models';
+import { NULL_UUID } from '@shared/models/id/has-uuid';
 
 export enum ClientType {
   DEVICE = 'DEVICE',
@@ -69,7 +70,7 @@ export const connectionStateTranslationMap = new Map<ConnectionState, string>(
   ]
 );
 
-export interface Client extends ClientInfo, DetailedClientSessionInfoDto, BaseData<ClientId> {
+export interface Client extends ClientInfo, ClientSessionInfo, BaseData<ClientId> {
 }
 
 export class ClientId implements EntityId {
@@ -88,11 +89,6 @@ export interface ClientSession {
 export interface ClientInfo {
   clientId: string;
   type: ClientType;
-}
-
-export interface ClientSessionInfo {
-  clientSession: ClientSession;
-  lastUpdateTime: number;
 }
 
 export interface SessionInfo {
@@ -116,17 +112,18 @@ export interface MqttAdminDto extends BaseData<ClientId> {
   lastName?: string;
 }
 
-export interface DetailedClientSessionInfoDto extends BaseData<ClientId>{
+export interface ClientSessionInfo extends BaseData<ClientId> {
   clientId: string;
+  sessionId: string;
   connectionState: ConnectionState;
   clientType: ClientType;
   nodeId: string;
   persistent: boolean;
-  username: string;
   subscriptions: TopicSubscription[];
   keepAliveSeconds: number;
   connectedAt: number;
   disconnectedAt: number;
+  username: string;
   note: string;
   cleanSession: boolean;
   subscriptionsCount: string;

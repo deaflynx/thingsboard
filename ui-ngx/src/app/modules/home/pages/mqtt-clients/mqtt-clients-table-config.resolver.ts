@@ -16,42 +16,34 @@
 
 import { Injectable } from '@angular/core';
 
-import { Resolve, Router } from '@angular/router';
+import { Resolve } from '@angular/router';
 import { EntityTableColumn, EntityTableConfig } from '@home/models/entity/entities-table-config.models';
 import { TranslateService } from '@ngx-translate/core';
-import { DatePipe } from '@angular/common';
 import { EntityType, entityTypeResources, entityTypeTranslations } from '@shared/models/entity-type.models';
-import { EntityAction } from '@home/models/entity/entity-component.models';
-import { NULL_UUID } from '@shared/models/id/has-uuid';
 import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
 import { Authority } from '@shared/models/authority.enum';
 import { DialogService } from '@core/services/dialog.service';
-import { ImportExportService } from '@home/components/import-export/import-export.service';
 import {
   Client,
+  ClientSessionInfo,
   clientTypeTranslationMap,
   ConnectionState,
   connectionStateColor,
   connectionStateTranslationMap
 } from '@shared/models/mqtt.models';
-import { MqttClientService } from '@core/http/mqtt-client.service';
 import { MqttClientsComponent } from '@home/pages/mqtt-clients/mqtt-clients.component';
 import { MqttClientSessionService } from '@core/http/mqtt-client-session.service';
 
 @Injectable()
-export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig<Client>> {
+export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig<ClientSessionInfo>> {
 
-  private readonly config: EntityTableConfig<Client> = new EntityTableConfig<Client>();
+  private readonly config: EntityTableConfig<ClientSessionInfo> = new EntityTableConfig<ClientSessionInfo>();
 
   constructor(private store: Store<AppState>,
               private dialogService: DialogService,
-              private mqttClientService: MqttClientService,
               private mqttClientSessionService: MqttClientSessionService,
-              private translate: TranslateService,
-              private importExport: ImportExportService,
-              private datePipe: DatePipe,
-              private router: Router) {
+              private translate: TranslateService) {
 
     this.config.entityComponent = MqttClientsComponent;
     this.config.entityTranslations = entityTypeTranslations.get(EntityType.MQTT_CLIENT);
@@ -62,12 +54,11 @@ export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig
     this.config.entitiesDeleteEnabled = false;
     this.config.deleteEnabled = () => false;
 
-    this.config.entityTitle = (mqttClient) => mqttClient ?
-      mqttClient.clientId : '';
+    this.config.entityTitle = (mqttClient) => mqttClient ? mqttClient.clientId : '';
 
     this.config.columns.push(
-      new EntityTableColumn<Client>('clientId', 'mqtt-client.client-id', '25%'),
-      new EntityTableColumn<Client>('connectionState', 'mqtt-client.connect', '25%',
+      new EntityTableColumn<ClientSessionInfo>('clientId', 'mqtt-client-session.client-id', '25%'),
+      new EntityTableColumn<ClientSessionInfo>('connectionState', 'mqtt-client-session.connect', '25%',
         (entity) => connectionStateTranslationMap.get(entity.connectionState),
         (entity) => ({
           color: entity.connectionState === ConnectionState.CONNECTED
@@ -75,8 +66,8 @@ export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig
             : connectionStateColor.get(ConnectionState.DISCONNECTED)
         })
       ),
-      new EntityTableColumn<Client>('nodeId', 'mqtt-client.node-id', '25%'),
-      new EntityTableColumn<Client>('clientType', 'mqtt-client.client-type', '25%',
+      new EntityTableColumn<ClientSessionInfo>('nodeId', 'mqtt-client-session.node-id', '25%'),
+      new EntityTableColumn<ClientSessionInfo>('clientType', 'mqtt-client-session.client-type', '25%',
         (entity) => clientTypeTranslationMap.get(entity.clientType))
     );
 
@@ -84,13 +75,13 @@ export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig
     // this.config.onEntityAction = action => this.onMqttClientAction(action);
   }
 
-  resolve(): EntityTableConfig<Client> {
-    this.config.entitiesFetchFunction = pageLink => this.mqttClientService.getMqttClients(pageLink);
+  resolve(): EntityTableConfig<ClientSessionInfo> {
+    this.config.entitiesFetchFunction = pageLink => this.mqttClientSessionService.getShortClientSessionInfos(pageLink);
     return this.config;
   }
 
   loadEntity(id) {
-    return this.mqttClientService.getMqttClient(id);
+    return this.mqttClientSessionService.getDetailedClientSessionInfo(id);
   }
 
   isMqttClientEditable(mqttClient: Client, authority: Authority): boolean {

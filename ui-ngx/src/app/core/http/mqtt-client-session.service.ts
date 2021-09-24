@@ -20,7 +20,7 @@ import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { PageLink } from '@shared/models/page/page-link';
 import { PageData } from '@shared/models/page/page-data';
-import { ClientType, ConnectionState, DetailedClientSessionInfoDto, MqttQoS } from '@shared/models/mqtt.models';
+import { ClientType, ConnectionState, ClientSessionInfo, MqttQoS } from '@shared/models/mqtt.models';
 
 @Injectable({
   providedIn: 'root'
@@ -31,86 +31,20 @@ export class MqttClientSessionService {
     private http: HttpClient
   ) { }
 
-  public getClientSessionInfo(clientId: string, config?: RequestConfig): Observable<DetailedClientSessionInfoDto> {
-    return this.http.get<DetailedClientSessionInfoDto>(`/api/client-session/${clientId}`, defaultHttpOptionsFromConfig(config));
-/*    return of({
-      id: {
-        id: '123124151251251651612',
-        entityType: EntityType.MQTT_CLIENT
-      },
-      clientId: clientId,
-      connectionState: ConnectionState.CONNECTED,
-      clientType: ClientType.DEVICE,
-      nodeId: '1',
-      persistent: true,
-      username: 'username 1',
-      subscriptions: [
-        {
-          topic: 'topic1',
-          qos: MqttQoS.AT_LEAST_ONCE
-        }
-      ],
-      keepAliveSeconds: 60,
-      connectedAt: 123456789,
-      disconnectedAt: 987654321
-    })*/
+  public getDetailedClientSessionInfo(clientId: string, config?: RequestConfig): Observable<ClientSessionInfo> {
+    return this.http.get<ClientSessionInfo>(`/api/client-session/${clientId}`, defaultHttpOptionsFromConfig(config));
   }
 
-  public getClientSessionInfos(pageLink: PageLink, config?: RequestConfig): Observable<PageData<DetailedClientSessionInfoDto>> {
-    return this.http.get<PageData<DetailedClientSessionInfoDto>>(`/api/client-session${pageLink.toQuery()}`, defaultHttpOptionsFromConfig(config));
-    /*return of({
-      data: [
-        {
-          id: {
-            id: '123124151251251651612',
-            entityType: EntityType.MQTT_CLIENT
-          },
-          clientId: '1',
-          connectionState: ConnectionState.CONNECTED,
-          clientType: ClientType.DEVICE,
-          nodeId: '1',
-          persistent: true,
-          username: 'username 1',
-          subscriptions: [
-            {
-              topic: 'topic1',
-              qos: MqttQoS.AT_LEAST_ONCE
-            }
-          ],
-          keepAliveSeconds: 60,
-          connectedAt: 123456789,
-          disconnectedAt: 987654321
-        },
-        {
-          id: {
-            id: '6432743743757457436',
-            entityType: EntityType.MQTT_CLIENT
-          },
-          clientId: '2',
-          connectionState: ConnectionState.DISCONNECTED,
-          clientType: ClientType.APPLICATION,
-          nodeId: '2',
-          persistent: false,
-          username: 'username 2',
-          subscriptions: [
-            {
-              topic: 'topic1',
-              qos: MqttQoS.AT_LEAST_ONCE
-            }
-          ],
-          keepAliveSeconds: 60,
-          connectedAt: 123456789,
-          disconnectedAt: 987654321
-        }
-      ],
-      totalElements: 2,
-      totalPages: 1,
-      hasNext: false
-    })*/
+  public getShortClientSessionInfos(pageLink: PageLink, config?: RequestConfig): Observable<PageData<ClientSessionInfo>> {
+    return this.http.get<PageData<ClientSessionInfo>>(`/api/client-session${pageLink.toQuery()}`, defaultHttpOptionsFromConfig(config));
   }
 
-  public clearClientSession(clientId: string, config?: RequestConfig) {
-    return this.http.delete(`/api/client-session/${clientId}/clear`, defaultHttpOptionsFromConfig(config));
+  public removeClientSession(clientId: string, sessionId: string, config?: RequestConfig) {
+    return this.http.delete(`/api/client-session/${clientId}/remove/${sessionId}`, defaultHttpOptionsFromConfig(config));
+  }
+
+  public disconnectClientSession(clientId: string, sessionId: string, config?: RequestConfig) {
+    return this.http.delete(`/api/client-session/${clientId}/disconnect/${sessionId}`, defaultHttpOptionsFromConfig(config));
   }
 
 }

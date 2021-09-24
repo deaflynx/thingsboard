@@ -3246,5 +3246,31 @@
       "topic-rule": "Topic rule",
       "parent-certificate-common-name": "Parent certificate common name",
       "parent-certificate-common-name-required": "Parent certificate common name required"
-    }
+    },
+    "mqtt-client-session": {
+      "active": "Active",
+      "client-id": "Client ID",
+      "client-id-required": "Client ID is required.",
+      "client-type": "Client type",
+      "clients": "Clients",
+      "connect": "Connect",
+      "connection": "Connection",
+      "connected-at": "Connected at",
+      "connected-status": "Connected Status",
+      "clean-session": "Clean Session",
+      "node": "Node",
+      "node-id": "Node ID",
+      "note": "Note",
+      "keep-alive": "Keep Alive(s)",
+      "username": "Username",
+      "add-subscription-to-client": "Add Subscription to Client",
+      "subscriptions": "Subscriptions",
+      "subscriptions-count": "Subscriptions Count",
+      "session": "Session",
+      "session-info": "Session Info",
+      "topic": "Topic",
+      "remove-session": "Remove session",
+      "disconnect-client": "Disconnect client",
+      "qos": "QoS"
+  }
 }

@@ -19,7 +19,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
 import {
-  Client,
+  Client, ClientSessionInfo,
   ClientType,
   clientTypeTranslationMap,
 } from '@shared/models/mqtt.models';
@@ -31,14 +31,14 @@ import { EntityTableConfig } from '@home/models/entity/entities-table-config.mod
   templateUrl: './mqtt-clients.component.html',
   styleUrls: ['./mqtt-clients.component.scss']
 })
-export class MqttClientsComponent extends EntityComponent<Client> {
+export class MqttClientsComponent extends EntityComponent<ClientSessionInfo> {
 
   mqttClientTypes = Object.values(ClientType);
   mqttClientTypeTranslationMap = clientTypeTranslationMap;
 
   constructor(protected store: Store<AppState>,
-              @Inject('entity') protected entityValue: Client,
-              @Inject('entitiesTableConfig') protected entitiesTableConfigValue: EntityTableConfig<Client>,
+              @Inject('entity') protected entityValue: ClientSessionInfo,
+              @Inject('entitiesTableConfig') protected entitiesTableConfigValue: EntityTableConfig<ClientSessionInfo>,
               public fb: FormBuilder,
               protected cd: ChangeDetectorRef) {
     super(store, fb, entityValue, entitiesTableConfigValue, cd);
@@ -52,7 +52,7 @@ export class MqttClientsComponent extends EntityComponent<Client> {
     }
   }
 
-  buildForm(entity: Client): FormGroup {
+  buildForm(entity: ClientSessionInfo): FormGroup {
     return this.fb.group({
       clientId: [entity ? entity.clientId : ''],
       nodeId: [entity ? entity.nodeId : ''],
@@ -70,7 +70,7 @@ export class MqttClientsComponent extends EntityComponent<Client> {
     });
   }
 
-  updateForm(entity: Client) {
+  updateForm(entity: ClientSessionInfo) {
     this.entityForm.patchValue({
       clientId: entity.clientId,
       nodeId: entity.nodeId,
