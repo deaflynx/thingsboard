@@ -33,7 +33,7 @@ export class MqttCredentialsMqttSslComponent implements OnInit, ControlValueAcce
 
   authorizationRulesMapping;
 
-  private propagateChange = (v: any) => {};
+  private propagateChange = null;
 
   constructor(public fb: FormBuilder) { }
 
@@ -48,7 +48,6 @@ export class MqttCredentialsMqttSslComponent implements OnInit, ControlValueAcce
   }
 
   writeValue(mqttSsl: string): void {
-    console.warn("SSL writeValue", mqttSsl);
     if (isDefinedAndNotNull(mqttSsl) && !isEmptyStr(mqttSsl)) {
       const value = JSON.parse(mqttSsl);
       this.authorizationRulesMapping = value.authorizationRulesMapping;
