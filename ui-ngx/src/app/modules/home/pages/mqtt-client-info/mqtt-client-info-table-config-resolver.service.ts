@@ -105,7 +105,7 @@ export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableCon
     this.config.loadEntity = id => this.loadEntity(id);
     this.config.saveEntity = mqttClient => this.mqttClientService.saveMqttClient(mqttClient);
     this.config.deleteEntity = id => this.deleteEntity(id);
-    this.config.onEntityAction = action => this.onMqttClientAction(action);
+    this.config.onEntityAction = action => this.onMqttClientInfoAction(action);
   }
 
   resolve(): EntityTableConfig<Client> {
@@ -147,7 +147,7 @@ export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableCon
       })
   }
 
-  onMqttClientAction(action: EntityAction<Client>): boolean {
+  onMqttClientInfoAction(action: EntityAction<Client>): boolean {
     switch (action.action) {
       case 'open':
         this.openEditClientProfile(action.event, action.entity);

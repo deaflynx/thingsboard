@@ -22,10 +22,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { EntityType, entityTypeResources, entityTypeTranslations } from '@shared/models/entity-type.models';
 import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
-import { Authority } from '@shared/models/authority.enum';
 import { DialogService } from '@core/services/dialog.service';
 import {
-  Client,
   ClientSessionInfo,
   clientTypeTranslationMap,
   ConnectionState,
@@ -34,6 +32,8 @@ import {
 } from '@shared/models/mqtt.models';
 import { MqttClientsComponent } from '@home/pages/mqtt-clients/mqtt-clients.component';
 import { MqttClientSessionService } from '@core/http/mqtt-client-session.service';
+import { EntityAction } from '@home/models/entity/entity-component.models';
+import { EdgeInfo } from '@shared/models/edge.models';
 
 @Injectable()
 export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig<ClientSessionInfo>> {
@@ -72,7 +72,7 @@ export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig
     );
 
     this.config.loadEntity = id => this.loadEntity(id);
-    // this.config.onEntityAction = action => this.onMqttClientAction(action);
+    this.config.onEntityAction = action => this.onClientSessionAction(action);
   }
 
   resolve(): EntityTableConfig<ClientSessionInfo> {
@@ -84,8 +84,68 @@ export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig
     return this.mqttClientSessionService.getDetailedClientSessionInfo(id);
   }
 
-  isMqttClientEditable(mqttClient: Client, authority: Authority): boolean {
-    return authority === Authority.SYS_ADMIN;
+  onClientSessionAction(action: EntityAction<ClientSessionInfo>): boolean {
+    switch (action.action) {
+      case 'remove':
+        this.removeSession(action.event, action.entity);
+        return true;
+      case 'disconnect':
+        this.disconnectClient(action.event, action.entity);
+        return true;
+      case 'refresh':
+        // this.mqttClientSessionService.getDetailedClientSessionInfo(action.entity.clientId);
+        return true;
+    }
+    return false;
   }
+
+  removeSession($event: Event, clientSession: ClientSessionInfo) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    let title = this.translate.instant('mqtt-client-session.remove-session-title', {clientId: clientSession.clientId});
+    let content = this.translate.instant('mqtt-client-session.remove-session-text');
+    this.dialogService.confirm(
+      title,
+      content,
+      this.translate.instant('action.no'),
+      this.translate.instant('action.yes'),
+      true
+    ).subscribe((res) => {
+        if (res) {
+          this.mqttClientSessionService.removeClientSession(clientSession.clientId, clientSession.sessionId).subscribe(
+            () => {
+              this.config.table.updateData();
+            }
+          );
+        }
+      }
+    );
+  }
+
+  disconnectClient($event: Event, clientSession: ClientSessionInfo) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    let title = this.translate.instant('mqtt-client-session.disconnect-session-title', {clientId: clientSession.clientId});
+    let content = this.translate.instant('mqtt-client-session.disconnect-session-text');
+    this.dialogService.confirm(
+      title,
+      content,
+      this.translate.instant('action.no'),
+      this.translate.instant('action.yes'),
+      true
+    ).subscribe((res) => {
+        if (res) {
+          this.mqttClientSessionService.disconnectClientSession(clientSession.clientId, clientSession.sessionId).subscribe(
+            () => {
+              this.config.table.updateData();
+            }
+          );
+        }
+      }
+    );
+  }
+
 
 }
