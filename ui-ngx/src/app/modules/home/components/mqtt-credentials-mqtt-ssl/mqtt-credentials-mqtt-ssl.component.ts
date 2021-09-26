@@ -31,9 +31,9 @@ export class MqttCredentialsMqttSslComponent implements OnInit, ControlValueAcce
 
   credentialsMqttSslFormGroup: FormGroup;
 
-  private propagateChange = (v: any) => {};
-
   authorizationRulesMapping;
+
+  private propagateChange = (v: any) => {};
 
   constructor(public fb: FormBuilder) { }
 

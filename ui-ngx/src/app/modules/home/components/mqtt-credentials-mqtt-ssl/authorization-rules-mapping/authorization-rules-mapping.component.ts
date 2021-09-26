@@ -1,8 +1,18 @@
 import { Component, forwardRef, Injector, Input, OnInit, Output } from '@angular/core';
-import { ControlValueAccessor, FormArray, FormBuilder, FormGroup, NG_VALUE_ACCESSOR, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  ControlValueAccessor,
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  NG_VALUE_ACCESSOR,
+  Validators
+} from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
 import { SslMqttCredentials } from '@shared/models/mqtt.models';
+import { Subscription } from 'rxjs';
 
 export interface AuthorizationRulesMap {
   certificateMtcherRegex: string;
@@ -25,13 +35,14 @@ export class AuthorizationRulesMappingComponent implements ControlValueAccessor,
 
   @Input() disabled: boolean;
 
-  @Input() authorizationRulesMapping;
+  @Input() authorizationRulesMapping: FormGroup;
 
-  private propagateChange = (v: any) => {};
+  rulesMappingFormGroup: FormGroup;
 
-  authorizationRulesMappingFormGroup: FormGroup;
+  rulesMappings: FormArray;
 
-  authorizationRulesMappings: FormArray;
+  private propagateChange = null;
+  private valueChangeSubscription: Subscription = null;
 
   constructor(protected store: Store<AppState>,
               private injector: Injector,
@@ -39,39 +50,32 @@ export class AuthorizationRulesMappingComponent implements ControlValueAccessor,
   }
 
   ngOnInit(): void {
-    this.authorizationRulesMappingFormGroup = this.fb.group({
-      authorizationRulesMapping: this.fb.array([this.createRule()])
-    });
-    this.authorizationRulesMappingFormGroup.valueChanges.subscribe((value) => {
+    this.rulesMappingFormGroup = this.fb.group({});
+    this.rulesMappingFormGroup.addControl('authorizationRulesMapping',
+      this.fb.array([]));
+    this.rulesMappingFormGroup.get('authorizationRulesMapping').valueChanges.subscribe((value) => {
       this.updateView(value);
     });
   }
 
-  createRule(): FormGroup {
-    if (this.authorizationRulesMapping) {
-      return this.fb.group({
-        certificateMtcherRegex: ['', [Validators.required]],
-        topicRule: ['', [Validators.required]]
-      });
-    } else {
-      return this.fb.group({
-        certificateMtcherRegex: ['', [Validators.required]],
-        topicRule: ['', [Validators.required]]
-      });
-    }
+  rulesFormArray(): FormArray {
+    return this.rulesMappingFormGroup.get('authorizationRulesMapping') as FormArray;
   }
 
-  rulesFormArray(): FormArray {
-    return this.authorizationRulesMappingFormGroup.value;
+  createRule(): FormGroup {
+    return this.fb.group({
+      certificateMtcherRegex: ['', [Validators.required]],
+      topicRule: ['', [Validators.required]]
+    });
   }
 
   addRule(): void {
-    this.authorizationRulesMappings = this.authorizationRulesMappingFormGroup.get('authorizationRulesMapping') as FormArray;
-    this.authorizationRulesMappings.push(this.createRule());
+    this.rulesMappings = this.rulesMappingFormGroup.get('authorizationRulesMapping') as FormArray;
+    this.rulesMappings.push(this.createRule());
   }
 
   removeRule(index: number) {
-    (this.authorizationRulesMappingFormGroup.get('authorizationRulesMapping') as FormArray).removeAt(index);
+    (this.rulesMappingFormGroup.get('authorizationRulesMapping') as FormArray).removeAt(index);
   }
 
   registerOnChange(fn: any): void {
@@ -82,14 +86,37 @@ export class AuthorizationRulesMappingComponent implements ControlValueAccessor,
   }
 
   writeValue(authorizationRulesMapping: any): void {
-    console.warn("authorizationRulesMapping writeValue", authorizationRulesMapping);
-    if (authorizationRulesMapping) {
-      this.authorizationRulesMappingFormGroup.patchValue(authorizationRulesMapping, { emitEvent: false });
+    if (this.valueChangeSubscription) {
+      this.valueChangeSubscription.unsubscribe();
     }
+    console.warn("authorizationRulesMapping writeValue", authorizationRulesMapping);
+    const rulesControls: Array<AbstractControl> = [];
+    if (authorizationRulesMapping) {
+      for (const resource of Object.keys(authorizationRulesMapping)) {
+        const rulesControl = this.fb.group({
+          certificateMtcherRegex: [resource, [Validators.required]],
+          topicRule: [resource, [Validators.required]]
+        });
+        if (this.disabled) {
+          rulesControl.disable();
+        }
+        rulesControls.push(rulesControl);
+      }
+    }
+    this.rulesMappingFormGroup.setControl('authorizationRulesMapping', this.fb.array(rulesControls));
+
+
+    // if (authorizationRulesMapping) {
+    //   this.authorizationRulesMappingFormGroup.patchValue(authorizationRulesMapping, { emitEvent: false });
+    // }
+
+    this.valueChangeSubscription = this.rulesMappingFormGroup.valueChanges.subscribe((v) => {
+      console.warn("valueChangeSubscription", v)
+    });
   }
 
   updateView(value: SslMqttCredentials) {
-    this.authorizationRulesMappingFormGroup.patchValue(value, { emitEvent: false });
+    this.rulesMappingFormGroup.patchValue(value, { emitEvent: false });
     this.propagateChange(this.prepareValues(value.authorizationRulesMapping));
   }
 

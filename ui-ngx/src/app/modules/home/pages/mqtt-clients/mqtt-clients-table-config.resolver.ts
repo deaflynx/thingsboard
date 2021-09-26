@@ -33,7 +33,6 @@ import {
 import { MqttClientsComponent } from '@home/pages/mqtt-clients/mqtt-clients.component';
 import { MqttClientSessionService } from '@core/http/mqtt-client-session.service';
 import { EntityAction } from '@home/models/entity/entity-component.models';
-import { EdgeInfo } from '@shared/models/edge.models';
 
 @Injectable()
 export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig<ClientSessionInfo>> {

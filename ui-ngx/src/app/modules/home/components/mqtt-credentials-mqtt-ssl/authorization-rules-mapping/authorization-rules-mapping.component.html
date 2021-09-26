@@ -6,7 +6,7 @@
       </mat-panel-title>
     </mat-expansion-panel-header>
     <section>
-      <div fxLayout="column" class="tb-auth-rules-list" [formGroup]="authorizationRulesMappingFormGroup">
+      <div fxLayout="column" class="tb-auth-rules-list" [formGroup]="rulesMappingFormGroup">
         <div class="header" fxFlex fxLayout="row">
           <span class="cell" fxFlex="50" translate>mqtt-client-credentials.certificate-matcher-regex</span>
           <span class="cell" fxFlex="50" translate>mqtt-client-credentials.topic-rule</span>
@@ -15,13 +15,13 @@
         <div class="body">
           <div class="row" fxFlex fxLayout="row"
                fxLayoutAlign="start center" formArrayName="authorizationRulesMapping"
-               *ngFor="let control of authorizationRulesMappingFormGroup.get('authorizationRulesMapping')['controls']; let $index = index">
+               *ngFor="let rulesControle of rulesFormArray().controls; let $index = index">
             <ng-container [formGroupName]="$index">
               <mat-form-field class="cell mat-block" fxFlex="50">
-                <input matInput formControlName="certificateMtcherRegex">
+                <input [formControl]="rulesControle.get('certificateMtcherRegex')" matInput formControlName="certificateMtcherRegex">
               </mat-form-field>
               <mat-form-field class="cell mat-block" fxFlex="50">
-                <input matInput formControlName="topicRule">
+                <input [formControl]="rulesControle.get('topicRule')" matInput formControlName="topicRule">
               </mat-form-field>
               <button mat-button mat-icon-button color="primary"
                       [fxShow]="!disabled"
