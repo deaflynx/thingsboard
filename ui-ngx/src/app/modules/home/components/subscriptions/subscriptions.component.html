@@ -7,7 +7,54 @@
       </mat-panel-title>
     </mat-expansion-panel-header>
     <section>
-      <tb-subscription-list></tb-subscription-list>
+      <section>
+        <div fxLayout="column" class="tb-subscription-list">
+          <div class="header" fxFlex fxLayout="row">
+            <span class="cell" fxFlex="70" translate>mqtt-client.topic</span>
+            <span class="cell" fxFlex="30" translate>mqtt-client.qos</span>
+            <span [fxShow]="!disabled" style="width: 40px; min-width: 40px;">&nbsp;</span>
+          </div>
+          <div class="body">
+            <div class="row" fxFlex fxLayout="row" fxLayoutAlign="start center"
+                 *ngFor="let topicFilter of subscriptionsFormArray().controls; let $index = index"
+                 [formGroup]="topicFilter">
+              <mat-form-field class="cell mat-block" fxFlex="70">
+                <mat-label translate>mqtt-client.topic</mat-label>
+                <input matInput placeholder="{{ 'mqtt-client.topic' | translate }}"
+                       required name="topicFilterTopic" formControlName="topic">
+              </mat-form-field>
+              <mat-form-field fxFlex floatLabel="always" hideRequiredMarker class="mat-block"
+                              style="margin: 4px 0px 0px 0px; max-height: 40px;">
+                <mat-label></mat-label>
+                <mat-select placeholder="{{ 'mqtt-client.qos' | translate }}"
+                            required formControlName="qos">
+                  <mat-option *ngFor="let mqttQoS of mqttQoSTypes" [value]="mqttQoS.value">
+                    {{mqttQoS.name | translate}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <button mat-button mat-icon-button color="primary"
+                      [fxShow]="!disabled"
+                      type="button"
+                      style="width: 40px; min-width: 40px;"
+                      (click)="removeTopic($index)"
+                      matTooltip="{{ 'mqtt-client.remove-permission' | translate }}"
+                      matTooltipPosition="above">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+            <button mat-button mat-raised-button color="primary"
+                    [fxShow]="!disabled"
+                    (click)="addTopic()"
+                    type="button"
+                    matTooltip="{{ 'mqtt-client.add-subscription' | translate }}"
+                    matTooltipPosition="above">
+              <mat-icon>add</mat-icon>
+              {{ 'action.add' | translate }}
+            </button>
+          </div>
+        </div>
+      </section>
     </section>
   </mat-expansion-panel>
 </form>

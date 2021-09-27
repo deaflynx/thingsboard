@@ -1,7 +1,10 @@
 :host {
-  mat-expansion-panel {
-    margin-left: 6px;
-    margin-right: 6px;
-    margin-bottom: 16px;
+  .container{
+    overflow-x: auto;
+  }
+  .tb-integration-panel-group {
+    margin-top: 16px;
+    margin-bottom: 32px;
+    display: block;
   }
 }

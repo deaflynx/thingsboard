@@ -14,7 +14,7 @@
 /// limitations under the License.
 ///
 
-import { ChangeDetectorRef, Component, Inject } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
@@ -35,6 +35,8 @@ export class MqttClientsComponent extends EntityComponent<ClientSessionInfo> {
 
   mqttClientTypes = Object.values(ClientType);
   mqttClientTypeTranslationMap = clientTypeTranslationMap;
+
+  @Output('topics') topics: any;
 
   constructor(protected store: Store<AppState>,
               @Inject('entity') protected entityValue: ClientSessionInfo,
@@ -66,30 +68,23 @@ export class MqttClientsComponent extends EntityComponent<ClientSessionInfo> {
       disconnectedAt: [entity ? entity.disconnectedAt : ''],
       cleanSession: [entity ? entity.cleanSession : ''],
       subscriptionsCount: [entity ? entity.subscriptionsCount : ''],
-      subscriptions: [entity ? entity.subscriptions : '']
+      subscriptions: [entity ? entity.subscriptions : null, []]
     });
   }
 
   updateForm(entity: ClientSessionInfo) {
-    this.entityForm.patchValue({
-      clientId: entity.clientId,
-      nodeId: entity.nodeId,
-      username: entity.username,
-      note: entity.note,
-      keepAliveSeconds: entity.keepAliveSeconds,
-      connectedAt: entity.connectedAt,
-      connectionState: entity.connectionState,
-      clientType: entity.clientType,
-      persistent: entity.persistent,
-      disconnectedAt: entity.disconnectedAt,
-      cleanSession: entity.cleanSession,
-      subscriptionsCount: entity.subscriptionsCount,
-      subscriptions: entity.subscriptions
-    });
-  }
-
-  sessionClick() {
-    console.warn("entityForm: ", this.entityForm.get('session').value);
+    this.entityForm.patchValue({clientId: entity.clientId});
+    this.entityForm.patchValue({nodeId: entity.nodeId});
+    this.entityForm.patchValue({username: entity.username});
+    this.entityForm.patchValue({note: entity.note});
+    this.entityForm.patchValue({keepAliveSeconds: entity.keepAliveSeconds});
+    this.entityForm.patchValue({connectedAt: entity.connectedAt});
+    this.entityForm.patchValue({connectionState: entity.connectionState});
+    this.entityForm.patchValue({persistent: entity.persistent});
+    this.entityForm.patchValue({disconnectedAt: entity.disconnectedAt});
+    this.entityForm.patchValue({cleanSession: entity.cleanSession});
+    this.entityForm.patchValue({subscriptionsCount: entity.subscriptionsCount});
+    this.entityForm.patchValue({ subscriptions: entity ? entity.subscriptions : null });
   }
 
 }

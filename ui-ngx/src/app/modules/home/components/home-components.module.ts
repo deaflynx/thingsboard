@@ -145,7 +145,6 @@ import { DeviceProfileCommonModule } from '@home/components/profile/device/commo
 import { ConnectionComponent } from '@home/components/mqtt-connection/connection.component';
 import { SessionComponent } from '@home/components/mqtt-session/session.component';
 import { SubscriptionsComponent } from '@home/components/subscriptions/subscriptions.component';
-import { SubscriptionListComponent } from '@home/components/subscriptions/subscription-list.component';
 import { MqttCredentialsMqttBasicComponent } from '@home/components/mqtt-credentials-mqtt-basic/mqtt-credentials-mqtt-basic.component';
 import { MqttCredentialsMqttSslComponent } from '@home/components/mqtt-credentials-mqtt-ssl/mqtt-credentials-mqtt-ssl.component';
 import { AuthorizationRulesMappingComponent } from '@home/components/mqtt-credentials-mqtt-ssl/authorization-rules-mapping/authorization-rules-mapping.component';
@@ -271,7 +270,6 @@ import { AuthorizationRulesMappingComponent } from '@home/components/mqtt-creden
       ConnectionComponent,
       SessionComponent,
       SubscriptionsComponent,
-      SubscriptionListComponent,
       MqttCredentialsMqttBasicComponent,
       MqttCredentialsMqttSslComponent,
       AuthorizationRulesMappingComponent
@@ -389,7 +387,6 @@ import { AuthorizationRulesMappingComponent } from '@home/components/mqtt-creden
     ConnectionComponent,
     SessionComponent,
     SubscriptionsComponent,
-    SubscriptionListComponent,
     MqttCredentialsMqttBasicComponent,
     MqttCredentialsMqttSslComponent,
     AuthorizationRulesMappingComponent
