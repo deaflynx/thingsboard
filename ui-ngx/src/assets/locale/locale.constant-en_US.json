@@ -3243,6 +3243,7 @@
       "name": "Name",
       "type": "Credentials type",
       "topic-rule": "Topic rule",
+      "remove-rule": "Remove rule",
       "parent-certificate-common-name": "Parent certificate common name",
       "parent-certificate-common-name-required": "Parent certificate common name required"
     },

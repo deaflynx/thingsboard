@@ -1,4 +1,4 @@
-import { Component, forwardRef, Injector, Input, OnInit, Output } from '@angular/core';
+import { Component, forwardRef, Injector, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import {
   AbstractControl,
   ControlValueAccessor,
@@ -62,16 +62,12 @@ export class AuthorizationRulesMappingComponent implements ControlValueAccessor,
     return this.rulesMappingFormGroup.get('authorizationRulesMapping') as FormArray;
   }
 
-  createRule(): FormGroup {
-    return this.fb.group({
-      certificateMtcherRegex: ['', [Validators.required]],
-      topicRule: ['', [Validators.required]]
-    });
-  }
-
   addRule(): void {
     this.rulesMappings = this.rulesMappingFormGroup.get('authorizationRulesMapping') as FormArray;
-    this.rulesMappings.push(this.createRule());
+    this.rulesMappings.push(this.fb.group({
+      certificateMtcherRegex: ['', [Validators.required]],
+      topicRule: ['', [Validators.required]]
+    }));
   }
 
   removeRule(index: number) {
@@ -88,14 +84,14 @@ export class AuthorizationRulesMappingComponent implements ControlValueAccessor,
   writeValue(authorizationRulesMapping: any): void {
     if (this.valueChangeSubscription) {
       this.valueChangeSubscription.unsubscribe();
+      console.warn("writeValue unsubscribe");
     }
-    console.warn("authorizationRulesMapping writeValue", authorizationRulesMapping);
     const rulesControls: Array<AbstractControl> = [];
     if (authorizationRulesMapping) {
-      for (const resource of Object.keys(authorizationRulesMapping)) {
+      for (const rule of Object.keys(authorizationRulesMapping)) {
         const rulesControl = this.fb.group({
-          certificateMtcherRegex: [resource, [Validators.required]],
-          topicRule: [resource, [Validators.required]]
+          certificateMtcherRegex: [rule, [Validators.required]],
+          topicRule: [authorizationRulesMapping[rule], [Validators.required]]
         });
         if (this.disabled) {
           rulesControl.disable();
@@ -104,14 +100,10 @@ export class AuthorizationRulesMappingComponent implements ControlValueAccessor,
       }
     }
     this.rulesMappingFormGroup.setControl('authorizationRulesMapping', this.fb.array(rulesControls));
-
-
-    // if (authorizationRulesMapping) {
-    //   this.authorizationRulesMappingFormGroup.patchValue(authorizationRulesMapping, { emitEvent: false });
-    // }
-
-    this.valueChangeSubscription = this.rulesMappingFormGroup.valueChanges.subscribe((v) => {
-      console.warn("valueChangeSubscription", v)
+    console.warn("getRawValue()", this.rulesMappingFormGroup.getRawValue());
+    this.valueChangeSubscription = this.rulesMappingFormGroup.valueChanges.subscribe((value) => {
+      console.warn("valueChangeSubscription", value)
+      this.updateView(value);
     });
   }
 
@@ -126,6 +118,7 @@ export class AuthorizationRulesMappingComponent implements ControlValueAccessor,
       const key = obj.certificateMtcherRegex;
       newObj[key] = obj.topicRule;
     });
+    console.warn("prepareValues", newObj);
     return newObj;
   }
 }

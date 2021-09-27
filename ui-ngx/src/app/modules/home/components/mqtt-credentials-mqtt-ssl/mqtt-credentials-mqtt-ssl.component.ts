@@ -1,7 +1,7 @@
-import { Component, forwardRef, Input, OnInit } from '@angular/core';
+import { Component, forwardRef, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import {
   ControlValueAccessor, FormArray,
-  FormBuilder,
+  FormBuilder, FormControl,
   FormGroup,
   NG_VALIDATORS,
   NG_VALUE_ACCESSOR,
@@ -31,7 +31,7 @@ export class MqttCredentialsMqttSslComponent implements OnInit, ControlValueAcce
 
   credentialsMqttSslFormGroup: FormGroup;
 
-  authorizationRulesMapping;
+  authorizationRulesMappingData;
 
   private propagateChange = null;
 
@@ -50,7 +50,7 @@ export class MqttCredentialsMqttSslComponent implements OnInit, ControlValueAcce
   writeValue(mqttSsl: string): void {
     if (isDefinedAndNotNull(mqttSsl) && !isEmptyStr(mqttSsl)) {
       const value = JSON.parse(mqttSsl);
-      this.authorizationRulesMapping = value.authorizationRulesMapping;
+      this.authorizationRulesMappingData = value.authorizationRulesMapping;
       this.credentialsMqttSslFormGroup.patchValue(value, { emitEvent: false });
     }
   }
