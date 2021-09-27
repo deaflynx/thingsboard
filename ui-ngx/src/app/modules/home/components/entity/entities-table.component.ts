@@ -580,7 +580,7 @@ export class EntitiesTableComponent extends PageComponent implements AfterViewIn
   }
 
   trackByEntityId(index: number, entity: any) {
-    return entity.id?.id ? entity.id?.id : entity.clientId;
+    return entity.id;
   }
 
 }

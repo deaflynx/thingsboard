@@ -29,8 +29,12 @@ export class MqttSubscriptionService {
     private http: HttpClient
   ) { }
 
-  public getMqttClient(clientId: string, config?: RequestConfig): Observable<Array<TopicSubscription>> {
+  public getClientSubscriptions(clientId: string, config?: RequestConfig): Observable<Array<TopicSubscription>> {
     return this.http.get<Array<TopicSubscription>>(`/api/subscription/${clientId}`, defaultHttpOptionsFromConfig(config));
+  }
+
+  public updateClientSubscriptions(clientId: string, subscriptions: Array<TopicSubscription>, config?: RequestConfig): Observable<Array<TopicSubscription>> {
+    return this.http.post<Array<TopicSubscription>>(`/api/subscription/${clientId}`, subscriptions, defaultHttpOptionsFromConfig(config));
   }
 
   public clearEmptySubscriptionNodes(config?: RequestConfig) {
