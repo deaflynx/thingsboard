@@ -25,7 +25,7 @@
   <button mat-raised-button color="primary"
           [disabled]="(isLoading$ | async)"
           (click)="onEntityAction($event, 'disconnect')"
-          [fxShow]="!isEdit && isConnected">
+          [fxShow]="!isEdit && isConnected()">
     {{'mqtt-client-session.disconnect-client' | translate }}
   </button>
   <button mat-raised-button
@@ -41,7 +41,6 @@
   <form [formGroup]="entityForm">
     <div fxFlex fxLayout="row">
       <div fxFlex="50" style="margin-right: 10px">
-<!--            <mat-label translate>mqtt-client.connection</mat-label>-->
         <mat-form-field class="mat-block">
           <mat-label translate>mqtt-client.node</mat-label>
           <input matInput formControlName="nodeId">
@@ -72,7 +71,6 @@
         </mat-form-field>
       </div>
       <div fxFlex="50" style="margin-right: 10px">
-<!--            <mat-label translate>mqtt-client.session</mat-label>-->
         <mat-form-field class="mat-block">
           <mat-label translate>mqtt-client.clean-session</mat-label>
           <input matInput formControlName="cleanSession">

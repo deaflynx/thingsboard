@@ -33,15 +33,17 @@ import { TranslateService } from '@ngx-translate/core';
   templateUrl: './mqtt-clients.component.html',
   styleUrls: ['./mqtt-clients.component.scss']
 })
-export class MqttClientsComponent extends EntityComponent<ClientSessionInfo> implements OnInit {
+export class MqttClientsComponent extends EntityComponent<ClientSessionInfo> {
 
   @Output('topics') topics: any;
-
-  isConnected: boolean;
 
   mqttClientTypes = Object.values(ClientType);
 
   clientTypeTranslationMap = clientTypeTranslationMap;
+
+  get connectionState() {
+    return this.entityForm.get('connectionState').value;
+  }
 
   constructor(protected store: Store<AppState>,
               @Inject('entity') protected entityValue: ClientSessionInfo,
@@ -51,11 +53,6 @@ export class MqttClientsComponent extends EntityComponent<ClientSessionInfo> imp
               private datePipe: DatePipe,
               private translate: TranslateService) {
     super(store, fb, entityValue, entitiesTableConfigValue, cd);
-  }
-
-  ngOnInit() {
-    super.ngOnInit();
-    this.updateConnectionState();
   }
 
   hideDelete() {
@@ -75,7 +72,7 @@ export class MqttClientsComponent extends EntityComponent<ClientSessionInfo> imp
         note: [{value: entity ? entity.note : null, disabled: true}],
         keepAliveSeconds: [{value: entity ? entity.keepAliveSeconds : null, disabled: true}],
         connectedAt: [{value: entity ? this.datePipe.transform(entity.connectedAt, 'yyyy-MM-dd HH:mm:ss') : null, disabled: true}],
-        connectionState: [{value: entity ? this.translate.instant(connectionStateTranslationMap.get(entity.connectionState)) : null, disabled: true}],
+        connectionState: [{value: entity ? entity.connectionState : null, disabled: true}],
         clientType: [{value: entity ? entity.clientType : null, disabled: true}],
         persistent: [{value: entity ? entity.persistent : null, disabled: true}],
         disconnectedAt: [{value: entity ? this.datePipe.transform(entity.disconnectedAt, 'yyyy-MM-dd HH:mm:ss') : null, disabled: true}],
@@ -104,9 +101,12 @@ export class MqttClientsComponent extends EntityComponent<ClientSessionInfo> imp
     });
   }
 
+  isConnected(): boolean {
+    return this.entityForm.get('connectionState').value === "Connected";
+  }
+
   updateFormState() {
     super.updateFormState();
-    this.updateConnectionState();
     this.entityForm.get('clientId').disable({ emitEvent: false });
     this.entityForm.get('nodeId').disable({ emitEvent: false });
     this.entityForm.get('username').disable({ emitEvent: false });
@@ -118,10 +118,6 @@ export class MqttClientsComponent extends EntityComponent<ClientSessionInfo> imp
     this.entityForm.get('disconnectedAt').disable({ emitEvent: false });
     this.entityForm.get('cleanSession').disable({ emitEvent: false });
     this.entityForm.get('subscriptionsCount').disable({ emitEvent: false });
-  }
-
-  updateConnectionState() {
-    this.isConnected = this.entityForm.get('connectionState').value === ConnectionState.CONNECTED;
   }
 
 }
