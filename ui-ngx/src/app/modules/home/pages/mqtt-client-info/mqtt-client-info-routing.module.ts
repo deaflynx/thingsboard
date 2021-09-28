@@ -23,7 +23,7 @@ import { MqttClientInfoTableConfigResolver } from '@home/pages/mqtt-client-info/
 
 const routes: Routes = [
   {
-    path: 'client-info',
+    path: 'clientInfo',
     data: {
       title: 'mqtt-client.client-info',
       breadcrumb: {

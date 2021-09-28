@@ -23,11 +23,11 @@ import { MqttClientsTableConfigResolver } from '@home/pages/mqtt-clients/mqtt-cl
 
 const routes: Routes = [
   {
-    path: 'clients',
+    path: 'sessions',
     data: {
-      title: 'mqtt-client.clients',
+      title: 'mqtt-client-session.sessions',
       breadcrumb: {
-        label: 'mqtt-client.clients',
+        label: 'mqtt-client-session.sessions',
         icon: 'supervisor_account'
       }
     },
@@ -37,7 +37,7 @@ const routes: Routes = [
         component: EntitiesTableComponent,
         data: {
           auth: [Authority.SYS_ADMIN, Authority.TENANT_ADMIN],
-          title: 'mqtt-client.clients'
+          title: 'mqtt-client-session.sessions'
         },
         resolve: {
           entitiesTableConfig: MqttClientsTableConfigResolver

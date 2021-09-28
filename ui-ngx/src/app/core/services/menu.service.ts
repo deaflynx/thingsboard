@@ -76,25 +76,25 @@ export class MenuService {
     sections.push(
       {
         id: guid(),
+        name: 'mqtt-client-credentials.client-credentials',
+        type: 'link',
+        path: '/clientCredentials',
+        icon: 'lock'
+      },
+      {
+        id: guid(),
+        name: 'mqtt-client-session.sessions',
+        type: 'link',
+        path: '/sessions',
+        icon: 'supervisor_account'
+      }
+/*      {
+        id: guid(),
         name: 'mqtt-client.clients',
         type: 'link',
-        path: '/clients',
+        path: '/clientInfo',
         icon: 'supervisor_account'
-      },
-      {
-        id: guid(),
-        name: 'mqtt-client.client-info',
-        type: 'link',
-        path: '/client-info',
-        icon: 'assignment_ind'
-      },
-      {
-        id: guid(),
-        name: 'mqtt-client.client-credentials',
-        type: 'link',
-        path: '/client-credentials',
-        icon: 'lock'
-      }
+      }*/
     );
 /*    sections.push(
       {

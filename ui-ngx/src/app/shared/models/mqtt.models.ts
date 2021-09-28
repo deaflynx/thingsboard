@@ -44,6 +44,28 @@ export enum MqttQoS {
   EXACTLY_ONCE = 'EXACTLY_ONCE'
 }
 
+export const mqttQoSMap = new Map<MqttQoS, number>(
+  [
+    [MqttQoS.AT_MOST_ONCE, 0],
+    [MqttQoS.AT_LEAST_ONCE, 1],
+    [MqttQoS.EXACTLY_ONCE, 2],
+  ]
+);
+
+export const mqttQoSTypes = [
+  {
+    value: 0,
+    name: 'mqtt-client-session.qos-at-most-once'
+  },
+  {
+    value: 1,
+    name: 'mqtt-client-session.qos-at-least-once'
+  },
+  {
+    value: 2,
+    name: 'mqtt-client-session.qos-exactly-once'
+  }];
+
 export enum ClientCredentialsType {
   MQTT_BASIC = 'MQTT_BASIC',
   SSL = 'SSL'

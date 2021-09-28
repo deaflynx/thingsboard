@@ -1,4 +1,4 @@
-import { Component, forwardRef, Injector, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, forwardRef, Injector, Input, OnInit } from '@angular/core';
 import {
   AbstractControl,
   ControlValueAccessor,
@@ -8,26 +8,11 @@ import {
   NG_VALUE_ACCESSOR,
   Validators
 } from '@angular/forms';
-import { TopicSubscription } from '@shared/models/mqtt.models';
+import { mqttQoSMap, mqttQoSTypes, TopicSubscription } from '@shared/models/mqtt.models';
 import { PageComponent } from '@shared/components/page.component';
 import { Subscription } from 'rxjs';
 import { AppState } from '@core/core.state';
 import { Store } from '@ngrx/store';
-
-export const mqttQoSTypes = [
-  {
-    value: 0,
-    name: 'mqtt-client-session.qos-at-most-once'
-  },
-  {
-    value: 1,
-    name: 'mqtt-client-session.qos-at-least-once'
-  },
-  {
-    value: 2,
-    name: 'mqtt-client-session.qos-exactly-once'
-  }];
-
 
 @Component({
   selector: 'tb-subscriptions',
@@ -45,6 +30,7 @@ export class SubscriptionsComponent extends PageComponent implements ControlValu
 
   topicListFormGroup: FormGroup;
   mqttQoSTypes = mqttQoSTypes;
+  mqttQoSMap = mqttQoSMap;
 
   private propagateChange = null;
 
@@ -119,13 +105,7 @@ export class SubscriptionsComponent extends PageComponent implements ControlValu
   }
 
   private updateModel() {
-    // const TopicList: {topic: Resource; qos: Operation[]}[] = this.topicListFormGroup.get('subscriptions').value;
-    // const subscriptions: TopicSubscription = {};
-    // TopicList.forEach((entry) => {
-    //   Topics[entry.resource] = entry.operations;
-    // });
-    this.propagateChange(this.topicListFormGroup.get('subscriptions').value);
+    this.propagateChange(this.topicListFormGroup.getRawValue());
   }
-
 
 }

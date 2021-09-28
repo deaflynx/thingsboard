@@ -23,11 +23,11 @@ import { MqttClientCredentialsTableConfigResolver } from '@home/pages/mqtt-clien
 
 const routes: Routes = [
   {
-    path: 'client-credentials',
+    path: 'clientCredentials',
     data: {
-      title: 'mqtt-client.client-credentials',
+      title: 'mqtt-client-credentials.client-credentials',
       breadcrumb: {
-        label: 'mqtt-client.client-credentials',
+        label: 'mqtt-client-credentials.client-credentials',
         icon: 'lock'
       }
     },
@@ -37,7 +37,7 @@ const routes: Routes = [
         component: EntitiesTableComponent,
         data: {
           auth: [Authority.SYS_ADMIN, Authority.TENANT_ADMIN],
-          title: 'mqtt-client.client-credentials'
+          title: 'mqtt-client-credentials.client-credentials'
         },
         resolve: {
           entitiesTableConfig: MqttClientCredentialsTableConfigResolver

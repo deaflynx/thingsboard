@@ -50,7 +50,7 @@ export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig
     this.config.entityComponent = MqttClientsComponent;
     this.config.entityTranslations = entityTypeTranslations.get(EntityType.MQTT_CLIENT);
     this.config.entityResources = entityTypeResources.get(EntityType.MQTT_CLIENT);
-    this.config.tableTitle = this.translate.instant('mqtt-client.clients');
+    this.config.tableTitle = this.translate.instant('mqtt-client-session.sessions');
 
     this.config.addEnabled = false;
     this.config.entitiesDeleteEnabled = false;
