@@ -44,7 +44,7 @@
         <mat-label translate>mqtt-client.client-type</mat-label>
         <mat-select formControlName="type">
           <mat-option *ngFor="let clientType of mqttClientTypes" [value]="clientType">
-            {{ mqttClientTypeTranslationMap.get(clientType) }}
+            {{ mqttClientTypeTranslationMap.get(clientType) | translate }}
           </mat-option>
         </mat-select>
       </mat-form-field>

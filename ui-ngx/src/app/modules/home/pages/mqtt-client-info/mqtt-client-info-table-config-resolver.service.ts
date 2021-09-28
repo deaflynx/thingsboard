@@ -65,6 +65,8 @@ export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableCon
 
     this.config.addEnabled = true;
     this.config.entitiesDeleteEnabled = true;
+    this.config.tableTitle = this.translate.instant('mqtt-client.client-info');
+
     this.config.deleteEnabled = () => true;
 
     this.config.entityTitle = (mqttClient) => mqttClient ?
@@ -74,7 +76,7 @@ export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableCon
       new DateEntityTableColumn<Client>('createdTime', 'common.created-time', this.datePipe, '150px'),
       new EntityTableColumn<Client>('clientId', 'mqtt-client.client-id', '50%'),
       new EntityTableColumn<Client>('type', 'mqtt-client.client-type', '50%',
-        (entity) => clientTypeTranslationMap.get(entity.type))
+        (entity) => this.translate.instant(clientTypeTranslationMap.get(entity.type)))
     );
 
     this.config.addActionDescriptors.push(
@@ -100,7 +102,6 @@ export class MqttClientInfoTableConfigResolver implements Resolve<EntityTableCon
     this.config.deleteEntityContent = () => this.translate.instant('mqtt-client.delete-client-text');
     this.config.deleteEntitiesTitle = count => this.translate.instant('mqtt-client.delete-mqtt-clients-title', {count});
     this.config.deleteEntitiesContent = () => this.translate.instant('mqtt-client.delete-mqtt-clients-text');
-    this.config.tableTitle = this.translate.instant('mqtt-client.client-info');
 
     this.config.loadEntity = id => this.loadEntity(id);
     this.config.saveEntity = mqttClient => this.mqttClientService.saveMqttClient(mqttClient);
