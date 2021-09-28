@@ -105,7 +105,7 @@ export class SubscriptionsComponent extends PageComponent implements ControlValu
   }
 
   private updateModel() {
-    this.propagateChange(this.topicListFormGroup.getRawValue());
+    this.propagateChange(this.topicListFormGroup.get('subscriptions').value);
   }
 
 }
