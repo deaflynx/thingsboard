@@ -51,8 +51,8 @@ export enum ClientCredentialsType {
 
 export const clientTypeTranslationMap = new Map<ClientType, string>(
   [
-    [ClientType.DEVICE, 'Device'],
-    [ClientType.APPLICATION, 'Application']
+    [ClientType.DEVICE, 'mqtt-client.device'],
+    [ClientType.APPLICATION, 'mqtt-client.application']
   ]
 );
 
@@ -65,8 +65,8 @@ export const clientCredentialsTypeTranslationMap = new Map<ClientCredentialsType
 
 export const connectionStateTranslationMap = new Map<ConnectionState, string>(
   [
-    [ConnectionState.CONNECTED, 'Connected'],
-    [ConnectionState.DISCONNECTED, 'Disconnected']
+    [ConnectionState.CONNECTED, 'mqtt-client-session.connected'],
+    [ConnectionState.DISCONNECTED, 'mqtt-client-session.disconnected']
   ]
 );
 

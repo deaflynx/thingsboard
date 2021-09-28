@@ -17,15 +17,15 @@ import { Store } from '@ngrx/store';
 export const mqttQoSTypes = [
   {
     value: 0,
-    name: 'integration.mqtt-qos-at-most-once'
+    name: 'mqtt-client-session.qos-at-most-once'
   },
   {
     value: 1,
-    name: 'integration.mqtt-qos-at-least-once'
+    name: 'mqtt-client-session.qos-at-least-once'
   },
   {
     value: 2,
-    name: 'integration.mqtt-qos-exactly-once'
+    name: 'mqtt-client-session.qos-exactly-once'
   }];
 
 
@@ -49,6 +49,10 @@ export class SubscriptionsComponent extends PageComponent implements ControlValu
   private propagateChange = null;
 
   private valueChangeSubscription: Subscription = null;
+
+  get topicFilters() {
+    return this.topicListFormGroup.get('subscriptions').value;
+  }
 
   constructor(protected store: Store<AppState>,
               private injector: Injector,

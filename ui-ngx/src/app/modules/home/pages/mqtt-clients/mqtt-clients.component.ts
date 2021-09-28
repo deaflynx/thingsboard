@@ -14,36 +14,48 @@
 /// limitations under the License.
 ///
 
-import { ChangeDetectorRef, Component, Inject, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
 import {
-  Client, ClientSessionInfo,
+  ClientSessionInfo,
   ClientType,
-  clientTypeTranslationMap,
+  clientTypeTranslationMap, ConnectionState, connectionStateTranslationMap,
 } from '@shared/models/mqtt.models';
 import { EntityComponent } from '@home/components/entity/entity.component';
 import { EntityTableConfig } from '@home/models/entity/entities-table-config.models';
+import { DatePipe } from '@angular/common';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'tb-mqtt-clients',
   templateUrl: './mqtt-clients.component.html',
   styleUrls: ['./mqtt-clients.component.scss']
 })
-export class MqttClientsComponent extends EntityComponent<ClientSessionInfo> {
-
-  mqttClientTypes = Object.values(ClientType);
-  mqttClientTypeTranslationMap = clientTypeTranslationMap;
+export class MqttClientsComponent extends EntityComponent<ClientSessionInfo> implements OnInit {
 
   @Output('topics') topics: any;
+
+  isConnected: boolean;
+
+  mqttClientTypes = Object.values(ClientType);
+
+  clientTypeTranslationMap = clientTypeTranslationMap;
 
   constructor(protected store: Store<AppState>,
               @Inject('entity') protected entityValue: ClientSessionInfo,
               @Inject('entitiesTableConfig') protected entitiesTableConfigValue: EntityTableConfig<ClientSessionInfo>,
               public fb: FormBuilder,
-              protected cd: ChangeDetectorRef) {
+              protected cd: ChangeDetectorRef,
+              private datePipe: DatePipe,
+              private translate: TranslateService) {
     super(store, fb, entityValue, entitiesTableConfigValue, cd);
+  }
+
+  ngOnInit() {
+    super.ngOnInit();
+    this.updateConnectionState();
   }
 
   hideDelete() {
@@ -55,36 +67,61 @@ export class MqttClientsComponent extends EntityComponent<ClientSessionInfo> {
   }
 
   buildForm(entity: ClientSessionInfo): FormGroup {
-    return this.fb.group({
-      clientId: [entity ? entity.clientId : ''],
-      nodeId: [entity ? entity.nodeId : ''],
-      username: [entity ? entity.username : ''],
-      note: [entity ? entity.note : ''],
-      keepAliveSeconds: [entity ? entity.keepAliveSeconds : ''],
-      connectedAt: [entity ? entity.connectedAt : ''],
-      connectionState: [entity ? entity.connectionState : ''],
-      clientType: [entity ? entity.clientType : ''],
-      persistent: [entity ? entity.persistent : ''],
-      disconnectedAt: [entity ? entity.disconnectedAt : ''],
-      cleanSession: [entity ? entity.cleanSession : ''],
-      subscriptionsCount: [entity ? entity.subscriptionsCount : ''],
-      subscriptions: [entity ? entity.subscriptions : null, []]
-    });
+    const form = this.fb.group(
+      {
+        clientId: [{value: entity ? entity.clientId : null, disabled: true}],
+        nodeId: [{value: entity ? entity.nodeId : null, disabled: true}],
+        username: [{value: entity ? entity.username : null, disabled: true}],
+        note: [{value: entity ? entity.note : null, disabled: true}],
+        keepAliveSeconds: [{value: entity ? entity.keepAliveSeconds : null, disabled: true}],
+        connectedAt: [{value: entity ? this.datePipe.transform(entity.connectedAt, 'yyyy-MM-dd HH:mm:ss') : null, disabled: true}],
+        connectionState: [{value: entity ? this.translate.instant(connectionStateTranslationMap.get(entity.connectionState)) : null, disabled: true}],
+        clientType: [{value: entity ? entity.clientType : null, disabled: true}],
+        persistent: [{value: entity ? entity.persistent : null, disabled: true}],
+        disconnectedAt: [{value: entity ? this.datePipe.transform(entity.disconnectedAt, 'yyyy-MM-dd HH:mm:ss') : null, disabled: true}],
+        cleanSession: [{value: entity ? !entity.persistent : null, disabled: true}],
+        subscriptionsCount: [{value: entity ? entity.subscriptions.length : null, disabled: true}],
+        subscriptions: [entity ? entity.subscriptions : null]
+      }
+    );
+    return form;
   }
 
   updateForm(entity: ClientSessionInfo) {
-    this.entityForm.patchValue({clientId: entity.clientId});
-    this.entityForm.patchValue({nodeId: entity.nodeId});
-    this.entityForm.patchValue({username: entity.username});
-    this.entityForm.patchValue({note: entity.note});
-    this.entityForm.patchValue({keepAliveSeconds: entity.keepAliveSeconds});
-    this.entityForm.patchValue({connectedAt: entity.connectedAt});
-    this.entityForm.patchValue({connectionState: entity.connectionState});
-    this.entityForm.patchValue({persistent: entity.persistent});
-    this.entityForm.patchValue({disconnectedAt: entity.disconnectedAt});
-    this.entityForm.patchValue({cleanSession: entity.cleanSession});
-    this.entityForm.patchValue({subscriptionsCount: entity.subscriptionsCount});
-    this.entityForm.patchValue({ subscriptions: entity ? entity.subscriptions : null });
+    this.entityForm.patchValue({
+      clientId: entity.clientId,
+      nodeId: entity.nodeId,
+      username: entity.username,
+      note: entity.note,
+      keepAliveSeconds: entity.keepAliveSeconds,
+      connectedAt: this.datePipe.transform(entity.connectedAt, 'yyyy-MM-dd HH:mm:ss'),
+      connectionState: this.translate.instant(connectionStateTranslationMap.get(entity.connectionState)),
+      persistent: entity.persistent,
+      disconnectedAt: this.datePipe.transform(entity.disconnectedAt, 'yyyy-MM-dd HH:mm:ss'),
+      cleanSession: !entity.cleanSession,
+      subscriptionsCount: entity.subscriptions.length,
+      subscriptions: entity.subscriptions
+    });
+  }
+
+  updateFormState() {
+    super.updateFormState();
+    this.updateConnectionState();
+    this.entityForm.get('clientId').disable({ emitEvent: false });
+    this.entityForm.get('nodeId').disable({ emitEvent: false });
+    this.entityForm.get('username').disable({ emitEvent: false });
+    this.entityForm.get('note').disable({ emitEvent: false });
+    this.entityForm.get('keepAliveSeconds').disable({ emitEvent: false });
+    this.entityForm.get('connectedAt').disable({ emitEvent: false });
+    this.entityForm.get('connectionState').disable({ emitEvent: false });
+    this.entityForm.get('persistent').disable({ emitEvent: false });
+    this.entityForm.get('disconnectedAt').disable({ emitEvent: false });
+    this.entityForm.get('cleanSession').disable({ emitEvent: false });
+    this.entityForm.get('subscriptionsCount').disable({ emitEvent: false });
+  }
+
+  updateConnectionState() {
+    this.isConnected = this.entityForm.get('connectionState').value === ConnectionState.CONNECTED;
   }
 
 }

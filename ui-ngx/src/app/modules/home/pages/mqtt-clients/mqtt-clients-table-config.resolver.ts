@@ -33,8 +33,8 @@ import {
 import { MqttClientsComponent } from '@home/pages/mqtt-clients/mqtt-clients.component';
 import { MqttClientSessionService } from '@core/http/mqtt-client-session.service';
 import { EntityAction } from '@home/models/entity/entity-component.models';
-import { mergeMap, tap } from 'rxjs/operators';
 import { MqttSubscriptionService } from '@core/http/mqtt-subscription.service';
+import { ActionNotificationShow } from '@core/notification/notification.actions';
 
 @Injectable()
 export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig<ClientSessionInfo>> {
@@ -61,7 +61,7 @@ export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig
     this.config.columns.push(
       new EntityTableColumn<ClientSessionInfo>('clientId', 'mqtt-client-session.client-id', '25%'),
       new EntityTableColumn<ClientSessionInfo>('connectionState', 'mqtt-client-session.connect', '25%',
-        (entity) => connectionStateTranslationMap.get(entity.connectionState),
+        (entity) => this.translate.instant(connectionStateTranslationMap.get(entity.connectionState)),
         (entity) => ({
           color: entity.connectionState === ConnectionState.CONNECTED
             ? connectionStateColor.get(ConnectionState.CONNECTED)
@@ -70,7 +70,8 @@ export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig
       ),
       new EntityTableColumn<ClientSessionInfo>('nodeId', 'mqtt-client-session.node-id', '25%'),
       new EntityTableColumn<ClientSessionInfo>('clientType', 'mqtt-client-session.client-type', '25%',
-        (entity) => clientTypeTranslationMap.get(entity.clientType))
+        (entity) => this.translate.instant(clientTypeTranslationMap.get(entity.clientType))
+      )
     );
 
     this.config.loadEntity = id => this.loadEntity(id);
@@ -97,7 +98,7 @@ export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig
         this.disconnectClient(action.event, action.entity);
         return true;
       case 'refresh':
-        // this.mqttClientSessionService.getDetailedClientSessionInfo(action.entity.clientId);
+        this.refreshPage(action.event, action.entity);
         return true;
     }
     return false;
@@ -127,28 +128,31 @@ export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig
     );
   }
 
-  disconnectClient($event: Event, clientSession: ClientSessionInfo) {
+  disconnectClient($event, clientSession) {
     if ($event) {
       $event.stopPropagation();
     }
-    let title = this.translate.instant('mqtt-client-session.disconnect-session-title', {clientId: clientSession.clientId});
-    let content = this.translate.instant('mqtt-client-session.disconnect-session-text');
-    this.dialogService.confirm(
-      title,
-      content,
-      this.translate.instant('action.no'),
-      this.translate.instant('action.yes'),
-      true
-    ).subscribe((res) => {
-        if (res) {
-          this.mqttClientSessionService.disconnectClientSession(clientSession.clientId, clientSession.sessionId).subscribe(
-            () => {
-              this.config.table.updateData();
+    this.mqttClientSessionService.disconnectClientSession(clientSession.clientId, clientSession.sessionId).subscribe(
+      () => {
+        this.store.dispatch(
+          new ActionNotificationShow(
+            {
+              message: this.translate.instant('mqtt-client-session.client-disconnected'),
+              type: 'success',
+              duration: 750,
+              verticalPosition: 'bottom',
+              horizontalPosition: 'right'
             }
-          );
-        }
+          )
+        );
       }
     );
+  }
+
+  refreshPage($event, clientSession) {
+    if ($event) {
+      $event.stopPropagation();
+    }
   }
 
 
