@@ -3194,6 +3194,7 @@
       "connect": "Connect",
       "connection": "Connection",
       "connected-at": "Connected at",
+      "disconnected-at": "Disconnected at",
       "connected-status": "Connected Status",
       "clean-session": "Clean Session",
       "create-new-client": "Create new client",

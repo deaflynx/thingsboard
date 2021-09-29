@@ -69,6 +69,14 @@
           <mat-label translate>mqtt-client.connected-status</mat-label>
           <input matInput formControlName="connectionState">
         </mat-form-field>
+        <mat-form-field class="mat-block">
+          <mat-label translate>mqtt-client.disconnected-at</mat-label>
+          <input matInput formControlName="disconnectedAt">
+        </mat-form-field>
+        <mat-form-field class="mat-block">
+          <mat-label translate>mqtt-client.client-type</mat-label>
+          <input matInput formControlName="clientType">
+        </mat-form-field>
       </div>
       <div fxFlex="50" style="margin-right: 10px">
         <mat-form-field class="mat-block">
@@ -81,6 +89,7 @@
         </mat-form-field>
       </div>
     </div>
+    <p>{{ entityForm.getRawValue() | json }}</p>
     <tb-subscriptions formControlName="subscriptions">
     </tb-subscriptions>
   </form>
