@@ -34,14 +34,14 @@ import { ImportExportService } from '@home/components/import-export/import-expor
 import { Direction } from '@shared/models/page/sort-order';
 import {
   MqttClientCredentials,
-  clientCredentialsTypeTranslationMap,
+  mqttCredentialsTypeNames,
 } from '@shared/models/mqtt.models';
 import { MqttClientCredentialsService } from '@core/http/mqtt-client-credentials.service';
 import { MqttClientCredentialsComponent } from '@home/pages/mqtt-client-credentials/mqtt-client-credentials.component';
 import {
-  EditMqttClientCredentialsDialogData,
-  EditMqttClientCredentialsProfileDialogComponent
-} from '@home/dialogs/edit-mqtt-client-credentials-profile-dialog.component';
+  ManageCredentialsDialogData,
+  ManageCredentialsDialogComponent
+} from '@home/dialogs/manage-credentials-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
 @Injectable()
@@ -73,7 +73,7 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
       new DateEntityTableColumn<MqttClientCredentials>('createdTime', 'common.created-time', this.datePipe, '150px'),
       new EntityTableColumn<MqttClientCredentials>('name', 'mqtt-client-credentials.name', '50%'),
       new EntityTableColumn<MqttClientCredentials>('credentialsType', 'mqtt-client-credentials.type', '50%',
-        (entity) => clientCredentialsTypeTranslationMap.get(entity.credentialsType))
+        (entity) => mqttCredentialsTypeNames.get(entity.credentialsType))
     );
 
     this.config.addActionDescriptors.push(
@@ -87,10 +87,10 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
 
     this.config.cellActionDescriptors.push(
       {
-        name: this.translate.instant('mqtt-client-credentials.edit-credentials'),
+        name: this.translate.instant('mqtt-client-credentials.manage-credentials'),
         icon: 'devices',
         isEnabled: () => true,
-        onAction: ($event, entity) => this.openEditClientCredentialsProfile($event, entity)
+        onAction: ($event, entity) => this.manageCredentials($event, entity)
       }
     );
 
@@ -133,11 +133,12 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
     return false;
   }
 
-  openEditClientCredentialsProfile($event: Event, mqttClientCredentials: MqttClientCredentials) {
+  manageCredentials($event: Event, mqttClientCredentials: MqttClientCredentials) {
     if ($event) {
       $event.stopPropagation();
     }
-    this.dialog.open<EditMqttClientCredentialsProfileDialogComponent, EditMqttClientCredentialsDialogData>(EditMqttClientCredentialsProfileDialogComponent, {
+    this.dialog.open<ManageCredentialsDialogComponent, ManageCredentialsDialogData,
+      MqttClientCredentials>(ManageCredentialsDialogComponent, {
       disableClose: true,
       panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
       data: {
