@@ -43,8 +43,8 @@ export class MqttClientCredentialsService {
     return this.http.get<PageData<MqttClientCredentials>>(`/api/mqtt/client/credentials${pageLink.toQuery()}`, defaultHttpOptionsFromConfig(config));
   }
 
-  public getMqttClientCredentials(clientId: string, config?: RequestConfig): Observable<MqttClientCredentials> {
-    return this.http.get<MqttClientCredentials>(`/api/mqtt/client/credentials/${clientId}`, defaultHttpOptionsFromConfig(config));
+  public getMqttClientCredentials(credentialsId: string, config?: RequestConfig): Observable<MqttClientCredentials> {
+    return this.http.get<MqttClientCredentials>(`/api/mqtt/client/credentials/${credentialsId}`, defaultHttpOptionsFromConfig(config));
   }
 
 }

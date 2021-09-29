@@ -1,16 +1,17 @@
 import { Component, forwardRef, Input, OnDestroy, OnInit } from '@angular/core';
 import {
-  AbstractControl,
-  ControlValueAccessor, FormBuilder, FormGroup,
+  ControlValueAccessor,
+  FormBuilder,
+  FormGroup,
   NG_VALIDATORS,
   NG_VALUE_ACCESSOR,
   ValidationErrors,
   Validator, ValidatorFn, Validators
 } from '@angular/forms';
-import { takeUntil } from 'rxjs/operators';
 import { DeviceCredentialMQTTBasic } from '@shared/models/device.models';
-import { Subject } from 'rxjs';
 import { isDefinedAndNotNull, isEmptyStr } from '@core/utils';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'tb-mqtt-credentials-mqtt-basic',
@@ -29,28 +30,36 @@ import { isDefinedAndNotNull, isEmptyStr } from '@core/utils';
     }
   ],
 })
-export class MqttCredentialsMqttBasicComponent implements ControlValueAccessor, Validator {
+export class MqttCredentialsMqttBasicComponent implements ControlValueAccessor, Validator, OnDestroy {
 
   @Input()
   disabled: boolean;
 
   credentialsMqttBasicFormGroup: FormGroup;
 
+  private destroy$ = new Subject();
   private propagateChange = (v: any) => {};
 
   constructor(public fb: FormBuilder) {
     this.credentialsMqttBasicFormGroup = this.fb.group({
-        clientId: [''],
-        userName: [''],
-        password: ['']
+        clientId: [null],
+        userName: [null],
+        password: [null]
       },
       {
         validators: this.atLeastOne(Validators.required, ['clientId', 'userName'])
       }
     );
-    this.credentialsMqttBasicFormGroup.valueChanges.subscribe((value) => {
+    this.credentialsMqttBasicFormGroup.valueChanges.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe((value) => {
       this.updateView(value);
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   writeValue(mqttBasic: any): void {
