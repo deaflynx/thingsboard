@@ -8,7 +8,7 @@ import {
   NG_VALUE_ACCESSOR,
   Validators
 } from '@angular/forms';
-import { mqttQoSMap, mqttQoSTypes, TopicSubscription } from '@shared/models/mqtt.models';
+import { mqttQoSTypes, TopicSubscription } from '@shared/models/mqtt.models';
 import { PageComponent } from '@shared/components/page.component';
 import { Subscription } from 'rxjs';
 import { AppState } from '@core/core.state';
@@ -30,7 +30,6 @@ export class SubscriptionsComponent extends PageComponent implements ControlValu
 
   topicListFormGroup: FormGroup;
   mqttQoSTypes = mqttQoSTypes;
-  mqttQoSMap = mqttQoSMap;
 
   private propagateChange = null;
 

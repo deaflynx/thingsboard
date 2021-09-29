@@ -143,7 +143,6 @@ import { SnmpDeviceProfileTransportModule } from '@home/components/profile/devic
 import { DeviceCredentialsModule } from '@home/components/device/device-credentials.module';
 import { DeviceProfileCommonModule } from '@home/components/profile/device/common/device-profile-common.module';
 import { ConnectionComponent } from '@home/components/mqtt-connection/connection.component';
-import { SessionComponent } from '@home/components/mqtt-session/session.component';
 import { SubscriptionsComponent } from '@home/components/subscriptions/subscriptions.component';
 import { MqttCredentialsMqttBasicComponent } from '@home/components/mqtt-credentials-mqtt-basic/mqtt-credentials-mqtt-basic.component';
 import { MqttCredentialsMqttSslComponent } from '@home/components/mqtt-credentials-mqtt-ssl/mqtt-credentials-mqtt-ssl.component';
@@ -268,7 +267,6 @@ import { AuthorizationRulesMappingComponent } from '@home/components/mqtt-creden
       EmbedDashboardDialogComponent,
       DisplayWidgetTypesPanelComponent,
       ConnectionComponent,
-      SessionComponent,
       SubscriptionsComponent,
       MqttCredentialsMqttBasicComponent,
       MqttCredentialsMqttSslComponent,
@@ -385,7 +383,6 @@ import { AuthorizationRulesMappingComponent } from '@home/components/mqtt-creden
     EmbedDashboardDialogComponent,
     DisplayWidgetTypesPanelComponent,
     ConnectionComponent,
-    SessionComponent,
     SubscriptionsComponent,
     MqttCredentialsMqttBasicComponent,
     MqttCredentialsMqttSslComponent,

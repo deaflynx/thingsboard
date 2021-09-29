@@ -26,6 +26,11 @@ export enum ClientType {
   APPLICATION = 'APPLICATION'
 }
 
+export enum ClientCredentialsType {
+  MQTT_BASIC = 'MQTT_BASIC',
+  SSL = 'SSL'
+}
+
 export enum ConnectionState {
   CONNECTED = 'CONNECTED',
   DISCONNECTED = 'DISCONNECTED'
@@ -44,14 +49,6 @@ export enum MqttQoS {
   EXACTLY_ONCE = 'EXACTLY_ONCE'
 }
 
-export const mqttQoSMap = new Map<MqttQoS, number>(
-  [
-    [MqttQoS.AT_MOST_ONCE, 0],
-    [MqttQoS.AT_LEAST_ONCE, 1],
-    [MqttQoS.EXACTLY_ONCE, 2],
-  ]
-);
-
 export const mqttQoSTypes = [
   {
     value: MqttQoS.AT_MOST_ONCE,
@@ -65,11 +62,6 @@ export const mqttQoSTypes = [
     value: MqttQoS.EXACTLY_ONCE,
     name: 'mqtt-client-session.qos-exactly-once'
   }];
-
-export enum ClientCredentialsType {
-  MQTT_BASIC = 'MQTT_BASIC',
-  SSL = 'SSL'
-}
 
 export const clientTypeTranslationMap = new Map<ClientType, string>(
   [

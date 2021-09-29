@@ -14,14 +14,14 @@
 /// limitations under the License.
 ///
 
-import { ChangeDetectorRef, Component, Inject, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
 import {
   ClientSessionInfo,
   ClientType,
-  clientTypeTranslationMap, ConnectionState, connectionStateTranslationMap,
+  clientTypeTranslationMap, connectionStateTranslationMap,
 } from '@shared/models/mqtt.models';
 import { EntityComponent } from '@home/components/entity/entity.component';
 import { EntityTableConfig } from '@home/models/entity/entities-table-config.models';
@@ -36,10 +36,25 @@ import { TranslateService } from '@ngx-translate/core';
 export class MqttClientsComponent extends EntityComponent<ClientSessionInfo> {
 
   mqttClientTypes = Object.values(ClientType);
-  clientTypeTranslationMap = clientTypeTranslationMap;
 
   get connectionState() {
     return this.entityForm.get('connectionState').value;
+  }
+
+  get connectionStateTranslation() {
+    return connectionStateTranslationMap.get(this.entityForm.get('connectionState').value);
+  }
+
+  get clientTypeTranslation() {
+    return clientTypeTranslationMap.get(this.entityForm.get('clientType').value);
+  }
+
+  get connectedAt() {
+    return this.datePipe.transform(this.entityForm.get('connectedAt').value, 'yyyy-MM-dd HH:mm:ss') ;
+  }
+
+  get disconnectedAt() {
+    return this.datePipe.transform(this.entityForm.get('disconnectedAt').value, 'yyyy-MM-dd HH:mm:ss') ;
   }
 
   constructor(protected store: Store<AppState>,
@@ -61,40 +76,37 @@ export class MqttClientsComponent extends EntityComponent<ClientSessionInfo> {
   }
 
   buildForm(entity: ClientSessionInfo): FormGroup {
-    const form = this.fb.group(
-      {
+    return  this.fb.group({
         clientId: [entity ? entity.clientId : null],
         clientType: [entity ? entity.clientType : null],
         nodeId: [entity ? entity.nodeId : null],
         username: [entity ? entity.username : null],
         note: [entity ? entity.note : null],
         keepAliveSeconds: [entity ? entity.keepAliveSeconds : null],
-        connectedAt: [entity ? this.datePipe.transform(entity.connectedAt, 'yyyy-MM-dd HH:mm:ss') : null],
+        connectedAt: [entity ? entity.connectedAt : null],
         connectionState: [entity ? entity.connectionState : null],
         persistent: [entity ? entity.persistent : null],
-        disconnectedAt: [entity ? this.datePipe.transform(entity.disconnectedAt, 'yyyy-MM-dd HH:mm:ss') : null],
+        disconnectedAt: [entity ? entity.disconnectedAt : null],
         cleanSession: [entity ? !entity.persistent : null],
         subscriptionsCount: [entity ? entity.subscriptions.length : null],
         subscriptions: [entity ? entity.subscriptions : null]
-      }
-    );
-    return form;
+    });
   }
 
   updateForm(entity: ClientSessionInfo) {
-    this.entityForm.patchValue({ clientId: entity.clientId}, {emitEvent: false} );
-    this.entityForm.patchValue({ clientType: entity.clientType}, {emitEvent: false} );
-    this.entityForm.patchValue({ nodeId: entity.nodeId}, {emitEvent: false} );
-    this.entityForm.patchValue({ username: entity.username}, {emitEvent: false} );
-    this.entityForm.patchValue({ note: entity.note}, {emitEvent: false} );
-    this.entityForm.patchValue({ keepAliveSeconds: entity.keepAliveSeconds}, {emitEvent: false} );
-    this.entityForm.patchValue({ connectedAt: this.datePipe.transform(entity.connectedAt, 'yyyy-MM-dd HH:mm:ss')}, {emitEvent: false} );
-    this.entityForm.patchValue({ connectionState: this.translate.instant(connectionStateTranslationMap.get(entity.connectionState))}, {emitEvent: false} );
-    this.entityForm.patchValue({ persistent: entity.persistent}, {emitEvent: false} );
-    this.entityForm.patchValue({ disconnectedAt: this.datePipe.transform(entity.disconnectedAt, 'yyyy-MM-dd HH:mm:ss')}, {emitEvent: false} );
-    this.entityForm.patchValue({ cleanSession: entity.cleanSession}, {emitEvent: false} );
-    this.entityForm.patchValue({ subscriptionsCount: entity.subscriptionsCount}, {emitEvent: false} );
-    this.entityForm.patchValue({ subscriptions: entity.subscriptions}, {emitEvent: false} );
+    this.entityForm.patchValue({clientId: entity.clientId}, {emitEvent: false} );
+    this.entityForm.patchValue({clientType: entity.clientType}, {emitEvent: false} );
+    this.entityForm.patchValue({nodeId: entity.nodeId}, {emitEvent: false} );
+    this.entityForm.patchValue({username: entity.username}, {emitEvent: false} );
+    this.entityForm.patchValue({note: entity.note}, {emitEvent: false} );
+    this.entityForm.patchValue({keepAliveSeconds: entity.keepAliveSeconds}, {emitEvent: false} );
+    this.entityForm.patchValue({connectedAt: entity.connectedAt}, {emitEvent: false} );
+    this.entityForm.patchValue({connectionState: entity.connectionState}, {emitEvent: false} );
+    this.entityForm.patchValue({persistent: entity.persistent}, {emitEvent: false} );
+    this.entityForm.patchValue({disconnectedAt: entity.disconnectedAt}, {emitEvent: false} );
+    this.entityForm.patchValue({cleanSession: !entity.persistent}, {emitEvent: false} );
+    this.entityForm.patchValue({subscriptionsCount: entity.subscriptions.length}, {emitEvent: false} );
+    this.entityForm.patchValue({subscriptions: entity.subscriptions}, {emitEvent: false} );
   }
 
   isConnected(): boolean {
@@ -104,7 +116,7 @@ export class MqttClientsComponent extends EntityComponent<ClientSessionInfo> {
   updateFormState() {
     super.updateFormState();
     this.entityForm.get('clientId').disable({ emitEvent: false });
-    this.entityForm.get('clientType');
+    this.entityForm.get('clientType').disable({ emitEvent: false });
     this.entityForm.get('nodeId').disable({ emitEvent: false });
     this.entityForm.get('username').disable({ emitEvent: false });
     this.entityForm.get('note').disable({ emitEvent: false });
