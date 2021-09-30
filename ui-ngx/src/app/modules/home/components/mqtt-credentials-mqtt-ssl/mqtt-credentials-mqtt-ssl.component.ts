@@ -10,7 +10,7 @@ import {
 } from '@angular/forms';
 import { DeviceCredentialMQTTBasic } from '@shared/models/device.models';
 import { isDefinedAndNotNull, isEmptyStr } from '@core/utils';
-import { BasicMqttCredentials, CredentialsType, SslMqttCredentials } from '@shared/models/mqtt.models';
+import { BasicMqttCredentials, SslMqttCredentials } from '@shared/models/mqtt.models';
 
 @Component({
   selector: 'tb-mqtt-credentials-mqtt-ssl',

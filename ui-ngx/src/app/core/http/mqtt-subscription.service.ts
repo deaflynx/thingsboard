@@ -34,7 +34,6 @@ export class MqttSubscriptionService {
   }
 
   public updateClientSubscriptions(clientId: string, subscriptions: Array<TopicSubscription>, config?: RequestConfig): Observable<Array<TopicSubscription>> {
-    subscriptions.map(value => JSON.stringify(value)); //TODO deaflynx move transformation from service
     return this.http.post<Array<TopicSubscription>>(`/api/subscription/${clientId}`, subscriptions, defaultHttpOptionsFromConfig(config));
   }
 

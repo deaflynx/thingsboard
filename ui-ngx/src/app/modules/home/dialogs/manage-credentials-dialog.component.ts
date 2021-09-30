@@ -24,9 +24,9 @@ import { DialogComponent } from '@shared/components/dialog.component';
 import { Router } from '@angular/router';
 import {
   MqttClientCredentials,
-  CredentialsType,
+  ClientCredentialsType,
   ClientType,
-  mqttCredentialsTypeNames
+  clientCredentialsTypeTranslationMap
 } from '@shared/models/mqtt.models';
 import { TranslateService } from '@ngx-translate/core';
 import { MqttClientCredentialsService } from '@core/http/mqtt-client-credentials.service';
@@ -41,14 +41,13 @@ export interface ManageCredentialsDialogData {
   providers: [{provide: ErrorStateMatcher, useExisting: ManageCredentialsDialogComponent}],
   styleUrls: []
 })
-export class ManageCredentialsDialogComponent extends
-  DialogComponent<ManageCredentialsDialogComponent, boolean> implements OnInit, ErrorStateMatcher {
+export class ManageCredentialsDialogComponent extends DialogComponent<ManageCredentialsDialogComponent, boolean> implements OnInit, ErrorStateMatcher {
 
   mqttCredentialsFormGroup: FormGroup;
   mqttCredentialsTypes = Object.values(ClientType);
   mqttCredentials: MqttClientCredentials;
-  mqttCredentialsTypeTranslationMap = mqttCredentialsTypeNames;
-  mqttCredentialsType: CredentialsType;
+  mqttCredentialsTypeTranslationMap = clientCredentialsTypeTranslationMap;
+  mqttCredentialsType: ClientCredentialsType;
 
   submitted = false;
   loadingCredentials = true;

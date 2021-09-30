@@ -19,8 +19,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
 import {
-  CredentialsType,
-  mqttCredentialsTypeNames,
+  ClientCredentialsType,
+  clientCredentialsTypeTranslationMap,
   MqttClientCredentials
 } from '@shared/models/mqtt.models';
 import { EntityComponent } from '@home/components/entity/entity.component';
@@ -33,9 +33,9 @@ import { EntityTableConfig } from '@home/models/entity/entities-table-config.mod
 })
 export class MqttClientCredentialsComponent extends EntityComponent<MqttClientCredentials> {
 
-  credentialsType = CredentialsType;
-  credentialsTypes = Object.values(CredentialsType);
-  credentialsTypeTranslationMap = mqttCredentialsTypeNames;
+  credentialsType = ClientCredentialsType;
+  credentialsTypes = Object.values(ClientCredentialsType);
+  credentialsTypeTranslationMap = clientCredentialsTypeTranslationMap;
 
   constructor(protected store: Store<AppState>,
               @Inject('entity') protected entityValue: MqttClientCredentials,
