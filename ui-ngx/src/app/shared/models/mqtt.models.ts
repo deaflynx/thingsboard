@@ -26,10 +26,12 @@ export enum ClientType {
   APPLICATION = 'APPLICATION'
 }
 
-export enum ClientCredentialsType {
+export enum MqttCredentialsType {
   MQTT_BASIC = 'MQTT_BASIC',
   SSL = 'SSL'
 }
+
+export const MqttCredentialsTypes = [MqttCredentialsType.SSL, MqttCredentialsType.MQTT_BASIC];
 
 export enum ConnectionState {
   CONNECTED = 'CONNECTED',
@@ -70,10 +72,10 @@ export const clientTypeTranslationMap = new Map<ClientType, string>(
   ]
 );
 
-export const clientCredentialsTypeTranslationMap = new Map<ClientCredentialsType, string>(
+export const credentialsTypeNames = new Map<MqttCredentialsType, string>(
   [
-    [ClientCredentialsType.MQTT_BASIC, 'MQTT Basic'],
-    [ClientCredentialsType.SSL, 'SSL']
+    [MqttCredentialsType.MQTT_BASIC, 'MQTT Basic'],
+    [MqttCredentialsType.SSL, 'SSL']
   ]
 );
 
@@ -112,10 +114,10 @@ export interface SessionInfo {
   clientInfo: ClientInfo;
 }
 
-export interface MqttClientCredentials extends BaseData<ClientId> {
+export interface MqttCredentials extends BaseData<ClientId> {
   name: string;
   credentialsId: string;
-  credentialsType: ClientCredentialsType;
+  credentialsType: MqttCredentialsType;
   credentialsValue: string;
 }
 

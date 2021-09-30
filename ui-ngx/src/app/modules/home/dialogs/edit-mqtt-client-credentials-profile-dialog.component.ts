@@ -23,16 +23,16 @@ import { FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm, Valida
 import { DialogComponent } from '@shared/components/dialog.component';
 import { Router } from '@angular/router';
 import {
-  MqttClientCredentials,
-  ClientCredentialsType,
+  MqttCredentials,
+  MqttCredentialsType,
   ClientType,
-  clientCredentialsTypeTranslationMap
+  credentialsTypeNames
 } from '@shared/models/mqtt.models';
 import { TranslateService } from '@ngx-translate/core';
 import { MqttClientCredentialsService } from '@core/http/mqtt-client-credentials.service';
 
 export interface EditMqttClientCredentialsDialogData {
-  mqttClientCredentials: MqttClientCredentials
+  mqttClientCredentials: MqttCredentials
 }
 
 @Component({
@@ -50,9 +50,9 @@ export class EditMqttClientCredentialsProfileDialogComponent extends
 
   editMqttClientCredentialsProfileFormGroup: FormGroup;
 
-  mqttClientCredentials: MqttClientCredentials;
+  mqttClientCredentials: MqttCredentials;
   mqttClientCredentialsTypes = Object.values(ClientType);
-  mqttClientCredentialsTypeTranslationMap = clientCredentialsTypeTranslationMap;
+  mqttClientCredentialsTypeTranslationMap = credentialsTypeNames;
 
   constructor(protected store: Store<AppState>,
               protected router: Router,
@@ -86,7 +86,7 @@ export class EditMqttClientCredentialsProfileDialogComponent extends
 
   save(): void {
     this.submitted = true;
-    const clientCredentialsType: ClientCredentialsType = this.editMqttClientCredentialsProfileFormGroup.get('credentialsType').value;
+    const clientCredentialsType: MqttCredentialsType = this.editMqttClientCredentialsProfileFormGroup.get('credentialsType').value;
     this.mqttClientCredentialsService.saveMqttClientCredentials({...this.data.mqttClientCredentials, credentialsType: clientCredentialsType })
       .subscribe(
         () => {

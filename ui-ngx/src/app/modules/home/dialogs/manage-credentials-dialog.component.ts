@@ -23,16 +23,16 @@ import { FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm, Valida
 import { DialogComponent } from '@shared/components/dialog.component';
 import { Router } from '@angular/router';
 import {
-  MqttClientCredentials,
-  ClientCredentialsType,
+  MqttCredentials,
+  MqttCredentialsType,
   ClientType,
-  clientCredentialsTypeTranslationMap
+  credentialsTypeNames
 } from '@shared/models/mqtt.models';
 import { TranslateService } from '@ngx-translate/core';
 import { MqttClientCredentialsService } from '@core/http/mqtt-client-credentials.service';
 
 export interface ManageCredentialsDialogData {
-  mqttClientCredentials: MqttClientCredentials;
+  mqttClientCredentials: MqttCredentials;
 }
 
 @Component({
@@ -45,9 +45,11 @@ export class ManageCredentialsDialogComponent extends DialogComponent<ManageCred
 
   mqttCredentialsFormGroup: FormGroup;
   mqttCredentialsTypes = Object.values(ClientType);
-  mqttCredentials: MqttClientCredentials;
-  mqttCredentialsTypeTranslationMap = clientCredentialsTypeTranslationMap;
-  mqttCredentialsType: ClientCredentialsType;
+  mqttCredentials: MqttCredentials;
+  mqttCredentialsTypeTranslationMap = credentialsTypeNames;
+  mqttCredentialsType: MqttCredentialsType;
+
+  mqttClientCredentials = this.data.mqttClientCredentials;
 
   submitted = false;
   loadingCredentials = true;

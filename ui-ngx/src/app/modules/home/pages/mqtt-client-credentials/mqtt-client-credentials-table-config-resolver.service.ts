@@ -33,8 +33,8 @@ import { DialogService } from '@core/services/dialog.service';
 import { ImportExportService } from '@home/components/import-export/import-export.service';
 import { Direction } from '@shared/models/page/sort-order';
 import {
-  MqttClientCredentials,
-  clientCredentialsTypeTranslationMap,
+  MqttCredentials,
+  credentialsTypeNames,
 } from '@shared/models/mqtt.models';
 import { MqttClientCredentialsService } from '@core/http/mqtt-client-credentials.service';
 import { MqttClientCredentialsComponent } from '@home/pages/mqtt-client-credentials/mqtt-client-credentials.component';
@@ -45,9 +45,9 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 
 @Injectable()
-export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityTableConfig<MqttClientCredentials>> {
+export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityTableConfig<MqttCredentials>> {
 
-  private readonly config: EntityTableConfig<MqttClientCredentials> = new EntityTableConfig<MqttClientCredentials>();
+  private readonly config: EntityTableConfig<MqttCredentials> = new EntityTableConfig<MqttCredentials>();
 
   constructor(private store: Store<AppState>,
               private dialogService: DialogService,
@@ -70,10 +70,10 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
     this.config.entityTitle = (mqttClient) => mqttClient ? mqttClient.credentialsId : '';
 
     this.config.columns.push(
-      new DateEntityTableColumn<MqttClientCredentials>('createdTime', 'common.created-time', this.datePipe, '150px'),
-      new EntityTableColumn<MqttClientCredentials>('name', 'mqtt-client-credentials.name', '50%'),
-      new EntityTableColumn<MqttClientCredentials>('credentialsType', 'mqtt-client-credentials.type', '50%',
-        (entity) => clientCredentialsTypeTranslationMap.get(entity.credentialsType))
+      new DateEntityTableColumn<MqttCredentials>('createdTime', 'common.created-time', this.datePipe, '150px'),
+      new EntityTableColumn<MqttCredentials>('name', 'mqtt-client-credentials.name', '50%'),
+      new EntityTableColumn<MqttCredentials>('credentialsType', 'mqtt-client-credentials.type', '50%',
+        (entity) => credentialsTypeNames.get(entity.credentialsType))
     );
 
     this.config.addActionDescriptors.push(
@@ -108,7 +108,7 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
     this.config.onEntityAction = action => this.onMqttClientAction(action);
   }
 
-  resolve(): EntityTableConfig<MqttClientCredentials> {
+  resolve(): EntityTableConfig<MqttCredentials> {
     const authUser = getCurrentAuthUser(this.store);
     // this.config.deleteEnabled = (mqttClient) => this.isMqttClientEditable(mqttClient, authUser.authority);
     // this.config.entitySelectionEnabled = (mqttClient) => this.isMqttClientEditable(mqttClient, authUser.authority);
@@ -129,16 +129,16 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
   //   return authority === Authority.SYS_ADMIN;
   // }
 
-  onMqttClientAction(action: EntityAction<MqttClientCredentials>): boolean {
+  onMqttClientAction(action: EntityAction<MqttCredentials>): boolean {
     return false;
   }
 
-  manageCredentials($event: Event, mqttClientCredentials: MqttClientCredentials) {
+  manageCredentials($event: Event, mqttClientCredentials: MqttCredentials) {
     if ($event) {
       $event.stopPropagation();
     }
     this.dialog.open<ManageCredentialsDialogComponent, ManageCredentialsDialogData,
-      MqttClientCredentials>(ManageCredentialsDialogComponent, {
+      MqttCredentials>(ManageCredentialsDialogComponent, {
       disableClose: true,
       panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
       data: {
@@ -152,7 +152,7 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
       });
   }
 
-  onMqttClientCredentialsAction(action: EntityAction<MqttClientCredentials>): boolean {
+  onMqttClientCredentialsAction(action: EntityAction<MqttCredentials>): boolean {
     switch (action.action) {
       case 'open':
         // this.openEditClientCredentialsProfile(action.event, action.entity);

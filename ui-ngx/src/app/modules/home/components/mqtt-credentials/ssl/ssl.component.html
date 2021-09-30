@@ -1,0 +1,16 @@
+<section [formGroup]="credentialsMqttFormGroup">
+  <mat-form-field class="mat-block">
+    <mat-label translate>mqtt-client-credentials.parent-cert-common-name</mat-label>
+    <input matInput formControlName="parentCertCommonName">
+    <mat-error *ngIf="credentialsMqttFormGroup.get('parentCertCommonName').hasError('required')">
+      {{ 'mqtt-client-credentials.parent-cert-common-name-required' | translate }}
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field class="mat-block">
+    <mat-label translate>mqtt-client-credentials.authorizationRulesMapping</mat-label>
+    <input matInput formControlName="authorizationRulesMapping">
+    <mat-error *ngIf="credentialsMqttFormGroup.get('authorizationRulesMapping').hasError('required')">
+      {{ 'mqtt-client-credentials.authorizationRulesMapping-required' | translate }}
+    </mat-error>
+  </mat-form-field>
+</section>
