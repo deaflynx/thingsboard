@@ -7,7 +7,7 @@
     </mat-error>
   </mat-form-field>
   <mat-form-field class="mat-block">
-    <mat-label translate>mqtt-client-credentials.user-name</mat-label>
+    <mat-label translate>mqtt-client-credentials.username</mat-label>
     <input matInput formControlName="userName" [required]="!!credentialsMqttFormGroup.get('password').value">
     <mat-error *ngIf="credentialsMqttFormGroup.get('userName').hasError('required')">
       {{ 'mqtt-client-credentials.user-name-required' | translate }}

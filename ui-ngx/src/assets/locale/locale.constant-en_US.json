@@ -3219,7 +3219,6 @@
       "open-mqtt-client": "Open MQTT client",
       "search": "Search MQTT clients",
       "selected-clients": "{ count, plural, 1 {1 MQTT client} other {# MQTT clients} } selected",
-      "username": "Username",
       "add-subscription-to-client": "Add Subscription to Client",
       "subscriptions": "Subscriptions",
       "subscriptions-count": "Subscriptions Count",
@@ -3248,8 +3247,10 @@
       "type": "Credentials type",
       "topic-rule": "Topic rule",
       "remove-rule": "Remove rule",
+      "password": "Password",
       "parent-certificate-common-name": "Parent certificate common name",
-      "parent-certificate-common-name-required": "Parent certificate common name required"
+      "parent-certificate-common-name-required": "Parent certificate common name required",
+      "username": "Username"
     },
     "mqtt-client-session": {
       "active": "Active",
