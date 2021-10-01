@@ -76,13 +76,7 @@ export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig
     );
 
     this.config.loadEntity = id => this.loadEntity(id);
-    this.config.saveEntity = session =>
-      this.mqttSubscriptionService.updateClientSubscriptions(session.clientId, session.subscriptions).pipe(
-        map(subscriptions => {
-          session.subscriptions = subscriptions;
-          return session;
-        })
-      );
+    this.config.saveEntity = session => this.mqttSubscriptionService.updateClientSubscriptions(session);
     this.config.onEntityAction = action => this.onClientSessionAction(action);
   }
 

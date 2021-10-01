@@ -21,7 +21,7 @@ import { AppState } from '@core/core.state';
 import {
   ClientSessionInfo,
   ClientType,
-  clientTypeTranslationMap, connectionStateTranslationMap,
+  clientTypeTranslationMap, ConnectionState, connectionStateTranslationMap,
 } from '@shared/models/mqtt.models';
 import { EntityComponent } from '@home/components/entity/entity.component';
 import { EntityTableConfig } from '@home/models/entity/entities-table-config.models';
@@ -110,7 +110,7 @@ export class MqttClientsComponent extends EntityComponent<ClientSessionInfo> {
   }
 
   isConnected(): boolean {
-    return this.entityForm.get('connectionState').value === "Connected";
+    return this.entityForm.get('connectionState').value === ConnectionState.CONNECTED;
   }
 
   updateFormState() {
