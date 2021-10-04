@@ -79,22 +79,17 @@ export class MenuService {
         name: 'mqtt-client-credentials.client-credentials',
         type: 'link',
         path: '/clientCredentials',
-        icon: 'lock'
+        icon: 'mdi:shield-lock',
+        isMdiIcon: true
       },
       {
         id: guid(),
         name: 'mqtt-client-session.sessions',
         type: 'link',
         path: '/sessions',
-        icon: 'supervisor_account'
+        icon: 'mdi:account-supervisor',
+        isMdiIcon: true
       }
-/*      {
-        id: guid(),
-        name: 'mqtt-client.clients',
-        type: 'link',
-        path: '/clientInfo',
-        icon: 'supervisor_account'
-      }*/
     );
 /*    sections.push(
       {
