@@ -14,8 +14,8 @@
 /// limitations under the License.
 ///
 
-import { ChangeDetectorRef, Component, Inject } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { AfterViewInit, ChangeDetectorRef, Component, Inject, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
 import {
@@ -27,6 +27,7 @@ import { EntityComponent } from '@home/components/entity/entity.component';
 import { EntityTableConfig } from '@home/models/entity/entities-table-config.models';
 import { DatePipe } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
+import { BaseData, HasId } from '@shared/models/base-data';
 
 @Component({
   selector: 'tb-mqtt-clients',
@@ -35,27 +36,11 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class MqttClientsComponent extends EntityComponent<ClientSessionInfo> {
 
+  @Input() entityForm: FormGroup;
+
   mqttClientTypes = Object.values(ClientType);
-
-  get connectionState() {
-    return this.entityForm.get('connectionState').value;
-  }
-
-  get connectionStateTranslation() {
-    return connectionStateTranslationMap.get(this.entityForm.get('connectionState').value);
-  }
-
-  get clientTypeTranslation() {
-    return clientTypeTranslationMap.get(this.entityForm.get('clientType').value);
-  }
-
-  get connectedAt() {
-    return this.datePipe.transform(this.entityForm.get('connectedAt').value, 'yyyy-MM-dd HH:mm:ss') ;
-  }
-
-  get disconnectedAt() {
-    return this.datePipe.transform(this.entityForm.get('disconnectedAt').value, 'yyyy-MM-dd HH:mm:ss') ;
-  }
+  connectionStateTranslationMap = connectionStateTranslationMap;
+  clientTypeTranslationMap = clientTypeTranslationMap;
 
   constructor(protected store: Store<AppState>,
               @Inject('entity') protected entityValue: ClientSessionInfo,
@@ -111,22 +96,6 @@ export class MqttClientsComponent extends EntityComponent<ClientSessionInfo> {
 
   isConnected(): boolean {
     return this.entityForm.get('connectionState').value === ConnectionState.CONNECTED;
-  }
-
-  updateFormState() {
-    super.updateFormState();
-    this.entityForm.get('clientId').disable({ emitEvent: false });
-    this.entityForm.get('clientType').disable({ emitEvent: false });
-    this.entityForm.get('nodeId').disable({ emitEvent: false });
-    this.entityForm.get('username').disable({ emitEvent: false });
-    this.entityForm.get('note').disable({ emitEvent: false });
-    this.entityForm.get('keepAliveSeconds').disable({ emitEvent: false });
-    this.entityForm.get('connectedAt').disable({ emitEvent: false });
-    this.entityForm.get('connectionState').disable({ emitEvent: false });
-    this.entityForm.get('persistent').disable({ emitEvent: false });
-    this.entityForm.get('disconnectedAt').disable({ emitEvent: false });
-    this.entityForm.get('cleanSession').disable({ emitEvent: false });
-    this.entityForm.get('subscriptionsCount').disable({ emitEvent: false });
   }
 
 }

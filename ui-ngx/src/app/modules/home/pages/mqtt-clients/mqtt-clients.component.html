@@ -16,17 +16,20 @@
 
 -->
 <div class="tb-details-buttons" fxLayout.xs="column">
-  <button mat-raised-button color="warn"
+  <button mat-raised-button
+          ngxClipboard
           [disabled]="(isLoading$ | async)"
           (click)="onEntityAction($event, 'remove')"
           [fxShow]="!isEdit">
-    {{'mqtt-client-session.remove-session' | translate }}
+    <mat-icon svgIcon="mdi:trash-can-outline"></mat-icon>
+    <span translate>mqtt-client-session.remove-session</span>
   </button>
-  <button mat-raised-button color="primary"
-          [disabled]="(isLoading$ | async)"
-          (click)="onEntityAction($event, 'disconnect')"
-          [fxShow]="!isEdit && isConnected()">
-    {{'mqtt-client-session.disconnect-client' | translate }}
+  <button mat-raised-button
+                   [disabled]="(isLoading$ | async)"
+                   (click)="onEntityAction($event, 'disconnect')"
+                   [fxShow]="!isEdit && isConnected()">
+    <mat-icon svgIcon="mdi:link-off"></mat-icon>
+    <span translate>mqtt-client-session.disconnect-client</span>
   </button>
   <button mat-raised-button
           ngxClipboard
@@ -43,49 +46,49 @@
       <div fxFlex="50" style="margin-right: 10px">
         <mat-form-field class="mat-block">
           <mat-label translate>mqtt-client.node</mat-label>
-          <input matInput formControlName="nodeId">
+          <input matInput formControlName="nodeId" readonly>
         </mat-form-field>
         <mat-form-field class="mat-block">
           <mat-label translate>mqtt-client.client-id</mat-label>
-          <input matInput formControlName="clientId">
+          <input matInput formControlName="clientId" readonly>
         </mat-form-field>
         <mat-form-field class="mat-block">
           <mat-label translate>mqtt-client.username</mat-label>
-          <input matInput formControlName="username">
+          <input matInput formControlName="username" readonly>
         </mat-form-field>
         <mat-form-field class="mat-block">
           <mat-label translate>mqtt-client.note</mat-label>
-          <input matInput formControlName="note">
+          <input matInput formControlName="note" readonly>
         </mat-form-field>
         <mat-form-field class="mat-block">
           <mat-label translate>mqtt-client.keep-alive</mat-label>
-          <input matInput formControlName="keepAliveSeconds">
+          <input matInput formControlName="keepAliveSeconds" readonly>
         </mat-form-field>
         <mat-form-field class="mat-block">
           <mat-label translate>mqtt-client.connected-at</mat-label>
-          <input matInput formControlName="connectedAt" [value]="connectedAt">
+          <input matInput formControlName="connectedAt" readonly>
         </mat-form-field>
         <mat-form-field class="mat-block">
           <mat-label translate>mqtt-client.connected-status</mat-label>
-          <input matInput formControlName="connectionState" [value]="connectionStateTranslation | translate">
+          <input matInput formControlName="connectionState" readonly>
         </mat-form-field>
         <mat-form-field class="mat-block">
           <mat-label translate>mqtt-client.disconnected-at</mat-label>
-          <input matInput formControlName="disconnectedAt" [value]="disconnectedAt">
+          <input matInput formControlName="disconnectedAt" readonly>
         </mat-form-field>
         <mat-form-field class="mat-block">
           <mat-label translate>mqtt-client.client-type</mat-label>
-          <input matInput formControlName="clientType" [value]="clientTypeTranslation | translate">
+          <input matInput formControlName="clientType" readonly>
         </mat-form-field>
       </div>
       <div fxFlex="50" style="margin-right: 10px">
         <mat-form-field class="mat-block">
           <mat-label translate>mqtt-client.clean-session</mat-label>
-          <input matInput formControlName="cleanSession">
+          <input matInput formControlName="cleanSession" readonly>
         </mat-form-field>
         <mat-form-field class="mat-block">
           <mat-label translate>mqtt-client.subscriptions-count</mat-label>
-          <input matInput formControlName="subscriptionsCount">
+          <input matInput formControlName="subscriptionsCount" readonly>
         </mat-form-field>
       </div>
     </div>
