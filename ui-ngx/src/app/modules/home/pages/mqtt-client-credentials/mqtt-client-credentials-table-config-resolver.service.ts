@@ -43,6 +43,7 @@ import {
   ManageCredentialsDialogComponent
 } from '@home/dialogs/manage-credentials-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { AccountBalance } from '@material-ui/icons';
 
 @Injectable()
 export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityTableConfig<MqttCredentials>> {
@@ -88,7 +89,7 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
     this.config.cellActionDescriptors.push(
       {
         name: this.translate.instant('mqtt-client-credentials.manage-credentials'),
-        icon: 'devices',
+        mdiIcon: 'mdi:badge-account-horizontal-outline',
         isEnabled: () => true,
         onAction: ($event, entity) => this.manageCredentials($event, entity)
       }

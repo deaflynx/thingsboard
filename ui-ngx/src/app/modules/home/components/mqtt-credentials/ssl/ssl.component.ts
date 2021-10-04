@@ -5,7 +5,7 @@ import {
   FormGroup,
   NG_VALIDATORS,
   NG_VALUE_ACCESSOR, ValidationErrors,
-  Validator, ValidatorFn, Validators
+  Validator
 } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';

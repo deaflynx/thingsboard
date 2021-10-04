@@ -1,53 +1,45 @@
-import { Component, forwardRef, Injector, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, forwardRef, Input, OnDestroy } from '@angular/core';
 import {
   AbstractControl,
-  ControlValueAccessor,
-  FormArray,
+  ControlValueAccessor, FormArray,
   FormBuilder,
-  FormControl,
   FormGroup,
-  NG_VALUE_ACCESSOR,
-  Validators
+  NG_VALIDATORS,
+  NG_VALUE_ACCESSOR, ValidationErrors,
+  Validator, Validators
 } from '@angular/forms';
-import { Store } from '@ngrx/store';
-import { AppState } from '@core/core.state';
-import { SslMqttCredentials } from '@shared/models/mqtt.models';
-import { Subscription } from 'rxjs';
-
-export interface AuthorizationRulesMap {
-  certificateMtcherRegex: string;
-  topicRule: string;
-}
+import { Subject, Subscription } from 'rxjs';
+import { AuthorizationRulesMap } from '@home/components/mqtt-credentials-mqtt-ssl/authorization-rules-mapping/authorization-rules-mapping.component';
 
 @Component({
-  selector: 'tb-authorization-rules-mapping',
-  templateUrl: './authorization-rules-mapping.component.html',
-  styleUrls: ['./authorization-rules-mapping.component.scss'],
+  selector: 'tb-auth-rules',
+  templateUrl: './auth-rules.component.html',
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => AuthorizationRulesMappingComponent),
+      useExisting: forwardRef(() => AuthRulesComponent),
       multi: true
-    }
-  ]
+    },
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => AuthRulesComponent),
+      multi: true,
+    }],
+  styleUrls: []
 })
-export class AuthorizationRulesMappingComponent implements ControlValueAccessor, OnInit {
+export class AuthRulesComponent implements ControlValueAccessor, Validator, OnDestroy {
 
-  @Input() disabled: boolean;
+  @Input()
+  disabled: boolean;
 
   rulesMappingFormGroup: FormGroup;
-
   rulesMappings: FormArray;
 
-  private propagateChange = null;
   private valueChangeSubscription: Subscription = null;
+  private destroy$ = new Subject();
+  private propagateChange = (v: any) => {};
 
-  constructor(protected store: Store<AppState>,
-              private injector: Injector,
-              private fb: FormBuilder) {
-  }
-
-  ngOnInit(): void {
+  constructor(public fb: FormBuilder) {
     this.rulesMappingFormGroup = this.fb.group({});
     this.rulesMappingFormGroup.addControl('authorizationRulesMapping',
       this.fb.array([]));
@@ -72,11 +64,30 @@ export class AuthorizationRulesMappingComponent implements ControlValueAccessor,
     (this.rulesMappingFormGroup.get('authorizationRulesMapping') as FormArray).removeAt(index);
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   registerOnChange(fn: any): void {
     this.propagateChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn: any): void {}
+
+  setDisabledState(isDisabled: boolean) {
+    this.disabled = isDisabled;
+    if (this.disabled) {
+      this.rulesMappingFormGroup.disable({emitEvent: false});
+    } else {
+      this.rulesMappingFormGroup.enable({emitEvent: false});
+    }
+  }
+
+  validate(): ValidationErrors | null {
+    return this.rulesMappingFormGroup.valid ? null : {
+      deviceCredentialsMqttBasic: false
+    };
   }
 
   writeValue(authorizationRulesMapping: any): void {
@@ -102,7 +113,7 @@ export class AuthorizationRulesMappingComponent implements ControlValueAccessor,
     });
   }
 
-  updateView(value: SslMqttCredentials) {
+  updateView(value: any) {
     this.rulesMappingFormGroup.patchValue(value, { emitEvent: false });
     this.propagateChange(this.prepareValues(value.authorizationRulesMapping));
   }
@@ -113,7 +124,8 @@ export class AuthorizationRulesMappingComponent implements ControlValueAccessor,
       const key = obj.certificateMtcherRegex;
       newObj[key] = obj.topicRule;
     });
-    console.warn("prepareValues", newObj);
     return newObj;
   }
+
 }
+

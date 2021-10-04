@@ -3227,7 +3227,8 @@
       "topic": "Topic",
       "remove-session": "Remove session",
       "disconnect-client": "Disconnect client",
-      "qos": "QoS"
+      "qos": "QoS",
+      "username": "Username"
     },
     "mqtt-client-credentials": {
       "add": "Add client credentials profile",
@@ -3268,6 +3269,7 @@
       "clean-session": "Clean Session",
       "connect-client": "Connect client",
       "disconnected": "Disconnected",
+      "disconnected-notification": "Client will be disconnected",
       "disconnect-client": "Disconnect client",
       "disconnect-session-title": "Are you sure you want to disconnect session for client with ID {{clientId}}?",
       "disconnect-session-text": "Be careful, after the confirmation client session will be disconnected.",
