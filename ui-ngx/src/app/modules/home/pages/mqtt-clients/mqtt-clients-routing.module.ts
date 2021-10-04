@@ -28,7 +28,7 @@ const routes: Routes = [
       title: 'mqtt-client-session.sessions',
       breadcrumb: {
         label: 'mqtt-client-session.sessions',
-        icon: 'supervisor_account'
+        icon: 'mdi:account-supervisor',
       }
     },
     children: [

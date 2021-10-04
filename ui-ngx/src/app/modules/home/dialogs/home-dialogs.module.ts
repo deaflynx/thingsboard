@@ -27,6 +27,7 @@ import { ManageCredentialsDialogComponent } from '@home/dialogs/manage-credentia
 import { MqttCredentialsComponent } from '@home/components/mqtt-credentials/mqtt-credentials.component';
 import { MqttCredentialsBasicComponent } from '@home/components/mqtt-credentials/basic/basic.component';
 import { MqttCredentialsSslComponent } from '@home/components/mqtt-credentials/ssl/ssl.component';
+import { AuthRulesComponent } from '@home/components/mqtt-credentials/ssl/auth-rules.component';
 
 @NgModule({
   declarations:
@@ -39,7 +40,8 @@ import { MqttCredentialsSslComponent } from '@home/components/mqtt-credentials/s
     ManageCredentialsDialogComponent,
     MqttCredentialsComponent,
     MqttCredentialsBasicComponent,
-    MqttCredentialsSslComponent
+    MqttCredentialsSslComponent,
+    AuthRulesComponent
   ],
   imports: [
     CommonModule,
@@ -54,7 +56,8 @@ import { MqttCredentialsSslComponent } from '@home/components/mqtt-credentials/s
     ManageCredentialsDialogComponent,
     MqttCredentialsComponent,
     MqttCredentialsBasicComponent,
-    MqttCredentialsSslComponent
+    MqttCredentialsSslComponent,
+    AuthRulesComponent
   ],
   providers: [
     HomeDialogsService
