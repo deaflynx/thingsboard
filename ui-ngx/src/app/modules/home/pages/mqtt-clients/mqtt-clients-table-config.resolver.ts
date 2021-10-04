@@ -35,7 +35,6 @@ import { MqttClientSessionService } from '@core/http/mqtt-client-session.service
 import { EntityAction } from '@home/models/entity/entity-component.models';
 import { MqttSubscriptionService } from '@core/http/mqtt-subscription.service';
 import { ActionNotificationShow } from '@core/notification/notification.actions';
-import { map } from 'rxjs/operators';
 
 @Injectable()
 export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig<ClientSessionInfo>> {
@@ -137,11 +136,8 @@ export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig
         this.store.dispatch(
           new ActionNotificationShow(
             {
-              message: this.translate.instant('mqtt-client-session.client-disconnected'),
-              type: 'success',
-              duration: 750,
-              verticalPosition: 'bottom',
-              horizontalPosition: 'right'
+              message: this.translate.instant('mqtt-client-session.disconnected-notification'),
+              type: 'success'
             }
           )
         );
@@ -149,11 +145,7 @@ export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig
     );
   }
 
-  refreshPage($event, clientSession) {
-    if ($event) {
-      $event.stopPropagation();
-    }
+  refreshPage($event, entity) {
+    this.config.table.updateData(true);
   }
-
-
 }
