@@ -35,6 +35,7 @@ import { MqttClientSessionService } from '@core/http/mqtt-client-session.service
 import { EntityAction } from '@home/models/entity/entity-component.models';
 import { MqttSubscriptionService } from '@core/http/mqtt-subscription.service';
 import { ActionNotificationShow } from '@core/notification/notification.actions';
+import { of } from 'rxjs';
 
 @Injectable()
 export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig<ClientSessionInfo>> {
@@ -75,8 +76,13 @@ export class MqttClientsTableConfigResolver implements Resolve<EntityTableConfig
     );
 
     this.config.loadEntity = id => this.loadEntity(id);
-    this.config.saveEntity = session => this.mqttSubscriptionService.updateClientSubscriptions(session);
+    this.config.saveEntity = session => this.saveEntity(session);
     this.config.onEntityAction = action => this.onClientSessionAction(action);
+  }
+
+  private saveEntity(session: ClientSessionInfo) {
+    this.mqttSubscriptionService.updateClientSubscriptions(session).subscribe();
+    return of(session);
   }
 
   resolve(): EntityTableConfig<ClientSessionInfo> {

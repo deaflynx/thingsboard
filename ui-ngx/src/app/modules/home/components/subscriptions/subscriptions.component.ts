@@ -5,7 +5,7 @@ import {
   FormArray,
   FormBuilder,
   FormGroup,
-  NG_VALUE_ACCESSOR,
+  NG_VALUE_ACCESSOR, ValidationErrors,
   Validators
 } from '@angular/forms';
 import { mqttQoSTypes, TopicSubscription } from '@shared/models/mqtt.models';
@@ -105,6 +105,12 @@ export class SubscriptionsComponent extends PageComponent implements ControlValu
 
   private updateModel() {
     this.propagateChange(this.topicListFormGroup.get('subscriptions').value);
+  }
+
+  validate(control: AbstractControl): ValidationErrors | null {
+    return control.valid ? null : {
+      topicList: {valid: false}
+    };
   }
 
 }
