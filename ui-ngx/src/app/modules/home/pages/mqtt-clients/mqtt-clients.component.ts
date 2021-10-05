@@ -21,7 +21,7 @@ import { AppState } from '@core/core.state';
 import {
   ClientSessionInfo,
   ClientType,
-  clientTypeTranslationMap, ConnectionState, connectionStateTranslationMap,
+  clientTypeTranslationMap, ConnectionState, connectionStateColor, connectionStateTranslationMap,
 } from '@shared/models/mqtt.models';
 import { EntityComponent } from '@home/components/entity/entity.component';
 import { EntityTableConfig } from '@home/models/entity/entities-table-config.models';
@@ -94,8 +94,28 @@ export class MqttClientsComponent extends EntityComponent<ClientSessionInfo> {
     this.entityForm.patchValue({subscriptions: entity.subscriptions}, {emitEvent: false} );
   }
 
+  updateFormState() {
+    super.updateFormState();
+    this.entityForm.get('clientId').disable({emitEvent: false});
+    this.entityForm.get('clientType').disable({emitEvent: false});
+    this.entityForm.get('nodeId').disable({emitEvent: false});
+    this.entityForm.get('username').disable({emitEvent: false});
+    this.entityForm.get('note').disable({emitEvent: false});
+    this.entityForm.get('keepAliveSeconds').disable({emitEvent: false});
+    this.entityForm.get('connectedAt').disable({emitEvent: false});
+    this.entityForm.get('connectionState').disable({emitEvent: false});
+    this.entityForm.get('persistent').disable({emitEvent: false});
+    this.entityForm.get('disconnectedAt').disable({emitEvent: false});
+    this.entityForm.get('cleanSession').disable({emitEvent: false});
+    this.entityForm.get('subscriptionsCount').disable({emitEvent: false});
+  }
+
   isConnected(): boolean {
     return this.entityForm.get('connectionState').value === ConnectionState.CONNECTED;
+  }
+
+  getColor(): {color: string} {
+    return {color: connectionStateColor.get(this.entityForm.get('connectionState').value)};
   }
 
 }
