@@ -1,4 +1,4 @@
-import { Component, forwardRef, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, forwardRef, Input, OnDestroy } from '@angular/core';
 import {
   ControlValueAccessor,
   FormBuilder,
@@ -12,7 +12,6 @@ import {
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { isDefinedAndNotNull, isEmptyStr } from '@core/utils';
-import { DeviceCredentialMQTTBasic } from '@shared/models/device.models';
 
 @Component({
   selector: 'tb-mqtt-credentials-basic',
@@ -107,7 +106,6 @@ export class MqttCredentialsBasicComponent implements ControlValueAccessor, Vali
         controls = Object.keys(group.controls);
       }
       const hasAtLeastOne = group?.controls && controls.some(k => !validator(group.controls[k]));
-
       return hasAtLeastOne ? null : {atLeastOne: true};
     };
   }

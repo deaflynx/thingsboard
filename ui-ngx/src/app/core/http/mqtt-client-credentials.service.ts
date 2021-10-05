@@ -21,6 +21,7 @@ import { HttpClient } from '@angular/common/http';
 import { PageLink } from '@shared/models/page/page-link';
 import { PageData } from '@shared/models/page/page-data';
 import { MqttCredentials, MqttCredentialsType } from '@shared/models/mqtt.models';
+import { string } from 'prop-types';
 
 @Injectable({
   providedIn: 'root'
@@ -32,9 +33,9 @@ export class MqttClientCredentialsService {
   ) { }
 
   public saveMqttClientCredentials(mqttClientCredentials: MqttCredentials, config?: RequestConfig): Observable<MqttCredentials> {
-    const credentialsValue = mqttClientCredentials.credentialsType === MqttCredentialsType.SSL
-      ? JSON.stringify(mqttClientCredentials.credentialsValue)
-      : mqttClientCredentials.credentialsValue;
+    const credentialsValue = typeof mqttClientCredentials.credentialsValue === 'string'
+      ? mqttClientCredentials.credentialsValue
+      : JSON.stringify(mqttClientCredentials.credentialsValue);
     return this.http.post<MqttCredentials>('/api/mqtt/client/credentials', {...mqttClientCredentials, ...{credentialsValue}}, defaultHttpOptionsFromConfig(config));
   }
 
