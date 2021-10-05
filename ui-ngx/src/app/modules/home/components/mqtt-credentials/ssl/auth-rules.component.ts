@@ -55,7 +55,7 @@ export class AuthRulesComponent implements ControlValueAccessor, Validator, OnDe
   addRule(): void {
     this.rulesMappings = this.rulesMappingFormGroup.get('authorizationRulesMapping') as FormArray;
     this.rulesMappings.push(this.fb.group({
-      certificateMtcherRegex: ['', [Validators.required]],
+      certificateMatcherRegex: ['', [Validators.required]],
       topicRule: ['', [Validators.required]]
     }));
   }
@@ -98,7 +98,7 @@ export class AuthRulesComponent implements ControlValueAccessor, Validator, OnDe
     if (authorizationRulesMapping) {
       for (const rule of Object.keys(authorizationRulesMapping)) {
         const rulesControl = this.fb.group({
-          certificateMtcherRegex: [rule, [Validators.required]],
+          certificateMatcherRegex: [rule, [Validators.required]],
           topicRule: [authorizationRulesMapping[rule], [Validators.required]]
         });
         if (this.disabled) {
@@ -121,7 +121,7 @@ export class AuthRulesComponent implements ControlValueAccessor, Validator, OnDe
   private prepareValues(authorizationRulesMapping: any) {
     const newObj = {};
     authorizationRulesMapping.forEach( (obj: AuthorizationRulesMap) => {
-      const key = obj.certificateMtcherRegex;
+      const key = obj.certificateMatcherRegex;
       newObj[key] = obj.topicRule;
     });
     return newObj;

@@ -1,16 +1,13 @@
-import { Component, forwardRef, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, forwardRef, Input } from '@angular/core';
 import {
-  ControlValueAccessor, FormArray,
-  FormBuilder, FormControl,
-  FormGroup,
-  NG_VALIDATORS,
-  NG_VALUE_ACCESSOR,
-  ValidationErrors,
-  Validator
+  AbstractControl,
+  ControlValueAccessor,
+  FormBuilder,
+  FormGroup, NG_VALIDATORS,
+  NG_VALUE_ACCESSOR, ValidationErrors, Validators,
 } from '@angular/forms';
-import { DeviceCredentialMQTTBasic } from '@shared/models/device.models';
 import { isDefinedAndNotNull, isEmptyStr } from '@core/utils';
-import { BasicMqttCredentials, SslMqttCredentials } from '@shared/models/mqtt.models';
+import { BasicMqttCredentials } from '@shared/models/mqtt.models';
 
 @Component({
   selector: 'tb-mqtt-credentials-mqtt-ssl',
@@ -21,51 +18,57 @@ import { BasicMqttCredentials, SslMqttCredentials } from '@shared/models/mqtt.mo
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => MqttCredentialsMqttSslComponent),
       multi: true
+    },
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => MqttCredentialsMqttSslComponent),
+      multi: true
     }
   ],
 })
-export class MqttCredentialsMqttSslComponent implements OnInit, ControlValueAccessor {
+export class MqttCredentialsMqttSslComponent implements ControlValueAccessor, Validators {
 
   @Input()
   disabled: boolean;
 
   credentialsMqttSslFormGroup: FormGroup;
 
-  authorizationRulesMappingData;
-
   private propagateChange = null;
+  private onTouched: () => void = () => {};
 
-  constructor(public fb: FormBuilder) { }
-
-  ngOnInit(): void {
+  constructor(public fb: FormBuilder) {
     this.credentialsMqttSslFormGroup = this.fb.group({
-      parentCertCommonName: [''],
+      parentCertCommonName: ['', [Validators.required]],
       authorizationRulesMapping: ['']
-    });
-    this.credentialsMqttSslFormGroup.valueChanges.subscribe((value) => {
-      this.updateView(value);
     });
   }
 
-  writeValue(mqttSsl: string): void {
-    if (isDefinedAndNotNull(mqttSsl) && !isEmptyStr(mqttSsl)) {
-      const value = JSON.parse(mqttSsl);
-      this.authorizationRulesMappingData = value.authorizationRulesMapping;
+  writeValue(credentialsValue: string): void {
+    if (isDefinedAndNotNull(credentialsValue) && !isEmptyStr(credentialsValue)) {
+      const value = JSON.parse(credentialsValue);
       this.credentialsMqttSslFormGroup.patchValue(value, { emitEvent: false });
     }
   }
 
   registerOnChange(fn: any): void {
     this.propagateChange = fn;
+    this.credentialsMqttSslFormGroup.valueChanges.subscribe(fn);
   }
 
   registerOnTouched(fn: any): void {
+    this.onTouched = fn;
   }
 
   updateView(value: BasicMqttCredentials) {
     this.credentialsMqttSslFormGroup.patchValue(value, { emitEvent: false });
     const formValue = JSON.stringify(value);
     this.propagateChange(formValue);
+  }
+
+  validate(control: AbstractControl): ValidationErrors | null {
+    return this.credentialsMqttSslFormGroup.valid ? null : {
+      credentialsMqttSsl: {valid: false}
+    };
   }
 
   setDisabledState(isDisabled: boolean) {

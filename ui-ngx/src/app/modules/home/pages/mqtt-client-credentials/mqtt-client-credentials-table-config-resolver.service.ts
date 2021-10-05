@@ -43,7 +43,6 @@ import {
   ManageCredentialsDialogComponent
 } from '@home/dialogs/manage-credentials-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { AccountBalance } from '@material-ui/icons';
 
 @Injectable()
 export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityTableConfig<MqttCredentials>> {
@@ -106,7 +105,6 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
     this.config.saveEntity = mqttClient => this.mqttClientCredentialsService.saveMqttClientCredentials(mqttClient);
     this.config.deleteEntity = id => this.deleteEntity(id);
     this.config.onEntityAction = action => this.onMqttClientAction(action);
-    this.config.onEntityAction = action => this.onMqttClientAction(action);
   }
 
   resolve(): EntityTableConfig<MqttCredentials> {
@@ -131,6 +129,11 @@ export class MqttClientCredentialsTableConfigResolver implements Resolve<EntityT
   // }
 
   onMqttClientAction(action: EntityAction<MqttCredentials>): boolean {
+    switch (action.action) {
+      case 'manage':
+        this.manageCredentials(action.event, action.entity);
+        return true;
+    }
     return false;
   }
 

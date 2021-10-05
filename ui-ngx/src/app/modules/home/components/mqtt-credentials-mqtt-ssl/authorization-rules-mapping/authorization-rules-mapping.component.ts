@@ -1,12 +1,13 @@
-import { Component, forwardRef, Injector, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, forwardRef, Injector, Input, OnInit } from '@angular/core';
 import {
   AbstractControl,
   ControlValueAccessor,
   FormArray,
   FormBuilder,
-  FormControl,
   FormGroup,
+  NG_VALIDATORS,
   NG_VALUE_ACCESSOR,
+  ValidationErrors,
   Validators
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -15,7 +16,7 @@ import { SslMqttCredentials } from '@shared/models/mqtt.models';
 import { Subscription } from 'rxjs';
 
 export interface AuthorizationRulesMap {
-  certificateMtcherRegex: string;
+  certificateMatcherRegex: string;
   topicRule: string;
 }
 
@@ -28,10 +29,15 @@ export interface AuthorizationRulesMap {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => AuthorizationRulesMappingComponent),
       multi: true
+    },
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => AuthorizationRulesMappingComponent),
+      multi: true
     }
   ]
 })
-export class AuthorizationRulesMappingComponent implements ControlValueAccessor, OnInit {
+export class AuthorizationRulesMappingComponent implements ControlValueAccessor, OnInit, Validators {
 
   @Input() disabled: boolean;
 
@@ -41,6 +47,10 @@ export class AuthorizationRulesMappingComponent implements ControlValueAccessor,
 
   private propagateChange = null;
   private valueChangeSubscription: Subscription = null;
+
+  get authorizationRulesMapping() {
+    return this.rulesMappingFormGroup.get('authorizationRulesMapping');
+  }
 
   constructor(protected store: Store<AppState>,
               private injector: Injector,
@@ -63,7 +73,7 @@ export class AuthorizationRulesMappingComponent implements ControlValueAccessor,
   addRule(): void {
     this.rulesMappings = this.rulesMappingFormGroup.get('authorizationRulesMapping') as FormArray;
     this.rulesMappings.push(this.fb.group({
-      certificateMtcherRegex: ['', [Validators.required]],
+      certificateMatcherRegex: ['', [Validators.required]],
       topicRule: ['', [Validators.required]]
     }));
   }
@@ -79,16 +89,16 @@ export class AuthorizationRulesMappingComponent implements ControlValueAccessor,
   registerOnTouched(fn: any): void {
   }
 
-  writeValue(authorizationRulesMapping: any): void {
+  writeValue(authorizationRules: any): void {
     if (this.valueChangeSubscription) {
       this.valueChangeSubscription.unsubscribe();
     }
     const rulesControls: Array<AbstractControl> = [];
-    if (authorizationRulesMapping) {
-      for (const rule of Object.keys(authorizationRulesMapping)) {
+    if (authorizationRules) {
+      for (const rule of Object.keys(authorizationRules)) {
         const rulesControl = this.fb.group({
-          certificateMtcherRegex: [rule, [Validators.required]],
-          topicRule: [authorizationRulesMapping[rule], [Validators.required]]
+          certificateMatcherRegex: [rule, [Validators.required]],
+          topicRule: [authorizationRules[rule], [Validators.required]]
         });
         if (this.disabled) {
           rulesControl.disable();
@@ -110,10 +120,26 @@ export class AuthorizationRulesMappingComponent implements ControlValueAccessor,
   private prepareValues(authorizationRulesMapping: any) {
     const newObj = {};
     authorizationRulesMapping.forEach( (obj: AuthorizationRulesMap) => {
-      const key = obj.certificateMtcherRegex;
+      const key = obj.certificateMatcherRegex;
       newObj[key] = obj.topicRule;
     });
-    console.warn("prepareValues", newObj);
     return newObj;
   }
+
+  validate(control: AbstractControl): ValidationErrors | null {
+    if (!this.rulesMappingFormGroup.get('authorizationRulesMapping').value?.length) {
+      return { rulesMappingLength: true };
+    }
+    return this.rulesMappingFormGroup.valid ? null : { rulesMapping: true };
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+    if (this.disabled) {
+      this.rulesMappingFormGroup.disable();
+    } else {
+      this.rulesMappingFormGroup.enable();
+    }
+  }
+
 }

@@ -58,20 +58,19 @@ export class MqttClientCredentialsComponent extends EntityComponent<MqttCredenti
       {
         name: [entity ? entity.name : '', [Validators.required]],
         credentialsType: [entity ? entity.credentialsType : '', [Validators.required]],
-        credentialsValue: [ entity ? entity.credentialsValue : '', [Validators.required]]
+        credentialsValue: [ entity ? entity.credentialsValue : '']
       }
     );
-    form.get('credentialsType').valueChanges.subscribe((value => {
+    form.get('credentialsType').valueChanges.subscribe(() => {
       form.patchValue({ credentialsValue: null });
-      form.get('credentialsValue').setValidators([Validators.required]);
-    }));
+    });
     return form;
   }
 
   updateForm(entity: MqttCredentials) {
-    this.entityForm.patchValue({ name: entity.name} );
-    this.entityForm.patchValue({ credentialsType: entity.credentialsType} );
-    this.entityForm.patchValue({ credentialsValue: entity.credentialsValue} );
+    this.entityForm.patchValue({name: entity.name} );
+    this.entityForm.patchValue({credentialsType: entity.credentialsType} );
+    this.entityForm.patchValue({credentialsValue: entity.credentialsValue} );
   }
 
 }

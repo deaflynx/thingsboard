@@ -20,7 +20,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { PageLink } from '@shared/models/page/page-link';
 import { PageData } from '@shared/models/page/page-data';
-import { MqttCredentials } from '@shared/models/mqtt.models';
+import { MqttCredentials, MqttCredentialsType } from '@shared/models/mqtt.models';
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +32,10 @@ export class MqttClientCredentialsService {
   ) { }
 
   public saveMqttClientCredentials(mqttClientCredentials: MqttCredentials, config?: RequestConfig): Observable<MqttCredentials> {
-    return this.http.post<MqttCredentials>('/api/mqtt/client/credentials', mqttClientCredentials, defaultHttpOptionsFromConfig(config));
+    const credentialsValue = mqttClientCredentials.credentialsType === MqttCredentialsType.SSL
+      ? JSON.stringify(mqttClientCredentials.credentialsValue)
+      : mqttClientCredentials.credentialsValue;
+    return this.http.post<MqttCredentials>('/api/mqtt/client/credentials', {...mqttClientCredentials, ...{credentialsValue}}, defaultHttpOptionsFromConfig(config));
   }
 
   public deleteMqttClientCredentials(credentialsId: string, config?: RequestConfig) {

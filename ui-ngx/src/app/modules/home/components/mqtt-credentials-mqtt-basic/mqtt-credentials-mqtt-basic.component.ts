@@ -1,12 +1,15 @@
-import { Component, forwardRef, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, forwardRef, Input, OnDestroy } from '@angular/core';
 import {
+  AbstractControl,
   ControlValueAccessor,
   FormBuilder,
   FormGroup,
   NG_VALIDATORS,
   NG_VALUE_ACCESSOR,
   ValidationErrors,
-  Validator, ValidatorFn, Validators
+  Validator,
+  ValidatorFn,
+  Validators
 } from '@angular/forms';
 import { DeviceCredentialMQTTBasic } from '@shared/models/device.models';
 import { isDefinedAndNotNull, isEmptyStr } from '@core/utils';
@@ -22,15 +25,10 @@ import { takeUntil } from 'rxjs/operators';
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => MqttCredentialsMqttBasicComponent),
       multi: true
-    },
-    {
-      provide: NG_VALIDATORS,
-      useExisting: forwardRef(() => MqttCredentialsMqttBasicComponent),
-      multi: true,
     }
   ],
 })
-export class MqttCredentialsMqttBasicComponent implements ControlValueAccessor, Validator, OnDestroy {
+export class MqttCredentialsMqttBasicComponent implements ControlValueAccessor, OnDestroy {
 
   @Input()
   disabled: boolean;
@@ -74,12 +72,6 @@ export class MqttCredentialsMqttBasicComponent implements ControlValueAccessor, 
   }
 
   registerOnTouched(fn: any): void {
-  }
-
-  validate(): ValidationErrors | null {
-    return this.credentialsMqttBasicFormGroup.valid ? null : {
-      credentialsMqttBasic: false
-    };
   }
 
   setDisabledState(isDisabled: boolean) {

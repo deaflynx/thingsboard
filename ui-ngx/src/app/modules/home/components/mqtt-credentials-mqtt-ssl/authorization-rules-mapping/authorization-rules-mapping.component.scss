@@ -1,4 +1,11 @@
 :host {
+  .tb-auth-rules-panel-group {
+    &.header-filters {
+      mat-expansion-panel {
+        margin-bottom: 15px;
+      }
+    }
+  }
   .tb-auth-rules-list {
     .header {
       padding-right: 5px;
@@ -14,7 +21,6 @@
         white-space: nowrap;
       }
     }
-
     .body {
       max-height: 300px;
       padding-right: 5px;
