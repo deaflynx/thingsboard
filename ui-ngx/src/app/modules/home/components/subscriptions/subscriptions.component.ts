@@ -5,10 +5,13 @@ import {
   FormArray,
   FormBuilder,
   FormGroup,
-  NG_VALUE_ACCESSOR, ValidationErrors,
+  NG_VALIDATORS,
+  NG_VALUE_ACCESSOR,
+  ValidationErrors,
+  Validator,
   Validators
 } from '@angular/forms';
-import { mqttQoSTypes, TopicSubscription } from '@shared/models/mqtt.models';
+import { MqttQoS, mqttQoSTypes, TopicSubscription } from '@shared/models/mqtt.models';
 import { PageComponent } from '@shared/components/page.component';
 import { Subscription } from 'rxjs';
 import { AppState } from '@core/core.state';
@@ -22,9 +25,14 @@ import { Store } from '@ngrx/store';
     provide: NG_VALUE_ACCESSOR,
     useExisting: forwardRef(() => SubscriptionsComponent),
     multi: true
-  }]
+  },
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => SubscriptionsComponent),
+      multi: true
+    }]
 })
-export class SubscriptionsComponent extends PageComponent implements ControlValueAccessor, OnInit {
+export class SubscriptionsComponent extends PageComponent implements ControlValueAccessor, Validator, OnInit {
 
   @Input() disabled: boolean;
 
@@ -34,10 +42,6 @@ export class SubscriptionsComponent extends PageComponent implements ControlValu
   private propagateChange = null;
 
   private valueChangeSubscription: Subscription = null;
-
-  get topicFilters() {
-    return this.topicListFormGroup.get('subscriptions').value;
-  }
 
   constructor(protected store: Store<AppState>,
               private injector: Injector,
@@ -71,13 +75,13 @@ export class SubscriptionsComponent extends PageComponent implements ControlValu
     }
   }
 
-  writeValue(subscriptions: TopicSubscription[]): void {
+  writeValue(topics: TopicSubscription[]): void {
     if (this.valueChangeSubscription) {
       this.valueChangeSubscription.unsubscribe();
     }
     const subscriptionsControls: Array<AbstractControl> = [];
-    if (subscriptions) {
-      for (const topic of subscriptions) {
+    if (topics) {
+      for (const topic of topics) {
         const topicControl = this.fb.group(topic);
         if (this.disabled) {
           topicControl.disable();
@@ -86,8 +90,8 @@ export class SubscriptionsComponent extends PageComponent implements ControlValu
       }
     }
     this.topicListFormGroup.setControl('subscriptions', this.fb.array(subscriptionsControls));
-    this.valueChangeSubscription = this.topicListFormGroup.valueChanges.subscribe(() => {
-      this.updateModel();
+    this.valueChangeSubscription = this.topicListFormGroup.valueChanges.subscribe((value) => {
+      this.updateView(value);
     });
   }
 
@@ -99,18 +103,18 @@ export class SubscriptionsComponent extends PageComponent implements ControlValu
     const subscriptionsFormArray = this.topicListFormGroup.get('subscriptions') as FormArray;
     subscriptionsFormArray.push(this.fb.group({
       topic: [null, [Validators.required]],
-      qos: [null, [Validators.required]]
+      qos: [MqttQoS.AT_LEAST_ONCE, [Validators.required]]
     }));
   }
 
-  private updateModel() {
-    this.propagateChange(this.topicListFormGroup.get('subscriptions').value);
+  validate(control: AbstractControl): ValidationErrors | null {
+    return control.value.length && this.topicListFormGroup.valid ? null : {
+      topicFilters: {valid: false}
+    };
   }
 
-  validate(control: AbstractControl): ValidationErrors | null {
-    return control.valid ? null : {
-      topicList: {valid: false}
-    };
+  private updateView(value: TopicSubscription[]) {
+    this.propagateChange(this.topicListFormGroup.get('subscriptions').value);
   }
 
 }

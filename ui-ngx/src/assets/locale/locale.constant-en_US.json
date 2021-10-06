@@ -3288,6 +3288,7 @@
       "sessions": "Sessions",
       "session-info": "Session Info",
       "topic": "Topic",
+      "topic-filter-required-prompt": "Topic filter is required",
       "remove-session": "Remove session",
       "remove-session-title": "Are you sure you want to remove MQTT session for client with ID {{clientId}}?",
       "remove-session-text": "Be careful, after the confirmation MQTT client session will be removed.",
