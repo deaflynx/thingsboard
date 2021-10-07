@@ -1,9 +1,12 @@
 <form>
-  <mat-expansion-panel [expanded]="true">
+  <mat-expansion-panel [expanded]="true" #matExpansionPanel>
     <mat-expansion-panel-header>
       <mat-panel-title>
-        <div class="tb-panel-title" translate>mqtt-client-credentials.authorization-rules-mapping</div>
+        <div class="tb-auth-rules-panel-group" translate>mqtt-client-credentials.authorization-rules-mapping</div>
       </mat-panel-title>
+      <mat-panel-description *ngIf="!rulesMappingFormGroup.get('authorizationRulesMapping').value?.length">
+        <mat-error translate>mqtt-client-credentials.add-auth-rule-prompt</mat-error>
+      </mat-panel-description>
     </mat-expansion-panel-header>
     <section>
       <div fxLayout="column" class="tb-auth-rules-list" [formGroup]="rulesMappingFormGroup">
@@ -18,10 +21,16 @@
                *ngFor="let rulesControl of rulesFormArray().controls; let $index = index">
             <ng-container [formGroupName]="$index">
               <mat-form-field class="cell mat-block" fxFlex="50">
-                <input [formControl]="rulesControl.get('certificateMatcherRegex')" matInput formControlName="certificateMatcherRegex">
+                <input matInput formControlName="certificateMatcherRegex">
+                <mat-error *ngIf="rulesControl.get('certificateMatcherRegex').invalid">
+                  {{ 'mqtt-client-credentials.cerificate-matcher-regex-required' | translate }}
+                </mat-error>
               </mat-form-field>
               <mat-form-field class="cell mat-block" fxFlex="50">
-                <input [formControl]="rulesControl.get('topicRule')" matInput formControlName="topicRule">
+                <input matInput formControlName="topicRule">
+                <mat-error *ngIf="rulesControl.get('topicRule').invalid">
+                  {{ 'mqtt-client-credentials.topic-rule-required' | translate }}
+                </mat-error>
               </mat-form-field>
               <button mat-button mat-icon-button color="primary"
                       [fxShow]="!disabled"

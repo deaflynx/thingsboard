@@ -1,10 +1,10 @@
 <form>
-  <mat-expansion-panel #matExpansionPanel>
+  <mat-expansion-panel [expanded]="true" #matExpansionPanel>
     <mat-expansion-panel-header>
       <mat-panel-title>
         <div class="tb-auth-rules-panel-group" translate>mqtt-client-credentials.authorization-rules-mapping</div>
       </mat-panel-title>
-      <mat-panel-description *ngIf="matExpansionPanel.expanded && !rulesMappingFormGroup.get('authorizationRulesMapping').value?.length">
+      <mat-panel-description *ngIf="!rulesMappingFormGroup.get('authorizationRulesMapping').value?.length">
         <mat-error translate>mqtt-client-credentials.add-auth-rule-prompt</mat-error>
       </mat-panel-description>
     </mat-expansion-panel-header>
@@ -22,9 +22,15 @@
             <ng-container [formGroupName]="$index">
               <mat-form-field class="cell mat-block" fxFlex="50">
                 <input matInput formControlName="certificateMatcherRegex">
+                <mat-error *ngIf="rulesControl.get('certificateMatcherRegex').invalid">
+                  {{ 'mqtt-client-credentials.regex-required' | translate }}
+                </mat-error>
               </mat-form-field>
               <mat-form-field class="cell mat-block" fxFlex="50">
                 <input matInput formControlName="topicRule">
+                <mat-error *ngIf="rulesControl.get('topicRule').invalid">
+                  {{ 'mqtt-client-credentials.topic-rule-required' | translate }}
+                </mat-error>
               </mat-form-field>
               <button mat-button mat-icon-button color="primary"
                       [fxShow]="!disabled"
@@ -48,9 +54,6 @@
           </button>
         </div>
       </div>
-      <mat-error *ngIf="rulesMappingFormGroup.invalid">
-        {{ 'mqtt-client-credentials.rules-mapping-required' | translate }}
-      </mat-error>
     </section>
   </mat-expansion-panel>
 </form>

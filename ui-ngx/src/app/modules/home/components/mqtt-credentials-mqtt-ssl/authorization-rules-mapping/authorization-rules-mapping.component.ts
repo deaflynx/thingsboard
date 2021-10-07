@@ -7,7 +7,7 @@ import {
   FormGroup,
   NG_VALIDATORS,
   NG_VALUE_ACCESSOR,
-  ValidationErrors,
+  ValidationErrors, Validator,
   Validators
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -37,7 +37,7 @@ export interface AuthorizationRulesMap {
     }
   ]
 })
-export class AuthorizationRulesMappingComponent implements ControlValueAccessor, OnInit, Validators {
+export class AuthorizationRulesMappingComponent implements ControlValueAccessor, OnInit, Validator {
 
   @Input() disabled: boolean;
 

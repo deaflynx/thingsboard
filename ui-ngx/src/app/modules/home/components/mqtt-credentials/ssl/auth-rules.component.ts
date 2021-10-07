@@ -25,7 +25,7 @@ import { AuthorizationRulesMap } from '@home/components/mqtt-credentials-mqtt-ss
       useExisting: forwardRef(() => AuthRulesComponent),
       multi: true,
     }],
-  styleUrls: []
+  styleUrls: ['./auth-rules.component.scss']
 })
 export class AuthRulesComponent implements ControlValueAccessor, Validator, OnDestroy {
 
@@ -85,9 +85,10 @@ export class AuthRulesComponent implements ControlValueAccessor, Validator, OnDe
   }
 
   validate(): ValidationErrors | null {
-    return this.rulesMappingFormGroup.valid ? null : {
-      deviceCredentialsMqttBasic: false
-    };
+    if (!this.rulesMappingFormGroup.get('authorizationRulesMapping').value?.length) {
+      return { rulesMappingLength: true };
+    }
+    return this.rulesMappingFormGroup.valid ? null : { rulesMapping: true };
   }
 
   writeValue(authorizationRulesMapping: any): void {

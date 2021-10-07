@@ -3239,7 +3239,7 @@
       "client-id": "Client ID",
       "clients": "Clients",
       "client-credentials": "Client Credentials",
-      "delete-credentials": "Delete Client Credentials",
+      "delete-credentials": "Delete Credentials",
       "manage-credentials": "Manage Credentials",
       "manage-credentials-title": "Client Credentials",
       "manage-credentials-text": "Edit client credentials of profile with name '{{mqttClientName}}'",
@@ -3255,6 +3255,7 @@
       "password": "Password",
       "parent-certificate-common-name": "Parent certificate common name",
       "parent-certificate-common-name-required": "Parent certificate common name required",
+      "parent-required": "Parent certificate common name required",
       "username": "Username"
     },
     "mqtt-client-session": {
