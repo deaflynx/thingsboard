@@ -77,6 +77,9 @@ import { PowerButtonWidgetComponent } from '@home/components/widget/lib/rpc/powe
 import { SliderWidgetComponent } from '@home/components/widget/lib/rpc/slider-widget.component';
 import { ToggleButtonWidgetComponent } from '@home/components/widget/lib/button/toggle-button-widget.component';
 import { TimeSeriesChartWidgetComponent } from '@home/components/widget/lib/chart/time-series-chart-widget.component';
+import {
+  AlarmsSchwarzTableWidgetComponent
+} from '@home/components/widget/lib/alarm-schwarz/alarms-schwarz-table-widget.component';
 
 @NgModule({
   declarations:
@@ -84,6 +87,7 @@ import { TimeSeriesChartWidgetComponent } from '@home/components/widget/lib/char
       DisplayColumnsPanelComponent,
       EntitiesTableWidgetComponent,
       AlarmsTableWidgetComponent,
+      AlarmsSchwarzTableWidgetComponent,
       TimeseriesTableWidgetComponent,
       EntitiesHierarchyWidgetComponent,
       EdgesOverviewWidgetComponent,
@@ -138,6 +142,7 @@ import { TimeSeriesChartWidgetComponent } from '@home/components/widget/lib/char
     exports: [
         EntitiesTableWidgetComponent,
         AlarmsTableWidgetComponent,
+        AlarmsSchwarzTableWidgetComponent,
         TimeseriesTableWidgetComponent,
         EntitiesHierarchyWidgetComponent,
         EdgesOverviewWidgetComponent,
